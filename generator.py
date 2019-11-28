@@ -62,15 +62,62 @@ def _get_inifitives(lines):
 
     return infinitives
 
+def _add_separator(result):
+    if len(result) > 0:
+        result += " - "
+
+    return result
+
+def _get_variants(descriptors, descriptor):
+
+        result = ''
+
+        forma = descriptors.get(descriptor + "0");
+        if forma is not None:
+            result = _add_separator(result)
+            result += '{0}'.format(forma)
+
+        forma = descriptors.get(descriptor + "X");
+        if forma is not None:
+            result = _add_separator(result)
+            result += '{0} (central i valencià)'.format(forma)
+
+        forma = descriptors.get(descriptor + "Y");
+        if forma is not None:
+            result = _add_separator(result)
+            result += '{0} (central i balear)'.format(forma)
+
+        forma = descriptors.get(descriptor + "Z");
+        if forma is not None:
+            result = _add_separator(result)
+            result += '{0} (valencià i balear)'.format(forma)
+
+        forma = descriptors.get(descriptor + "C");
+        if forma is not None:
+            result = _add_separator(result)
+            result += '{0} (central)'.format(forma)
+
+        forma = descriptors.get(descriptor + "V");
+        if forma is not None:
+            result = _add_separator(result)
+            result += '{0} (valencià)'.format(forma)
+
+        forma = descriptors.get(descriptor + "B");
+        if forma is not None:
+            result = _add_separator(result)
+            result += '{0} (balear)'.format(forma)
+        
+        return result
+
 def _set_plurals_singulars(form, descriptor, descriptors):
 
-        form.singular1 = descriptors.get(descriptor + "1S00")
-        form.singular2 = descriptors.get(descriptor + "2S00")
-        form.singular3 = descriptors.get(descriptor + "2S00")
+        form.singular1 = _get_variants(descriptors, descriptor + "1S0")
+        form.singular2 = _get_variants(descriptors, descriptor + "2S0")
+        form.singular3 = _get_variants(descriptors, descriptor + "3S0")
 
-        form.plural1 = descriptors.get(descriptor + "1P00")
-        form.plural2 = descriptors.get(descriptor + "2P00")
-        form.plural3 = descriptors.get(descriptor + "2P00")
+        form.plural1 = _get_variants(descriptors, descriptor + "1P0")
+        form.plural2 = _get_variants(descriptors, descriptor + "2P0")
+        form.plural3 = _get_variants(descriptors, descriptor + "3P0")
 
 
 # Forms' documentation:
