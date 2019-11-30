@@ -20,6 +20,7 @@
 
 import re
 import yaml
+import datetime
 
 class Forms:
 
@@ -155,6 +156,7 @@ def main():
     lines = _read_file()
     infinitives = _get_inifitives(lines)
 
+    start_time = datetime.datetime.now()
     with open('verbs.yaml', 'w') as yaml_file:
         verbs = {}
         for infinitive in infinitives:
@@ -169,6 +171,9 @@ def main():
             verbs[infinitive] = forms
 
         yaml.dump(verbs, yaml_file, default_flow_style=False)
+
+    s = 'Time used for generation: {0}'.format(datetime.datetime.now() - start_time)
+    print(s)
 
 if __name__ == "__main__":
     main()
