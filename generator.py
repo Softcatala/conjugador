@@ -55,6 +55,8 @@ def _read_file(input_file):
 
 def _get_inifitives(lines):
 
+    INFINITIVE_DESCRIPTOR = 'VMN00000'
+
     infinitives = []
     for line in lines:
         wordList = re.sub("[^\w]", " ",  line).split()
@@ -62,7 +64,7 @@ def _get_inifitives(lines):
         infinitive = wordList[1]
         descriptor = wordList[2]
 
-        if descriptor != 'VMN00000':
+        if descriptor != INFINITIVE_DESCRIPTOR:
             continue
 
         infinitives.append(infinitive)
@@ -176,7 +178,7 @@ def main():
     input_file = 'catalan-dict-tools/resultats/lt/diccionari.txt'
     output_dir = 'jsons/'
 
-    print("Read a diccionari file and extracts the verbs into json files")
+    print("Read a dictionary file and extracts the verbs into json files")
     print("Input file: {0}, output dir: {1}".format(input_file, output_dir))
         
     start_time = datetime.datetime.now()
