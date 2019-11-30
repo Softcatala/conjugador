@@ -2,21 +2,20 @@
 
 # How it works
 
-Needs diccionari.txt as input from
-
-https://github.com/Softcatala/catalan-dict-tools/tree/master/resultats/lt
 
 
-Contact Jordi Mas <jmas@softcatla.org>
+#  Docker
 
-========
-Commands
-========
-
-Create builder image:
+Create Docker image:
 
 ``docker build -t conjugador . -f dockerfile``
 
-Simple execution of the builder image:
+Simple execution of the Docker image:
 
-``docker run -i -t tmt-builder``
+``docker run -i -t conjugador``
+
+
+# Contact
+
+Contact Jordi Mas <jmas@softcatla.org>
+
