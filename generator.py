@@ -22,9 +22,10 @@ import re
 
 class Forms:
 
-    def __init__(self, group, form):
+    def __init__(self, group, form, descriptor):
         self.group = group
         self.form = form
+        self.descriptor = descriptor
         self.singular1 = '-' 
         self.singular2 = '-'
         self.singular3 = '-'
@@ -109,15 +110,15 @@ def _get_variants(descriptors, descriptor):
         
         return result
 
-def _set_plurals_singulars(form, descriptor, descriptors):
+def _set_plurals_singulars(form, descriptors):
 
-        form.singular1 = _get_variants(descriptors, descriptor + "1S0")
-        form.singular2 = _get_variants(descriptors, descriptor + "2S0")
-        form.singular3 = _get_variants(descriptors, descriptor + "3S0")
+        form.singular1 = _get_variants(descriptors, form.descriptor + "1S0")
+        form.singular2 = _get_variants(descriptors, form.descriptor + "2S0")
+        form.singular3 = _get_variants(descriptors, form.descriptor + "3S0")
 
-        form.plural1 = _get_variants(descriptors, descriptor + "1P0")
-        form.plural2 = _get_variants(descriptors, descriptor + "2P0")
-        form.plural3 = _get_variants(descriptors, descriptor + "3P0")
+        form.plural1 = _get_variants(descriptors, form.descriptor + "1P0")
+        form.plural2 = _get_variants(descriptors, form.descriptor + "2P0")
+        form.plural3 = _get_variants(descriptors, form.descriptor + "3P0")
 
 
 # Forms' documentation:
@@ -126,9 +127,9 @@ def _get_forms(req_inifitive, lines):
 
     forms = []
 
-    VMII = Forms('Indicatiu', 'Pretèrit imperfecte')
-    VMSP = Forms('Subjuntiu', 'Present')
-    VMIP = Forms('Indicatiu', 'Present')
+    forms.append(Forms('Indicatiu', 'Pretèrit imperfecte', 'VMII'))
+    forms.append(Forms('Subjuntiu', 'Present', 'VMSP'))
+    forms.append(Forms('Indicatiu', 'Present', 'VMIP'))
     
     descriptors = {}
     for line in lines:
@@ -142,14 +143,9 @@ def _get_forms(req_inifitive, lines):
 
         descriptors[descriptor] = flexionada
 
-    _set_plurals_singulars(VMII, 'VMII', descriptors)
-    _set_plurals_singulars(VMSP, 'VMSP', descriptors)
-    _set_plurals_singulars(VMIP, 'VMIP', descriptors)
+    for form in forms:
+        _set_plurals_singulars(form, descriptors)
 
-
-    forms.append(VMII)
-    forms.append(VMSP)
-    forms.append(VMIP)
     return forms
 
 def main():
