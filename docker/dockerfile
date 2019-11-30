@@ -4,6 +4,7 @@ RUN git clone --depth=1 --recurse-submodules https://github.com/Softcatala/conju
 WORKDIR conjugador
 RUN pip install -r requirements.txt
 RUN ./generator.py
+RUN ./index_creation.py
 
 #Web server
 RUN pip install gunicorn
