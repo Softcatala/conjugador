@@ -122,29 +122,39 @@ def _set_plurals_singulars(form, descriptors):
         form.plural2 = _get_variants(descriptors, form.descriptor + "2P0")
         form.plural3 = _get_variants(descriptors, form.descriptor + "3P0")
 
+def _build_infinitive_descriptors(lines, infinitives):
+
+    inf_desc = {}
+#    descriptors = {}
+    for line in lines:
+
+        wordList = re.sub("[^\w]", " ",  line).split()
+        flexionada = wordList[0]
+        infinitive = wordList[1]
+        descriptor = wordList[2]
+
+        if infinitive in inf_desc:
+            descriptors = inf_desc[infinitive]
+        else:
+            descriptors = {}
+
+        descriptors[descriptor] = flexionada
+        inf_desc[infinitive] = descriptors;
+
+    return inf_desc
+
 
 # Forms' documentation:
 # https://freeling-user-manual.readthedocs.io/en/latest/tagsets/tagset-ca/#part-of-speech-verb
-def _get_forms(req_inifitive, lines):
+def _get_forms(inf_desc, req_infinitive):
 
     forms = []
 
     forms.append(Forms('Indicatiu', 'Pretèrit imperfecte', 'VMII'))
     forms.append(Forms('Subjuntiu', 'Present', 'VMSP'))
     forms.append(Forms('Indicatiu', 'Present', 'VMIP'))
-    
-    descriptors = {}
-    for line in lines:
-        wordList = re.sub("[^\w]", " ",  line).split()
-        flexionada = wordList[0]
-        infinitive = wordList[1]
-        descriptor = wordList[2]
 
-        if infinitive != req_inifitive:
-            continue
-
-        descriptors[descriptor] = flexionada
-
+    descriptors = inf_desc[req_infinitive]
     for form in forms:
         _set_plurals_singulars(form, descriptors)
 
@@ -153,18 +163,19 @@ def _get_forms(req_inifitive, lines):
 def main():
 
     print("Read a diccionari file and extracts the verbs into yaml")
+    start_time = datetime.datetime.now()
+
     lines = _read_file()
     infinitives = _get_inifitives(lines)
 
-    start_time = datetime.datetime.now()
     with open('verbs.yaml', 'w') as yaml_file:
         verbs = {}
+        inf_desc = _build_infinitive_descriptors(lines, infinitives)
+
         for infinitive in infinitives:
-            if infinitive != 'cantar' and infinitive != 'jugar':
-                continue
 
             print(infinitive)
-            forms = _get_forms(infinitive, lines)
+            forms = _get_forms(inf_desc, infinitive)
             for form in forms:
                 form.print()
 
@@ -172,6 +183,7 @@ def main():
 
         yaml.dump(verbs, yaml_file, default_flow_style=False)
 
+    print("Number of verbs {0}".format(len(verbs)))
     s = 'Time used for generation: {0}'.format(datetime.datetime.now() - start_time)
     print(s)
 
