@@ -19,6 +19,7 @@
 # Boston, MA 02111-1307, USA.
 
 import re
+import yaml
 
 class Forms:
 
@@ -150,18 +151,24 @@ def _get_forms(req_inifitive, lines):
 
 def main():
 
+    print("Read a diccionari file and extracts the verbs into yaml")
     lines = _read_file()
     infinitives = _get_inifitives(lines)
 
-    for infinitive in infinitives:
-        if infinitive != 'cantar':
-            continue
+    with open('verbs.yaml', 'w') as yaml_file:
+        verbs = {}
+        for infinitive in infinitives:
+            if infinitive != 'cantar' and infinitive != 'jugar':
+                continue
 
-        print(infinitive)
-        forms = _get_forms(infinitive, lines)
-        for form in forms:
-            form.print()
-            
+            print(infinitive)
+            forms = _get_forms(infinitive, lines)
+            for form in forms:
+                form.print()
+
+            verbs[infinitive] = forms
+
+        yaml.dump(verbs, yaml_file, default_flow_style=False)
 
 if __name__ == "__main__":
     main()
