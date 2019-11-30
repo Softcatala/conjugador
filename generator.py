@@ -19,8 +19,11 @@
 # Boston, MA 02111-1307, USA.
 
 import re
-import yaml
+import json
 import datetime
+import os
+import shutil
+ 
 
 class Forms:
 
@@ -45,8 +48,9 @@ class Forms:
         print(self.plural2)
         print(self.plural3)
 
-def _read_file():
-    with open('catalan-dict-tools/resultats/lt/diccionari.txt') as f:
+
+def _read_file(input_file):
+    with open(input_file) as f:
         return f.readlines()
 
 def _get_inifitives(lines):
@@ -125,7 +129,6 @@ def _set_plurals_singulars(form, descriptors):
 def _build_infinitive_descriptors(lines, infinitives):
 
     inf_desc = {}
-#    descriptors = {}
     for line in lines:
 
         wordList = re.sub("[^\w]", " ",  line).split()
@@ -160,28 +163,52 @@ def _get_forms(inf_desc, req_infinitive):
 
     return forms
 
+def _serialize_to_file(file_dir, infinitive, forms):
+    d = {}
+    d[infinitive] = forms
+    s = json.dumps(d, default=lambda x: x.__dict__, indent=4)
+
+    with open(os.path.join(file_dir, infinitive + ".json") ,"w") as file:
+        file.write(s)
+
 def main():
 
-    print("Read a diccionari file and extracts the verbs into yaml")
+    input_file = 'catalan-dict-tools/resultats/lt/diccionari.txt'
+    output_dir = 'jsons/'
+
+    print("Read a diccionari file and extracts the verbs into json files")
+    print("Input file: {0}, output dir: {1}".format(input_file, output_dir))
+        
     start_time = datetime.datetime.now()
 
-    lines = _read_file()
+    lines = _read_file(input_file)
     infinitives = _get_inifitives(lines)
 
-    with open('verbs.yaml', 'w') as yaml_file:
-        verbs = {}
-        inf_desc = _build_infinitive_descriptors(lines, infinitives)
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
+        os.makedirs(output_dir)
 
-        for infinitive in infinitives:
+    verbs = {}
+    inf_desc = _build_infinitive_descriptors(lines, infinitives)
 
-            print(infinitive)
-            forms = _get_forms(inf_desc, infinitive)
-            for form in forms:
-                form.print()
+    for infinitive in infinitives:
 
-            verbs[infinitive] = forms
+        #if infinitive != 'cantar' and infinitive != 'jugar':
+        #    continue
 
-        yaml.dump(verbs, yaml_file, default_flow_style=False)
+        file_dir = os.path.join(output_dir, infinitive[:2])
+        if not os.path.exists(file_dir):
+            os.makedirs(file_dir)
+            print(file_dir)
+
+        print(infinitive)
+        forms = _get_forms(inf_desc, infinitive)
+        for form in forms:
+            form.print()
+
+        verbs[infinitive] = forms
+        _serialize_to_file(file_dir, infinitive, forms)
+
 
     print("Number of verbs {0}".format(len(verbs)))
     s = 'Time used for generation: {0}'.format(datetime.datetime.now() - start_time)
