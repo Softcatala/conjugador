@@ -1,0 +1,3 @@
+[submodule "catalan-dict-tools"]
+	path = catalan-dict-tools
+	url = git@github.com:Softcatala/catalan-dict-tools.git
