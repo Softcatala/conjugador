@@ -1,6 +1,5 @@
 FROM python:3.6.1
-#RUN apt-get update && apt-get install python3-dev libhunspell-dev gettext -y
-RUN git clone --depth=1 https://github.com/Softcatala/conjugador conjugador
+RUN git clone --depth=1 --recurse-submodules https://github.com/Softcatala/conjugador conjugador
 
 WORKDIR conjugador
 
@@ -9,9 +8,10 @@ RUN pip install gunicorn
 
 EXPOSE 8080 8000
 
-WORKDIR web
+#WORKDIR web
 
 #What get's executed on Run
-ENTRYPOINT gunicorn web_search:app -b 0.0.0.0:8000
+#ENTRYPOINT gunicorn web_search:app -b 0.0.0.0:8000
+ENTRYPOINT /bin/bash
 
 

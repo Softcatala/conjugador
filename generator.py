@@ -44,7 +44,7 @@ class Forms:
         print(self.plural3)
 
 def _read_file():
-    with open('diccionari.txt') as f:
+    with open('catalan-dict-tools/resultats/lt/diccionari.txt') as f:
         return f.readlines()
 
 def _get_inifitives(lines):
