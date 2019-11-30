@@ -37,6 +37,7 @@ class Forms:
         self.plural1 = '-'
         self.plural2 = '-'
         self.plural3 = '-'
+        self.variants = ''
 
     def print(self):
         print("---")
@@ -80,53 +81,66 @@ def _add_separator(result):
 def _get_variants(descriptors, descriptor):
 
         result = ''
+        formes = []
 
         forma = descriptors.get(descriptor + "0");
         if forma is not None:
             result = _add_separator(result)
             result += '{0}'.format(forma)
+            formes.append(forma)
 
         forma = descriptors.get(descriptor + "X");
         if forma is not None:
             result = _add_separator(result)
             result += '{0} (central i valencià)'.format(forma)
+            formes.append(forma)
 
         forma = descriptors.get(descriptor + "Y");
         if forma is not None:
             result = _add_separator(result)
             result += '{0} (central i balear)'.format(forma)
+            formes.append(forma)
 
         forma = descriptors.get(descriptor + "Z");
         if forma is not None:
             result = _add_separator(result)
             result += '{0} (valencià i balear)'.format(forma)
+            formes.append(forma)
 
         forma = descriptors.get(descriptor + "C");
         if forma is not None:
             result = _add_separator(result)
             result += '{0} (central)'.format(forma)
+            formes.append(forma)
 
         forma = descriptors.get(descriptor + "V");
         if forma is not None:
             result = _add_separator(result)
             result += '{0} (valencià)'.format(forma)
+            formes.append(forma)
 
         forma = descriptors.get(descriptor + "B");
         if forma is not None:
             result = _add_separator(result)
             result += '{0} (balear)'.format(forma)
+            formes.append(forma)
         
-        return result
+        return result, formes
 
 def _set_plurals_singulars(form, descriptors):
 
-        form.singular1 = _get_variants(descriptors, form.descriptor + "1S0")
-        form.singular2 = _get_variants(descriptors, form.descriptor + "2S0")
-        form.singular3 = _get_variants(descriptors, form.descriptor + "3S0")
+        form.singular1, formes_singular1 = _get_variants(descriptors, form.descriptor + "1S0")
+        form.singular2, formes_singular2 = _get_variants(descriptors, form.descriptor + "2S0")
+        form.singular3, formes_singular3 = _get_variants(descriptors, form.descriptor + "3S0")
 
-        form.plural1 = _get_variants(descriptors, form.descriptor + "1P0")
-        form.plural2 = _get_variants(descriptors, form.descriptor + "2P0")
-        form.plural3 = _get_variants(descriptors, form.descriptor + "3P0")
+        form.plural1, formes_plural1 = _get_variants(descriptors, form.descriptor + "1P0")
+        form.plural2, formes_plural2 = _get_variants(descriptors, form.descriptor + "2P0")
+        form.plural3, formes_plural3 = _get_variants(descriptors, form.descriptor + "3P0")
+
+        forms = [formes_singular1 + formes_singular2 + formes_singular3 +
+                 formes_plural1 + formes_plural2 + formes_plural3]
+
+        form.variants = forms
 
 def _build_infinitive_descriptors(lines, infinitives):
 
