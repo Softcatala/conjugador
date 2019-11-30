@@ -128,7 +128,8 @@ def _get_forms(req_inifitive, lines):
 
     VMII = Forms('Indicatiu', 'Pretèrit imperfecte')
     VMSP = Forms('Subjuntiu', 'Present')
-
+    VMIP = Forms('Indicatiu', 'Present')
+    
     descriptors = {}
     for line in lines:
         wordList = re.sub("[^\w]", " ",  line).split()
@@ -143,9 +144,12 @@ def _get_forms(req_inifitive, lines):
 
     _set_plurals_singulars(VMII, 'VMII', descriptors)
     _set_plurals_singulars(VMSP, 'VMSP', descriptors)
+    _set_plurals_singulars(VMIP, 'VMIP', descriptors)
+
 
     forms.append(VMII)
     forms.append(VMSP)
+    forms.append(VMIP)
     return forms
 
 def main():
