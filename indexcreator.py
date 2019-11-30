@@ -19,15 +19,18 @@
 
 import os
 import shutil
+import json
 
 from whoosh.analysis import StandardAnalyzer
 from whoosh.fields import BOOLEAN, TEXT, Schema, STORED, ID
 from whoosh.index import create_in
+from findfiles import FindFiles
 
 
 class IndexCreator(object):
 
     def __init__(self, json_dir):
+        self.json_dir = json_dir
         self.dir_name = "indexdir/"
         self.writer = None
 
@@ -45,3 +48,28 @@ class IndexCreator(object):
 
         self.writer = ix.writer()
         return ix
+
+
+    def write_entry(self, verb_form, file_path):
+
+        self.writer.add_document(verb_form = verb_form,
+                                 file_path = file_path)
+
+    def _process_file(self, filename):
+        with open(filename) as json_file:
+            data = json.load(json_file)
+            infinitive = list(data.keys())[0]
+            print(infinitive)
+            print(filename)
+            self.write_entry(infinitive, filename)
+            
+
+    def process_files(self):
+        findFiles = FindFiles()
+        files = findFiles.find_recursive(self.json_dir, '*.json')
+        for filename in files:
+            self._process_file(filename)
+
+        print("Processed {0} files".format(len(files)))
+
+

@@ -21,9 +21,6 @@
 import datetime
 import locale
 import time
-from optparse import OptionParser
-
-
 from indexcreator import IndexCreator
 
 
@@ -34,6 +31,7 @@ def main():
 
     indexCreator = IndexCreator("jsons/")
     indexCreator.create()
+    indexCreator.process_files()
 
     print("Time used to create the index: {0} ".format(datetime.datetime.now() - start_time))
 
