@@ -190,7 +190,7 @@ def _serialize_to_file(file_dir, infinitive, forms):
 def main():
 
     input_file = 'catalan-dict-tools/resultats/lt/diccionari.txt'
-    output_dir = 'jsons/'
+    output_dir = 'data/jsons/'
 
     print("Read a dictionary file and extracts the verbs into json files")
     print("Input file: {0}, output dir: {1}".format(input_file, output_dir))

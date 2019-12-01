@@ -31,7 +31,7 @@ class IndexCreator(object):
 
     def __init__(self, json_dir):
         self.json_dir = json_dir
-        self.dir_name = "indexdir/"
+        self.dir_name = "data/indexdir/"
         self.writer = None
 
     def create(self, in_memory=False):
@@ -93,6 +93,6 @@ class IndexCreator(object):
         for filename in files:
             indexed += self._process_file(filename)
 
-        print("Processed {0} files, index {1} variants".format(len(files), indexed))
+        print("Processed {0} files, indexed {1} variants".format(len(files), indexed))
 
 

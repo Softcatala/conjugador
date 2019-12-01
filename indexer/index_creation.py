@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 #
-# Copyright (c) 2013-2019 Jordi Mas i Hernandez <jmas@softcatala.org>
+# Copyright (c) 2019 Jordi Mas i Hernandez <jmas@softcatala.org>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@ def main():
 
     start_time = datetime.datetime.now()
 
-    indexCreator = IndexCreator("jsons/")
+    indexCreator = IndexCreator("data/jsons/")
     indexCreator.create()
     indexCreator.process_files()
     indexCreator.save_index()

@@ -27,7 +27,7 @@ import cgi
 
 class Search(object):
     """Search a term in the Whoosh index."""
-    dir_name = "../indexdir"
+    dir_name = "../data/indexdir"
 
     def __init__(self, word):
         self._word = word
