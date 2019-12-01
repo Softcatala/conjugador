@@ -59,17 +59,40 @@ class IndexCreator(object):
         with open(filename) as json_file:
             data = json.load(json_file)
             infinitive = list(data.keys())[0]
-            print(infinitive)
-            print(filename)
-            self.write_entry(infinitive, filename)
             
+            #if infinitive != 'cantar':
+            #    return 0
+
+            indexed = set()
+            self.write_entry(infinitive, filename)
+            indexed.add(infinitive)
+
+            for form in data[infinitive]:
+                variants = form['variants']
+                for variant in variants:
+
+                    if variant in indexed:
+                        continue
+
+                    #print(filename)
+                    #print(variant)
+                    #print("---")
+                    self.write_entry(variant, filename)
+                    indexed.add(variant)
+
+        return len(indexed)
+
+    def save_index(self):
+        self.writer.commit()
+
 
     def process_files(self):
         findFiles = FindFiles()
         files = findFiles.find_recursive(self.json_dir, '*.json')
+        indexed = 0
         for filename in files:
-            self._process_file(filename)
+            indexed += self._process_file(filename)
 
-        print("Processed {0} files".format(len(files)))
+        print("Processed {0} files, index {1} variants".format(len(files), indexed))
 
 

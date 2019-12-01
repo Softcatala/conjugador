@@ -25,13 +25,14 @@ from indexcreator import IndexCreator
 
 
 def main():
-    print("Create Whoosh index from a JSON directory")
+    print("Create Whoosh index from a directory with JSONs")
 
     start_time = datetime.datetime.now()
 
     indexCreator = IndexCreator("jsons/")
     indexCreator.create()
     indexCreator.process_files()
+    indexCreator.save_index()
 
     print("Time used to create the index: {0} ".format(datetime.datetime.now() - start_time))
 
