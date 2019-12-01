@@ -1,17 +1,14 @@
 FROM python:3.7.5
 RUN git clone --depth=1 --recurse-submodules https://github.com/Softcatala/conjugador conjugador
+RUN pip install gunicorn
 
+# Generate data set
 WORKDIR conjugador
 RUN pip install -r requirements.txt
 RUN ./generator.py
 RUN ./index_creation.py
 
-#Web server
-RUN pip install gunicorn
-
 EXPOSE 8080 8000
-
-#WORKDIR web
 
 #What get's executed on Run
 #ENTRYPOINT gunicorn web_search:app -b 0.0.0.0:8000
