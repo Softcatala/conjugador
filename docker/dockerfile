@@ -5,7 +5,7 @@ RUN pip install gunicorn
 # Generate data set
 WORKDIR conjugador
 RUN pip install -r requirements.txt
-RUN ./generator.py
+RUN ./extract.py
 RUN ./index_creation.py
 
 EXPOSE 8080 8000
