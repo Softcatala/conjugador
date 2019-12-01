@@ -137,8 +137,8 @@ def _set_plurals_singulars(form, descriptors):
         form.plural2, formes_plural2 = _get_variants(descriptors, form.descriptor + "2P0")
         form.plural3, formes_plural3 = _get_variants(descriptors, form.descriptor + "3P0")
 
-        forms = [formes_singular1 + formes_singular2 + formes_singular3 +
-                 formes_plural1 + formes_plural2 + formes_plural3]
+        forms = formes_singular1 + formes_singular2 + formes_singular3 + \
+                 formes_plural1 + formes_plural2 + formes_plural3
 
         form.variants = forms
 
