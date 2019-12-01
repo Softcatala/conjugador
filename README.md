@@ -12,8 +12,9 @@ Create Docker image:
 
 Simple execution of the Docker image:
 
-``docker run -i -t conjugador``
+``docker run -p 8000:8000 -i -t conjugador``
 
+Test from the brower: http://localhost:8000/search/cantar
 
 # Contact
 
