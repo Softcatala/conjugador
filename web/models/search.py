@@ -68,7 +68,12 @@ class Search(object):
         results = self.get_results()
         all_results = []
         for result in results:
-            all_results.append(result.fields())
+
+            filepath = "../" + result['file_path']
+
+            with open(filepath, 'r') as j:
+                file = json.loads(j.read())
+                all_results.append(file)
 
         return json.dumps(all_results, indent=4, separators=(',', ': ')), status
 
