@@ -19,5 +19,5 @@ Test from the browser: http://localhost:8000/search/cantar
 
 # Contact
 
-Contact Jordi Mas <jmas@softcatla.org>
+Contact Jordi Mas <jmas@softcatala.org>
 
