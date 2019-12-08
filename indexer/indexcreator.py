@@ -36,7 +36,8 @@ class IndexCreator(object):
 
     def create(self, in_memory=False):
         analyzer = StandardAnalyzer(minsize=1, stoplist=None)
-        schema = Schema(verb_form=TEXT(stored=True, analyzer=analyzer),
+        schema = Schema(verb_form=TEXT(stored=True, sortable=True, analyzer=analyzer),
+                        index_letter=TEXT(stored=True, analyzer=analyzer),
                         file_path=STORED)
 
         if os.path.exists(self.dir_name):
@@ -49,11 +50,36 @@ class IndexCreator(object):
         self.writer = ix.writer()
         return ix
 
+    def _get_first_letter_for_index(self, word_ca):
+        s = ''
+        if word_ca is None:
+            return s
 
-    def write_entry(self, verb_form, file_path):
+        s = word_ca[0].lower()
+        mapping = { u'à' : u'a',
+                    u'è' : u'e',
+                    u'é' : u'e',
+                    u'í' : u'i',
+                    u'ó' : u'o',
+                    u'ò' : u'o',
+                    u'ú' : u'u'} 
+
+        if s in mapping:
+            s = mapping[s]
+
+        return s
+
+
+    def write_entry(self, verb_form, file_path, infinitive):
+
+        if infinitive is True:
+            index_letter = self._get_first_letter_for_index(verb_form)
+        else:
+            index_letter = None
 
         self.writer.add_document(verb_form = verb_form,
-                                 file_path = file_path)
+                                 file_path = file_path,
+                                 index_letter = index_letter)
 
     def _process_file(self, filename):
         with open(filename) as json_file:
@@ -64,8 +90,6 @@ class IndexCreator(object):
             #    return 0
 
             indexed = set()
-            self.write_entry(infinitive, filename)
-            indexed.add(infinitive)
 
             for form in data[infinitive]:
                 variants = form['variants']
@@ -74,10 +98,14 @@ class IndexCreator(object):
                     if variant in indexed:
                         continue
 
+                    infinitive = form['form'] == "Infinitiu"
+
                     #print(filename)
                     #print(variant)
+                    #print(form['form'])
                     #print("---")
-                    self.write_entry(variant, filename)
+
+                    self.write_entry(variant, filename, infinitive)
                     indexed.add(variant)
 
         return len(indexed)

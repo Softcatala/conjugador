@@ -44,7 +44,14 @@ def json_answer_status(data, status):
 @app.route('/search/<word>', methods=['GET'])
 def search_api(word):
     search = Search(word)
-    j, status = search._get_json_search()
+    j, status = search.get_json_search()
+    return json_answer_status(j, status)
+
+@app.route('/index/<lletra>', methods=['GET'])
+def index_letter_api(lletra):
+    search = Search(lletra)
+    search.Index = True
+    j, status = search.get_json_index()
     return json_answer_status(j, status)
 
 if __name__ == '__main__':

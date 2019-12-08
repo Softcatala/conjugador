@@ -31,6 +31,7 @@ class Search(object):
 
     def __init__(self, word):
         self._word = word
+        self.Index = False
         self.searcher = None
         self.query = None
 
@@ -42,7 +43,16 @@ class Search(object):
         if self.searcher is None:
             self.search()
 
-        results = self.searcher.search(self.query, limit=None, reverse=True)    
+        if self.Index is True:
+            results = self.searcher.search(self.query,
+                                          limit=None,
+                                          sortedby='verb_form',
+                                           collapse_limit=1,
+                                          collapse='verb_form')
+
+        else:
+            results = self.searcher.search(self.query, limit=None, reverse=True)
+
         return results
 
     def search(self, ix=None):
@@ -54,13 +64,27 @@ class Search(object):
         fields = []
         qs = ''
 
-        qs += u' verb_form:({0})'.format(self._word)
+        if self.Index is True:
+            if self.word is not None and len(self.word) > 0:
+                qs += u' index_letter:({0})'.format(self.word)
+                fields.append("index_letter")
+        else:
+          qs += u' verb_form:({0})'.format(self._word)
+
         self.query = MultifieldParser(fields, ix.schema).parse(qs)
 
-    def get_json(self):
-        return self._get_json_search()
+    def get_json_index(self):
+        OK = 200
+        status = OK
+        results = self.get_results()
+        all_results = []
+        for result in results:
+            verb = result['verb_form']
+            all_results.append(verb)
 
-    def _get_json_search(self):
+        return json.dumps(all_results, indent=4, separators=(',', ': ')), status
+
+    def get_json_search(self):
         OK = 200
         NOT_FOUND = 404
 
