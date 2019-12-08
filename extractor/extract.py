@@ -189,6 +189,25 @@ def _set_plurals_singulars(form, descriptors):
 
         form.variants = forms
 
+def _set_plurals_singulars_gerundi(form, descriptors):
+
+        form.singular1, formes_singular1 = _get_variants(descriptors, form.descriptor + "0SM")
+        form.singular2, formes_singular2 = _get_variants(descriptors, form.descriptor + "0SF")
+        form.singular3, formes_singular3 = _get_variants(descriptors, form.descriptor + "0PM")
+        form.plural1, formes_plural1 = _get_variants(descriptors, form.descriptor + "0PF")
+
+        forms = formes_singular1 + formes_singular2 + formes_singular3 + \
+                 formes_plural1
+
+        form.variants = forms
+
+def _set_plurals_singulars0(form, descriptors):
+
+        form.singular1, formes_singular1 = _get_variants(descriptors, form.descriptor + "000")
+
+        forms = formes_singular1
+        form.variants = forms
+
 def _build_infinitive_descriptors(lines, infinitives):
 
     inf_desc = {}
@@ -224,10 +243,19 @@ def _get_forms(inf_desc, req_infinitive):
 
     forms.append(Forms('Subjuntiu', 'Present', 'VMSP'))
     forms.append(Forms('Subjuntiu', 'Pretèrit imperfecte', 'VMSI'))
-
+    
     descriptors = inf_desc[req_infinitive]
     for form in forms:
         _set_plurals_singulars(form, descriptors)
+
+    forms.append(Forms('Formes no personals', 'Infinitiu', 'VMN0'))
+    forms.append(Forms('Formes no personals', 'Gerundi', 'VMG0'))
+
+    for form in forms[-2:]:
+        _set_plurals_singulars0(form, descriptors)
+
+    forms.append(Forms('Formes no personals', 'Participi', 'VMP0'))
+    _set_plurals_singulars_gerundi(forms[len(forms) - 1], descriptors)
 
     return forms
 
