@@ -243,6 +243,7 @@ def _get_forms(inf_desc, req_infinitive):
 
     forms.append(Forms('Subjuntiu', 'Present', 'VMSP'))
     forms.append(Forms('Subjuntiu', 'Pretèrit imperfecte', 'VMSI'))
+    forms.append(Forms('Subjuntiu', 'Imperatiu', 'VMM0'))
     
     descriptors = inf_desc[req_infinitive]
     for form in forms:
@@ -304,7 +305,6 @@ def main():
 
         verbs[infinitive] = forms
         _serialize_to_file(file_dir, infinitive, forms)
-
 
     print("Number of verbs {0}".format(len(verbs)))
     s = 'Time used for generation: {0}'.format(datetime.datetime.now() - start_time)
