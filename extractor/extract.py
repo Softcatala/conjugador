@@ -78,6 +78,53 @@ def _add_separator(result):
 
     return result
 
+def _get_variants_imperfet_subjuntiu(result, formes, descriptors, descriptor):
+
+        forma = descriptors.get(descriptor + "1");
+        if forma is not None:
+            result = _add_separator(result)
+            result += '{0} (català central i valencià formal)'.format(forma)
+            formes.append(forma)
+
+        forma = descriptors.get(descriptor + "2");
+        if forma is not None:
+            result = _add_separator(result)
+            result += '{0} (català central)'.format(forma)
+            formes.append(forma)
+
+        forma = descriptors.get(descriptor + "3");
+        if forma is not None:
+            result = _add_separator(result)
+            result += '{0} (valencià amb -r-)'.format(forma)
+            formes.append(forma)
+
+        forma = descriptors.get(descriptor + "4");
+        if forma is not None:
+            result = _add_separator(result)
+            result += '{0} (balear)'.format(forma)
+            formes.append(forma)
+
+        forma = descriptors.get(descriptor + "5");
+        if forma is not None:
+            result = _add_separator(result)
+            result += '{0} (valencià formal)'.format(forma)
+            formes.append(forma)
+
+        forma = descriptors.get(descriptor + "6");
+        if forma is not None:
+            result = _add_separator(result)
+            result += '{0} (valencià formal)'.format(forma)
+            formes.append(forma)
+
+        forma = descriptors.get(descriptor + "7");
+        if forma is not None:
+            result = _add_separator(result)
+            result += '{0} (balear i valencià formal)'.format(forma)
+            formes.append(forma)
+
+        return result, formes
+
+
 def _get_variants(descriptors, descriptor):
 
         result = ''
@@ -124,8 +171,8 @@ def _get_variants(descriptors, descriptor):
             result = _add_separator(result)
             result += '{0} (balear)'.format(forma)
             formes.append(forma)
-        
-        return result, formes
+
+        return _get_variants_imperfet_subjuntiu(result, formes, descriptors, descriptor)
 
 def _set_plurals_singulars(form, descriptors):
 
@@ -214,7 +261,7 @@ def main():
 
     for infinitive in infinitives:
 
-        #if infinitive != 'cantar' and infinitive != 'jugar':
+        #if infinitive != 'cantar':
         #    continue
 
         file_dir = os.path.join(output_dir, infinitive[:2])
