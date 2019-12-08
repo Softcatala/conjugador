@@ -15,7 +15,10 @@ Simple execution of the Docker image:
 
 ``docker run -p 8000:8000 -i -t conjugador``
 
-Test from the browser: http://localhost:8000/search/cantar
+Test from the browser:
+* Search: http://localhost:8000/search/cantar
+* Index: http://localhost:8000/index/a
+
 
 # Contact
 
