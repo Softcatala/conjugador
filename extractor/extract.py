@@ -169,9 +169,14 @@ def _get_forms(inf_desc, req_infinitive):
 
     forms = []
 
-    forms.append(Forms('Indicatiu', 'Pretèrit imperfecte', 'VMII'))
-    forms.append(Forms('Subjuntiu', 'Present', 'VMSP'))
     forms.append(Forms('Indicatiu', 'Present', 'VMIP'))
+    forms.append(Forms('Indicatiu', 'Futur imperfecte', 'VMIF'))
+    forms.append(Forms('Indicatiu', 'Futur hipotètic', 'VMIC'))
+    forms.append(Forms('Indicatiu', 'Pretèrit imperfecte', 'VMII'))
+    forms.append(Forms('Indicatiu', 'Pretèrit perfecte', 'VMIS'))
+
+    forms.append(Forms('Subjuntiu', 'Present', 'VMSP'))
+    forms.append(Forms('Subjuntiu', 'Pretèrit imperfecte', 'VMSI'))
 
     descriptors = inf_desc[req_infinitive]
     for form in forms:
