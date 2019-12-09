@@ -24,30 +24,7 @@ import datetime
 import os
 import shutil
  
-
-class Forms:
-
-    def __init__(self, group, form, descriptor):
-        self.group = group
-        self.form = form
-        self.descriptor = descriptor
-        self.singular1 = '-' 
-        self.singular2 = '-'
-        self.singular3 = '-'
-        self.plural1 = '-'
-        self.plural2 = '-'
-        self.plural3 = '-'
-        self.variants = ''
-
-    def print(self):
-        print("---")
-        print("* {0} ({1})".format(self.form,  self.group))
-        print(self.singular1)
-        print(self.singular2)
-        print(self.singular3)
-        print(self.plural1)
-        print(self.plural2)
-        print(self.plural3)
+from forms import Forms
 
 
 def _read_file(input_file):
@@ -80,99 +57,99 @@ def _add_separator(result):
 
 def _get_variants_imperfet_subjuntiu(result, formes, descriptors, descriptor):
 
-        forma = descriptors.get(descriptor + "1");
-        if forma is not None:
-            result = _add_separator(result)
-            result += '{0} (català central i valencià formal)'.format(forma)
-            formes.append(forma)
+    forma = descriptors.get(descriptor + "1");
+    if forma is not None:
+        result = _add_separator(result)
+        result += '{0} (català central i valencià formal)'.format(forma)
+        formes.append(forma)
 
-        forma = descriptors.get(descriptor + "2");
-        if forma is not None:
-            result = _add_separator(result)
-            result += '{0} (català central)'.format(forma)
-            formes.append(forma)
+    forma = descriptors.get(descriptor + "2");
+    if forma is not None:
+        result = _add_separator(result)
+        result += '{0} (català central)'.format(forma)
+        formes.append(forma)
 
-        forma = descriptors.get(descriptor + "3");
-        if forma is not None:
-            result = _add_separator(result)
-            result += '{0} (valencià amb -r-)'.format(forma)
-            formes.append(forma)
+    forma = descriptors.get(descriptor + "3");
+    if forma is not None:
+        result = _add_separator(result)
+        result += '{0} (valencià amb -r-)'.format(forma)
+        formes.append(forma)
 
-        forma = descriptors.get(descriptor + "4");
-        if forma is not None:
-            result = _add_separator(result)
-            result += '{0} (balear)'.format(forma)
-            formes.append(forma)
+    forma = descriptors.get(descriptor + "4");
+    if forma is not None:
+        result = _add_separator(result)
+        result += '{0} (balear)'.format(forma)
+        formes.append(forma)
 
-        forma = descriptors.get(descriptor + "5");
-        if forma is not None:
-            result = _add_separator(result)
-            result += '{0} (valencià formal)'.format(forma)
-            formes.append(forma)
+    forma = descriptors.get(descriptor + "5");
+    if forma is not None:
+        result = _add_separator(result)
+        result += '{0} (valencià formal)'.format(forma)
+        formes.append(forma)
 
-        forma = descriptors.get(descriptor + "6");
-        if forma is not None:
-            result = _add_separator(result)
-            result += '{0} (valencià formal)'.format(forma)
-            formes.append(forma)
+    forma = descriptors.get(descriptor + "6");
+    if forma is not None:
+        result = _add_separator(result)
+        result += '{0} (valencià formal)'.format(forma)
+        formes.append(forma)
 
-        forma = descriptors.get(descriptor + "7");
-        if forma is not None:
-            result = _add_separator(result)
-            result += '{0} (balear i valencià formal)'.format(forma)
-            formes.append(forma)
+    forma = descriptors.get(descriptor + "7");
+    if forma is not None:
+        result = _add_separator(result)
+        result += '{0} (balear i valencià formal)'.format(forma)
+        formes.append(forma)
 
-        return result, formes
+    return result, formes
 
 
 def _get_variants(descriptors, descriptor):
 
-        result = ''
-        formes = []
+    result = ''
+    formes = []
 
-        forma = descriptors.get(descriptor + "0");
-        if forma is not None:
-            result = _add_separator(result)
-            result += '{0}'.format(forma)
-            formes.append(forma)
+    forma = descriptors.get(descriptor + "0");
+    if forma is not None:
+        result = _add_separator(result)
+        result += '{0}'.format(forma)
+        formes.append(forma)
 
-        forma = descriptors.get(descriptor + "X");
-        if forma is not None:
-            result = _add_separator(result)
-            result += '{0} (central i valencià)'.format(forma)
-            formes.append(forma)
+    forma = descriptors.get(descriptor + "X");
+    if forma is not None:
+        result = _add_separator(result)
+        result += '{0} (central i valencià)'.format(forma)
+        formes.append(forma)
 
-        forma = descriptors.get(descriptor + "Y");
-        if forma is not None:
-            result = _add_separator(result)
-            result += '{0} (central i balear)'.format(forma)
-            formes.append(forma)
+    forma = descriptors.get(descriptor + "Y");
+    if forma is not None:
+        result = _add_separator(result)
+        result += '{0} (central i balear)'.format(forma)
+        formes.append(forma)
 
-        forma = descriptors.get(descriptor + "Z");
-        if forma is not None:
-            result = _add_separator(result)
-            result += '{0} (valencià i balear)'.format(forma)
-            formes.append(forma)
+    forma = descriptors.get(descriptor + "Z");
+    if forma is not None:
+        result = _add_separator(result)
+        result += '{0} (valencià i balear)'.format(forma)
+        formes.append(forma)
 
-        forma = descriptors.get(descriptor + "C");
-        if forma is not None:
-            result = _add_separator(result)
-            result += '{0} (central)'.format(forma)
-            formes.append(forma)
+    forma = descriptors.get(descriptor + "C");
+    if forma is not None:
+        result = _add_separator(result)
+        result += '{0} (central)'.format(forma)
+        formes.append(forma)
 
-        forma = descriptors.get(descriptor + "V");
-        if forma is not None:
-            result = _add_separator(result)
-            result += '{0} (valencià)'.format(forma)
-            formes.append(forma)
+    forma = descriptors.get(descriptor + "V");
+    if forma is not None:
+        result = _add_separator(result)
+        result += '{0} (valencià)'.format(forma)
+        formes.append(forma)
 
-        forma = descriptors.get(descriptor + "B");
-        if forma is not None:
-            result = _add_separator(result)
-            result += '{0} (balear)'.format(forma)
-            formes.append(forma)
+    forma = descriptors.get(descriptor + "B");
+    if forma is not None:
+        result = _add_separator(result)
+        result += '{0} (balear)'.format(forma)
+        formes.append(forma)
 
-        return _get_variants_imperfet_subjuntiu(result, formes, descriptors, descriptor)
+    return _get_variants_imperfet_subjuntiu(result, formes, descriptors, descriptor)
 
 def _set_plurals_singulars(form, descriptors):
 
