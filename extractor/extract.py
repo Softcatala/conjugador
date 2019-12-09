@@ -153,37 +153,37 @@ def _get_variants(descriptors, descriptor):
 
 def _set_plurals_singulars(form, descriptors):
 
-        form.singular1, formes_singular1 = _get_variants(descriptors, form.descriptor + "1S0")
-        form.singular2, formes_singular2 = _get_variants(descriptors, form.descriptor + "2S0")
-        form.singular3, formes_singular3 = _get_variants(descriptors, form.descriptor + "3S0")
+    form.singular1, formes_singular1 = _get_variants(descriptors, form.descriptor + "1S0")
+    form.singular2, formes_singular2 = _get_variants(descriptors, form.descriptor + "2S0")
+    form.singular3, formes_singular3 = _get_variants(descriptors, form.descriptor + "3S0")
 
-        form.plural1, formes_plural1 = _get_variants(descriptors, form.descriptor + "1P0")
-        form.plural2, formes_plural2 = _get_variants(descriptors, form.descriptor + "2P0")
-        form.plural3, formes_plural3 = _get_variants(descriptors, form.descriptor + "3P0")
+    form.plural1, formes_plural1 = _get_variants(descriptors, form.descriptor + "1P0")
+    form.plural2, formes_plural2 = _get_variants(descriptors, form.descriptor + "2P0")
+    form.plural3, formes_plural3 = _get_variants(descriptors, form.descriptor + "3P0")
 
-        forms = formes_singular1 + formes_singular2 + formes_singular3 + \
-                 formes_plural1 + formes_plural2 + formes_plural3
+    forms = formes_singular1 + formes_singular2 + formes_singular3 + \
+             formes_plural1 + formes_plural2 + formes_plural3
 
-        form.variants = forms
+    form.variants = forms
 
 def _set_plurals_singulars_gerundi(form, descriptors):
 
-        form.singular1, formes_singular1 = _get_variants(descriptors, form.descriptor + "0SM")
-        form.singular2, formes_singular2 = _get_variants(descriptors, form.descriptor + "0SF")
-        form.singular3, formes_singular3 = _get_variants(descriptors, form.descriptor + "0PM")
-        form.plural1, formes_plural1 = _get_variants(descriptors, form.descriptor + "0PF")
+    form.singular1, formes_singular1 = _get_variants(descriptors, form.descriptor + "0SM")
+    form.singular2, formes_singular2 = _get_variants(descriptors, form.descriptor + "0SF")
+    form.singular3, formes_singular3 = _get_variants(descriptors, form.descriptor + "0PM")
+    form.plural1, formes_plural1 = _get_variants(descriptors, form.descriptor + "0PF")
 
-        forms = formes_singular1 + formes_singular2 + formes_singular3 + \
-                 formes_plural1
+    forms = formes_singular1 + formes_singular2 + formes_singular3 + \
+             formes_plural1
 
-        form.variants = forms
+    form.variants = forms
 
 def _set_plurals_singulars0(form, descriptors):
 
-        form.singular1, formes_singular1 = _get_variants(descriptors, form.descriptor + "000")
+    form.singular1, formes_singular1 = _get_variants(descriptors, form.descriptor + "000")
 
-        forms = formes_singular1
-        form.variants = forms
+    forms = formes_singular1
+    form.variants = forms
 
 def _build_infinitive_descriptors(lines, infinitives):
 
