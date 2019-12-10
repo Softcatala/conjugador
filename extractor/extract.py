@@ -33,7 +33,7 @@ def _read_file(input_file):
 
 def _get_inifitives(lines):
 
-    INFINITIVE_DESCRIPTOR = 'VMN00000'
+    INFINITIVE_DESCRIPTORS = set(['VMN00000', 'VAN00000', 'VSN00000'])
 
     infinitives = []
     for line in lines:
@@ -42,7 +42,7 @@ def _get_inifitives(lines):
         infinitive = wordList[1]
         descriptor = wordList[2]
 
-        if descriptor != INFINITIVE_DESCRIPTOR:
+        if descriptor not in INFINITIVE_DESCRIPTORS:
             continue
 
         infinitives.append(infinitive)
@@ -187,6 +187,10 @@ def _set_plurals_singulars0(form, descriptors):
 
 def _build_infinitive_descriptors(lines, infinitives):
 
+    #key = infinitive
+    #           value dict {}
+    #                   key = descriptor
+    #                   value = flexionada
     inf_desc = {}
     for line in lines:
 
@@ -211,29 +215,38 @@ def _build_infinitive_descriptors(lines, infinitives):
 def _get_forms(inf_desc, req_infinitive):
 
     forms = []
+    verb_types = ['M', 'A', 'S']
 
-    forms.append(Forms('Indicatiu', 'Present', 'VMIP'))
-    forms.append(Forms('Indicatiu', 'Futur imperfecte', 'VMIF'))
-    forms.append(Forms('Indicatiu', 'Futur hipotètic', 'VMIC'))
-    forms.append(Forms('Indicatiu', 'Pretèrit imperfecte', 'VMII'))
-    forms.append(Forms('Indicatiu', 'Pretèrit perfecte', 'VMIS'))
-
-    forms.append(Forms('Subjuntiu', 'Present', 'VMSP'))
-    forms.append(Forms('Subjuntiu', 'Pretèrit imperfecte', 'VMSI'))
-    forms.append(Forms('Subjuntiu', 'Imperatiu', 'VMM0'))
+    for verb_type in verb_types:
     
-    descriptors = inf_desc[req_infinitive]
-    for form in forms:
-        _set_plurals_singulars(form, descriptors)
+        descriptors = inf_desc[req_infinitive]
+        form = 'V{0}N00000'.format(verb_type)
 
-    forms.append(Forms('Formes no personals', 'Infinitiu', 'VMN0'))
-    forms.append(Forms('Formes no personals', 'Gerundi', 'VMG0'))
+        if form not in descriptors:
+            continue
 
-    for form in forms[-2:]:
-        _set_plurals_singulars0(form, descriptors)
+        forms.append(Forms('Indicatiu', 'Present', 'V' + verb_type + 'IP'))
+        forms.append(Forms('Indicatiu', 'Futur imperfecte', 'V' + verb_type + 'IF'))
+        forms.append(Forms('Indicatiu', 'Futur hipotètic', 'V' + verb_type + 'IC'))
+        forms.append(Forms('Indicatiu', 'Pretèrit imperfecte', 'V' + verb_type + 'II'))
+        forms.append(Forms('Indicatiu', 'Pretèrit perfecte', 'V' + verb_type + 'IS'))
 
-    forms.append(Forms('Formes no personals', 'Participi', 'VMP0'))
-    _set_plurals_singulars_gerundi(forms[len(forms) - 1], descriptors)
+        forms.append(Forms('Subjuntiu', 'Present', 'V' + verb_type + 'SP'))
+        forms.append(Forms('Subjuntiu', 'Pretèrit imperfecte', 'V' + verb_type + 'SI'))
+        forms.append(Forms('Subjuntiu', 'Imperatiu', 'V' + verb_type + 'M0'))
+        
+        descriptors = inf_desc[req_infinitive]
+        for form in forms:
+            _set_plurals_singulars(form, descriptors)
+
+        forms.append(Forms('Formes no personals', 'Infinitiu', 'V' + verb_type + 'N0'))
+        forms.append(Forms('Formes no personals', 'Gerundi', 'V' + verb_type + 'G0'))
+
+        for form in forms[-2:]:
+            _set_plurals_singulars0(form, descriptors)
+
+        forms.append(Forms('Formes no personals', 'Participi', 'V' + verb_type + 'P0'))
+        _set_plurals_singulars_gerundi(forms[len(forms) - 1], descriptors)
 
     return forms
 
