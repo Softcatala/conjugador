@@ -204,7 +204,13 @@ def _build_infinitive_descriptors(lines, infinitives):
         else:
             descriptors = {}
 
-        descriptors[descriptor] = flexionada
+        if descriptor not in descriptors:
+            descriptors[descriptor] = flexionada
+        else:
+            term = descriptors[descriptor]
+            term += " - " + flexionada
+            descriptors[descriptor] = term
+
         inf_desc[infinitive] = descriptors;
 
     return inf_desc
