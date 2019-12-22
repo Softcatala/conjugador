@@ -38,7 +38,7 @@ class IndexCreator(object):
         analyzer = StandardAnalyzer(minsize=1, stoplist=None)
         schema = Schema(verb_form=TEXT(stored=True, sortable=True, analyzer=analyzer),
                         index_letter=TEXT(stored=True, analyzer=analyzer),
-                        file_path=STORED)
+                        file_path=TEXT(stored=True, sortable=True))
 
         if os.path.exists(self.dir_name):
             shutil.rmtree(self.dir_name)

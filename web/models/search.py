@@ -47,11 +47,13 @@ class Search(object):
             results = self.searcher.search(self.query,
                                           limit=None,
                                           sortedby='verb_form',
-                                           collapse_limit=1,
+                                          collapse_limit=1,
                                           collapse='verb_form')
 
         else:
-            results = self.searcher.search(self.query, limit=None, reverse=True)
+            results = self.searcher.search(self.query, limit=None,
+                                          collapse_limit=1,
+                                          collapse='file_path')
 
         return results
 
