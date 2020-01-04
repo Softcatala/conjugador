@@ -1,0 +1,11 @@
+language: python
+python:
+  - "3.8"
+before_install:
+install:
+  pip install -r requirements.txt
+script:
+  - cd extractor
+  - nosetests --with-coverage --cover-package=extractor
+after_success:
+  coveralls

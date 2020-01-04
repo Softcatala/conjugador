@@ -22,7 +22,6 @@ import unittest
 import sys
 import hashlib
 
-
 class TestExtractor(unittest.TestCase):
 
     def _hash_file(self, filename):
@@ -39,18 +38,23 @@ class TestExtractor(unittest.TestCase):
         return sha1.hexdigest()
 
     def test_extractor(self):
+        executed = 0
+        output_dir = "test/output/"
         with open('test/data/signatures.txt') as f:
             lines = f.readlines()
 
         for line in lines:
-            filename, signature = line.split(',')
-            signature = signature.rstrip('\n')
+            line = line.rstrip('\n')
+            filename, output_file, signature = line.split(',')
             filename = "test/data/" + filename
-            extract_from_dictfile(filename, "test/output/")
-            signature_file = self._hash_file(filename)
-            print(signature_file)
-            print(signature)
+
+            extract_from_dictfile(filename, output_dir)
+            signature_file = self._hash_file(output_dir + output_file)
             self.assertEquals(signature_file, signature)
+            executed = executed + 1
+
+        self.assertEquals(2, executed)
+
 
 if __name__ == '__main__':
     unittest.main()

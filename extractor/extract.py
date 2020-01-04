@@ -91,11 +91,6 @@ def _set_plurals_singulars(form, descriptors):
     form.plural2 = _get_variants(descriptors, form.descriptor + "2P0")
     form.plural3 = _get_variants(descriptors, form.descriptor + "3P0")
 
-#    forms = formes_singular1 + formes_singular2 + formes_singular3 + \
-#             formes_plural1 + formes_plural2 + formes_plural3
-#
-#    form.variants = forms
-
 def _set_plurals_singulars_gerundi(form, descriptors):
 
     form.singular1 = _get_variants(descriptors, form.descriptor + "0SM")
@@ -189,7 +184,6 @@ def _serialize_to_file(file_dir, infinitive, forms):
 
 
 def extract_from_dictfile(input_file, output_dir):
-    print("Input:" + input_file)
     lines = _read_file(input_file)
     infinitives = _get_inifitives(lines)
 

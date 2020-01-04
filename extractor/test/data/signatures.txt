@@ -1,2 +1,2 @@
-cantar.txt,e4694eda008c84e76c9d7db2ddf202747fd3aae4
-ser.txt,586442fd9ae83f1a891cc69f84f4eba046898aa2
+cantar.txt,ca/cantar.json,cede5889cbcb43f41d89c0b8042aa204d68062e1
+ser.txt,se/ser.json,fa6179d983526bf23a8d14bdba1bb1da04a5e796
