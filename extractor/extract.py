@@ -187,16 +187,9 @@ def _serialize_to_file(file_dir, infinitive, forms):
     with open(os.path.join(file_dir, infinitive + ".json") ,"w") as file:
         file.write(s)
 
-def main():
 
-    input_file = 'catalan-dict-tools/resultats/lt/diccionari.txt'
-    output_dir = 'data/jsons/'
-
-    print("Read a dictionary file and extracts the verbs into json files")
-    print("Input file: {0}, output dir: {1}".format(input_file, output_dir))
-        
-    start_time = datetime.datetime.now()
-
+def extract_from_dictfile(input_file, output_dir):
+    print("Input:" + input_file)
     lines = _read_file(input_file)
     infinitives = _get_inifitives(lines)
 
@@ -225,7 +218,21 @@ def main():
         verbs[infinitive] = forms
         _serialize_to_file(file_dir, infinitive, forms)
 
-    print("Number of verbs {0}".format(len(verbs)))
+    return len(verbs)
+
+def main():
+
+    input_file = 'catalan-dict-tools/resultats/lt/diccionari.txt'
+    output_dir = 'data/jsons/'
+
+    start_time = datetime.datetime.now()
+
+    print("Read a dictionary file and extracts the verbs into json files")
+    print("Input file: {0}, output dir: {1}".format(input_file, output_dir))
+
+    num_verbs = extract_from_dictfile(input_file, output_dir)
+
+    print("Number of verbs {0}".format(num_verbs))
     s = 'Time used for generation: {0}'.format(datetime.datetime.now() - start_time)
     print(s)
 
