@@ -18,28 +18,35 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+class Form:
+    def __init__(self, word, variant):
+        self.word = word
+        self.variant = variant
+
+    def __str__(self):
+        return "{0} - {1} ".format(self.word, self.variant)
+
 class Forms:
 
     def __init__(self, group, form, descriptor):
         self.group = group
         self.form = form
         self.descriptor = descriptor
-        self.singular1 = '-'
-        self.singular2 = '-'
-        self.singular3 = '-'
-        self.plural1 = '-'
-        self.plural2 = '-'
-        self.plural3 = '-'
-        self.variants = ''
+        self.singular1 = []
+        self.singular2 = []
+        self.singular3 = []
+        self.plural1 = []
+        self.plural2 = []
+        self.plural3 = []
 
-    def print(self):
-        print("---")
-        print("* {0} ({1})".format(self.form,  self.group))
-        print(self.singular1)
-        print(self.singular2)
-        print(self.singular3)
-        print(self.plural1)
-        print(self.plural2)
-        print(self.plural3)
-
-
+    def __str__(self):
+        s = "---"
+# [x.upper() for x in ["a","b","c"]]
+        s += "* {0} ({1})\n".format(self.form,  self.group)
+        s += '{0}\n'.format(''.join(str(p) for p in self.singular1))
+        s += '{0}\n'.format(''.join(str(p) for p in self.singular2))
+        s += '{0}\n'.format(''.join(str(p) for p in self.singular3))
+        s += '{0}\n'.format(''.join(str(p) for p in self.plural1))
+        s += '{0}\n'.format(''.join(str(p) for p in self.plural2))
+        s += '{0}\n'.format(''.join(str(p) for p in self.plural3))
+        return s

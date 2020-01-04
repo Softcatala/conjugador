@@ -92,21 +92,23 @@ class IndexCreator(object):
             indexed = set()
 
             for form in data[infinitive]:
-                variants = form['variants']
-                for variant in variants:
+                sps = ['singular1', 'singular2', 'singular3', 'plural1', 'plural2', 'plural3']
+                for sp in sps:
+                    for conjugacio in form[sp]:
+                        word = conjugacio['word']
 
-                    if variant in indexed:
-                        continue
+                        if word in indexed:
+                            continue
 
-                    infinitive = form['form'] == "Infinitiu"
+                        infinitive = form['form'] == "Infinitiu"
 
-                    #print(filename)
-                    #print(variant)
-                    #print(form['form'])
-                    #print("---")
+                        #print(filename)
+                        #print(word)
+                        #print(form['form'])
+                        #print("---")
 
-                    self.write_entry(variant, filename, infinitive)
-                    indexed.add(variant)
+                        self.write_entry(word, filename, infinitive)
+                        indexed.add(word)
 
         return len(indexed)
 

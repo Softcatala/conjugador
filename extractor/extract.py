@@ -25,6 +25,7 @@ import os
 import shutil
  
 from forms import Forms
+from forms import Form
 
 
 def _read_file(input_file):
@@ -55,135 +56,57 @@ def _add_separator(result):
 
     return result
 
-def _get_variants_imperfet_subjuntiu(result, formes, descriptors, descriptor):
+def _get_variants_imperfet_subjuntiu(result, descriptors, descriptor):
 
-    forma = descriptors.get(descriptor + "1");
-    if forma is not None:
-        result = _add_separator(result)
-        result += '{0} (català central i valencià formal)'.format(forma)
-        formes.append(forma)
+    variants = ["1", "2", "3", "4", "5", "6", "7"]
 
-    forma = descriptors.get(descriptor + "2");
-    if forma is not None:
-        result = _add_separator(result)
-        result += '{0} (català central)'.format(forma)
-        formes.append(forma)
+    for variant in variants:
+        forma = descriptors.get(descriptor + variant);
+        if forma is not None:
+            result.append(Form(forma, variant))
 
-    forma = descriptors.get(descriptor + "3");
-    if forma is not None:
-        result = _add_separator(result)
-        result += '{0} (valencià amb -r-)'.format(forma)
-        formes.append(forma)
-
-    forma = descriptors.get(descriptor + "4");
-    if forma is not None:
-        result = _add_separator(result)
-        result += '{0} (balear)'.format(forma)
-        formes.append(forma)
-
-    forma = descriptors.get(descriptor + "5");
-    if forma is not None:
-        result = _add_separator(result)
-        result += '{0} (valencià formal)'.format(forma)
-        formes.append(forma)
-
-    forma = descriptors.get(descriptor + "6");
-    if forma is not None:
-        result = _add_separator(result)
-        result += '{0} (valencià formal)'.format(forma)
-        formes.append(forma)
-
-    forma = descriptors.get(descriptor + "7");
-    if forma is not None:
-        result = _add_separator(result)
-        result += '{0} (balear i valencià formal)'.format(forma)
-        formes.append(forma)
-
-    return result, formes
+    return result
 
 
 def _get_variants(descriptors, descriptor):
 
-    result = ''
-    formes = []
+    result = []
 
-    forma = descriptors.get(descriptor + "0");
-    if forma is not None:
-        result = _add_separator(result)
-        result += '{0}'.format(forma)
-        formes.append(forma)
+    variants = ["0", "X", "Y", "Z", "C", "V", "B"]
 
-    forma = descriptors.get(descriptor + "X");
-    if forma is not None:
-        result = _add_separator(result)
-        result += '{0} (central i valencià)'.format(forma)
-        formes.append(forma)
+    for variant in variants:
+        forma = descriptors.get(descriptor + variant);
+        if forma is not None:
+            result.append(Form(forma, variant))
 
-    forma = descriptors.get(descriptor + "Y");
-    if forma is not None:
-        result = _add_separator(result)
-        result += '{0} (central i balear)'.format(forma)
-        formes.append(forma)
-
-    forma = descriptors.get(descriptor + "Z");
-    if forma is not None:
-        result = _add_separator(result)
-        result += '{0} (valencià i balear)'.format(forma)
-        formes.append(forma)
-
-    forma = descriptors.get(descriptor + "C");
-    if forma is not None:
-        result = _add_separator(result)
-        result += '{0} (central)'.format(forma)
-        formes.append(forma)
-
-    forma = descriptors.get(descriptor + "V");
-    if forma is not None:
-        result = _add_separator(result)
-        result += '{0} (valencià)'.format(forma)
-        formes.append(forma)
-
-    forma = descriptors.get(descriptor + "B");
-    if forma is not None:
-        result = _add_separator(result)
-        result += '{0} (balear)'.format(forma)
-        formes.append(forma)
-
-    return _get_variants_imperfet_subjuntiu(result, formes, descriptors, descriptor)
+    return _get_variants_imperfet_subjuntiu(result, descriptors, descriptor)
 
 def _set_plurals_singulars(form, descriptors):
 
-    form.singular1, formes_singular1 = _get_variants(descriptors, form.descriptor + "1S0")
-    form.singular2, formes_singular2 = _get_variants(descriptors, form.descriptor + "2S0")
-    form.singular3, formes_singular3 = _get_variants(descriptors, form.descriptor + "3S0")
+    form.singular1 = _get_variants(descriptors, form.descriptor + "1S0")
+    form.singular2 = _get_variants(descriptors, form.descriptor + "2S0")
+    form.singular3 = _get_variants(descriptors, form.descriptor + "3S0")
 
-    form.plural1, formes_plural1 = _get_variants(descriptors, form.descriptor + "1P0")
-    form.plural2, formes_plural2 = _get_variants(descriptors, form.descriptor + "2P0")
-    form.plural3, formes_plural3 = _get_variants(descriptors, form.descriptor + "3P0")
+    form.plural1 = _get_variants(descriptors, form.descriptor + "1P0")
+    form.plural2 = _get_variants(descriptors, form.descriptor + "2P0")
+    form.plural3 = _get_variants(descriptors, form.descriptor + "3P0")
 
-    forms = formes_singular1 + formes_singular2 + formes_singular3 + \
-             formes_plural1 + formes_plural2 + formes_plural3
-
-    form.variants = forms
+#    forms = formes_singular1 + formes_singular2 + formes_singular3 + \
+#             formes_plural1 + formes_plural2 + formes_plural3
+#
+#    form.variants = forms
 
 def _set_plurals_singulars_gerundi(form, descriptors):
 
-    form.singular1, formes_singular1 = _get_variants(descriptors, form.descriptor + "0SM")
-    form.singular2, formes_singular2 = _get_variants(descriptors, form.descriptor + "0SF")
-    form.singular3, formes_singular3 = _get_variants(descriptors, form.descriptor + "0PM")
-    form.plural1, formes_plural1 = _get_variants(descriptors, form.descriptor + "0PF")
+    form.singular1 = _get_variants(descriptors, form.descriptor + "0SM")
+    form.singular2 = _get_variants(descriptors, form.descriptor + "0SF")
+    form.singular3 = _get_variants(descriptors, form.descriptor + "0PM")
+    form.plural1 = _get_variants(descriptors, form.descriptor + "0PF")
 
-    forms = formes_singular1 + formes_singular2 + formes_singular3 + \
-             formes_plural1
-
-    form.variants = forms
 
 def _set_plurals_singulars0(form, descriptors):
 
-    form.singular1, formes_singular1 = _get_variants(descriptors, form.descriptor + "000")
-
-    forms = formes_singular1
-    form.variants = forms
+    form.singular1 = _get_variants(descriptors, form.descriptor + "000")
 
 def _build_infinitive_descriptors(lines, infinitives):
 
@@ -297,7 +220,7 @@ def main():
         print(infinitive)
         forms = _get_forms(inf_desc, infinitive)
         for form in forms:
-            form.print()
+            print(form)
 
         verbs[infinitive] = forms
         _serialize_to_file(file_dir, infinitive, forms)
