@@ -1,16 +1,33 @@
-FROM python:3.7.5-slim-buster
-RUN apt-get update && apt-get install git -y
-RUN git clone --depth=1 --recurse-submodules https://github.com/Softcatala/conjugador conjugador
-RUN pip install gunicorn
+FROM python:3.7.6-slim-buster as generate_data
+
+RUN mkdir -p /srv
+COPY requirements.txt /srv/
+RUN mkdir -p /srv/indexer
+COPY indexer/*.py /srv/indexer/
+RUN mkdir -p /srv/extractor
+COPY extractor/*.py /srv/extractor/
+
+RUN mkdir -p /srv/catalan-dict-tools/
+COPY catalan-dict-tools/ /srv/catalan-dict-tools/
 
 # Generate data set
-WORKDIR conjugador
+WORKDIR /srv
 RUN pip install -r requirements.txt
 RUN ./extractor/extract.py
 RUN ./indexer/index_creation.py
 
+FROM python:3.7.6-slim-buster
+RUN apt-get update -y && apt-get upgrade -y
+
+COPY requirements.txt /srv/
+RUN pip install -r /srv/requirements.txt
+COPY docker/entrypoint.sh /srv/
+COPY web/ /srv/web/
+
+COPY --from=generate_data /srv/data /srv/data
+RUN pip install gunicorn
+
 #What get's executed on Run
-ENTRYPOINT /conjugador/docker/entrypoint.sh
-#ENTRYPOINT /bin/bash
+ENTRYPOINT srv/entrypoint.sh
 
 

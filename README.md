@@ -9,7 +9,7 @@
 
 Create Docker image:
 
-``docker build -t conjugador . -f dockerfile``
+``docker build -t conjugador ../ -f dockerfile``
 
 Simple execution of the Docker image:
 
