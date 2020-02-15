@@ -54,6 +54,15 @@ def index_letter_api(lletra):
     j, status = search.get_json_index()
     return json_answer_status(j, status)
 
+@app.route('/autocomplete/<word>', methods=['GET'])
+def autocomplete_api(word):
+    word = word + u"*"
+    search = Search(word)
+    search.AutoComplete = True
+    j, status = search.get_json_index()
+    return json_answer_status(j, status)
+
+
 if __name__ == '__main__':
     app.debug = True
     app.run()

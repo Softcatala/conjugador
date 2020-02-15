@@ -18,7 +18,7 @@ Simple execution of the Docker image:
 Test from the browser:
 * Search: http://localhost:8000/search/cantar
 * Index: http://localhost:8000/index/a
-
+* Autocomplete: http://localhost:8000/autocomplete/cantari
 
 # Contact
 

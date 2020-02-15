@@ -34,6 +34,7 @@ class Search(object):
         self.Index = False
         self.searcher = None
         self.query = None
+        self.AutoComplete = False
 
     @property
     def word(self):
@@ -49,7 +50,12 @@ class Search(object):
                                           sortedby='verb_form',
                                           collapse_limit=1,
                                           collapse='verb_form')
-
+        elif self.AutoComplete is True:
+            results = self.searcher.search(self.query,
+                                           limit=10,
+                                           sortedby='verb_form',
+                                           collapse_limit=1,
+                                           collapse='verb_form')
         else:
             results = self.searcher.search(self.query, limit=None,
                                           collapse_limit=1,
