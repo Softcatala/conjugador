@@ -158,7 +158,7 @@ def _get_forms(inf_desc, req_infinitive):
         forms.append(Forms('Subjuntiu', 'Present', 'V' + verb_type + 'SP'))
         forms.append(Forms('Subjuntiu', 'Imperfet', 'V' + verb_type + 'SI'))
         
-        forms.append(Forms('Imperatiu', 'Imperatiu', 'V' + verb_type + 'M0'))
+        forms.append(Forms('Imperatiu', 'Present', 'V' + verb_type + 'M0'))
         
         descriptors = inf_desc[req_infinitive]
         for form in forms:
