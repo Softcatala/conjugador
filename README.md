@@ -7,7 +7,7 @@
 
 #  Docker
 
-Create Docker image:
+To create Docker image, from the <em>docker</em> subdirectory type:
 
 ``docker build -t conjugador ../ -f dockerfile``
 
