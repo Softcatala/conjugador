@@ -126,7 +126,7 @@ def _build_infinitive_descriptors(lines, infinitives):
             descriptors[descriptor] = flexionada
         else:
             term = descriptors[descriptor]
-            term += " - " + flexionada
+            term += " / " + flexionada
             descriptors[descriptor] = term
 
         inf_desc[infinitive] = descriptors;
