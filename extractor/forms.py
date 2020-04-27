@@ -41,7 +41,6 @@ class Forms:
 
     def __str__(self):
         s = "---"
-# [x.upper() for x in ["a","b","c"]]
         s += "* {0} ({1})\n".format(self.form,  self.group)
         s += '{0}\n'.format(''.join(str(p) for p in self.singular1))
         s += '{0}\n'.format(''.join(str(p) for p in self.singular2))
