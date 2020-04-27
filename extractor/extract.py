@@ -149,15 +149,16 @@ def _get_forms(inf_desc, req_infinitive):
         if form not in descriptors:
             continue
 
-        forms.append(Forms('Indicatiu', 'Present', 'V' + verb_type + 'IP'))
-        forms.append(Forms('Indicatiu', 'Futur imperfecte', 'V' + verb_type + 'IF'))
-        forms.append(Forms('Indicatiu', 'Futur hipotètic', 'V' + verb_type + 'IC'))
-        forms.append(Forms('Indicatiu', 'Pretèrit imperfecte', 'V' + verb_type + 'II'))
-        forms.append(Forms('Indicatiu', 'Pretèrit perfecte', 'V' + verb_type + 'IS'))
+        forms.append(Forms('Indicatiu', 'Present', 'V' + verb_type + 'IP'))     
+        forms.append(Forms('Indicatiu', 'Imperfet', 'V' + verb_type + 'II'))
+        forms.append(Forms('Indicatiu', 'Passat simple', 'V' + verb_type + 'IS'))
+        forms.append(Forms('Indicatiu', 'Futur', 'V' + verb_type + 'IF'))
+        forms.append(Forms('Indicatiu', 'Condicional', 'V' + verb_type + 'IC'))
 
         forms.append(Forms('Subjuntiu', 'Present', 'V' + verb_type + 'SP'))
-        forms.append(Forms('Subjuntiu', 'Pretèrit imperfecte', 'V' + verb_type + 'SI'))
-        forms.append(Forms('Subjuntiu', 'Imperatiu', 'V' + verb_type + 'M0'))
+        forms.append(Forms('Subjuntiu', 'Imperfet', 'V' + verb_type + 'SI'))
+        
+        forms.append(Forms('Imperatiu', 'Imperatiu', 'V' + verb_type + 'M0'))
         
         descriptors = inf_desc[req_infinitive]
         for form in forms:
