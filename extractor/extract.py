@@ -38,7 +38,7 @@ def _get_inifitives(lines):
 
     infinitives = []
     for line in lines:
-        wordList = re.sub("[^\w]", " ",  line).split()
+        wordList = re.sub("[^(\w|·)]", " ",  line).split()
         flexionada = wordList[0]
         infinitive = wordList[1]
         descriptor = wordList[2]
@@ -112,7 +112,7 @@ def _build_infinitive_descriptors(lines, infinitives):
     inf_desc = {}
     for line in lines:
 
-        wordList = re.sub("[^\w]", " ",  line).split()
+        wordList = re.sub("[^(\w|·)]", " ",  line).split()
         flexionada = wordList[0]
         infinitive = wordList[1]
         descriptor = wordList[2]
