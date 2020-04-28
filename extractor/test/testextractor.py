@@ -50,7 +50,7 @@ class TestExtractor(unittest.TestCase):
 
             extract_from_dictfile(filename, output_dir)
             signature_file = self._hash_file(output_dir + output_file)
-            self.assertEquals(signature_file, signature)
+            self.assertEquals(signature, signature_file)
             executed = executed + 1
 
         self.assertEquals(2, executed)
