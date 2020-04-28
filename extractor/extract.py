@@ -58,7 +58,7 @@ def _add_separator(result):
 
 def _get_variants_imperfet_subjuntiu(result, descriptors, descriptor):
 
-    variants = ["1", "2", "3", "4", "5", "6", "7"]
+    variants = ["1", "2", "3", "4", "5", "6", "7", "B"]
 
     for variant in variants:
         forma = descriptors.get(descriptor + variant);
