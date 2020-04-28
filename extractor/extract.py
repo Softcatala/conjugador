@@ -72,7 +72,7 @@ def _get_variants(descriptors, descriptor):
 
     result = []
 
-    variants = ["0", "X", "Y", "Z", "C", "V", "B"]
+    variants = ["0", "C", "X", "Y", "Z", "V", "B"]
 
     for variant in variants:
         forma = descriptors.get(descriptor + variant);
