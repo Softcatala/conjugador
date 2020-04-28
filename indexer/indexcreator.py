@@ -20,7 +20,7 @@
 import os
 import shutil
 import json
-
+from whoosh.util.text import rcompile
 from whoosh.analysis import StandardAnalyzer
 from whoosh.fields import BOOLEAN, TEXT, Schema, STORED, ID
 from whoosh.index import create_in
@@ -35,7 +35,8 @@ class IndexCreator(object):
         self.writer = None
 
     def create(self, in_memory=False):
-        analyzer = StandardAnalyzer(minsize=1, stoplist=None)
+        tokenizer_pattern = rcompile(r"(\w|·)+(\.?(\w|·)+)*") # Includes l·l
+        analyzer = StandardAnalyzer(minsize=1, stoplist=None, expression=tokenizer_pattern)
         schema = Schema(verb_form=TEXT(stored=True, sortable=True, analyzer=analyzer),
                         index_letter=TEXT(stored=True, analyzer=analyzer),
                         file_path=TEXT(stored=True, sortable=True))
