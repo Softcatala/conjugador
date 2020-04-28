@@ -82,6 +82,16 @@ class IndexCreator(object):
                                  file_path = file_path,
                                  index_letter = index_letter)
 
+    def _write_term(self, indexed, filename, word, form, infinitive):
+        print(filename)
+        print(word)
+        print(form)
+        print("---")
+
+        self.write_entry(word, filename, infinitive)
+        indexed.add(word)
+
+
     def _process_file(self, filename):
         with open(filename) as json_file:
             data = json.load(json_file)
@@ -101,15 +111,10 @@ class IndexCreator(object):
                         if word in indexed:
                             continue
 
-                        infinitive = form['form'] == "Infinitiu"
-
-                        #print(filename)
-                        #print(word)
-                        #print(form['form'])
-                        #print("---")
-
-                        self.write_entry(word, filename, infinitive)
-                        indexed.add(word)
+                        words = [x.strip() for x in word.split('/')]
+                        for word in words:
+                            infinitive = form['form'] == "Infinitiu"
+                            self._write_term(indexed, filename, word, form['form'], infinitive)
 
         return len(indexed)
 
