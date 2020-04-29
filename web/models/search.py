@@ -22,8 +22,10 @@ from whoosh.highlight import WholeFragmenter
 from whoosh.index import open_dir
 from whoosh.qparser import MultifieldParser
 from whoosh.query import FuzzyTerm
+from whoosh.sorting import FieldFacet, TranslateFacet
 import json
 import cgi
+from pyuca import Collator
 
 class Search(object):
     """Search a term in the Whoosh index."""
@@ -35,19 +37,28 @@ class Search(object):
         self.searcher = None
         self.query = None
         self.AutoComplete = False
+        self.collator = Collator()
 
     @property
     def word(self):
         return self._word
 
+    def sort_key(self, string):
+        s = string.decode("utf-8")
+        return self.collator.sort_key(s)
+
     def get_results(self):
         if self.searcher is None:
             self.search()
 
+
         if self.Index is True:
+            facet = FieldFacet("verb_form")
+            facet = TranslateFacet(self.sort_key, facet)
+
             results = self.searcher.search(self.query,
                                           limit=None,
-                                          sortedby='verb_form',
+                                          sortedby=facet,
                                           collapse_limit=1,
                                           collapse='verb_form')
         elif self.AutoComplete is True:
