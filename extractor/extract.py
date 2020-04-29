@@ -56,9 +56,11 @@ def _add_separator(result):
 
     return result
 
-def _get_variants_imperfet_subjuntiu(result, descriptors, descriptor):
+def _get_variants(descriptors, descriptor):
 
-    variants = ["1", "2", "3", "4", "5", "6", "7", "B"]
+    result = []
+
+    variants = ["0", "1", "2", "3", "4", "5", "6", "7", "C", "X", "Y", "Z", "V", "B"]
 
     for variant in variants:
         forma = descriptors.get(descriptor + variant);
@@ -66,20 +68,6 @@ def _get_variants_imperfet_subjuntiu(result, descriptors, descriptor):
             result.append(Form(forma, variant))
 
     return result
-
-
-def _get_variants(descriptors, descriptor):
-
-    result = []
-
-    variants = ["0", "C", "X", "Y", "Z", "V", "B"]
-
-    for variant in variants:
-        forma = descriptors.get(descriptor + variant);
-        if forma is not None:
-            result.append(Form(forma, variant))
-
-    return _get_variants_imperfet_subjuntiu(result, descriptors, descriptor)
 
 def _set_plurals_singulars(form, descriptors):
 
