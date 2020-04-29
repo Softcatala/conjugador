@@ -58,6 +58,7 @@ class Search(object):
                                            collapse='verb_form')
         else:
             results = self.searcher.search(self.query, limit=None,
+                                          sortedby='index_letter',
                                           collapse='file_path')
 
         return results
