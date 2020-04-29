@@ -24,6 +24,7 @@ from whoosh.qparser import MultifieldParser
 from whoosh.query import FuzzyTerm
 import json
 import cgi
+from pathlib import Path
 
 class Search(object):
     """Search a term in the Whoosh index."""
@@ -53,9 +54,7 @@ class Search(object):
         elif self.AutoComplete is True:
             results = self.searcher.search(self.query,
                                            limit=10,
-                                           sortedby='verb_form',
-                                           collapse_limit=1,
-                                           collapse='verb_form')
+                                           sortedby='verb_form')
         else:
             results = self.searcher.search(self.query, limit=None,
                                           sortedby='index_letter',
@@ -87,10 +86,11 @@ class Search(object):
         results = self.get_results()
         all_results = []
         for result in results:
-            verb = result['verb_form']
-            all_results.append(verb)
+            all_results.append(self._get_autocomplete_result(result))
 
-        return json.dumps(all_results, indent=4, separators=(',', ': ')), status
+        sorted_results = self._sort_autocomplete(all_results)
+
+        return json.dumps(sorted_results, indent=4, separators=(',', ': ')), status
 
     def get_json_search(self):
         OK = 200
@@ -114,3 +114,15 @@ class Search(object):
             return cgi.escape(result[key]) 
 
         return None
+
+    def _get_autocomplete_result(self, result):
+        return {
+            'form': result['verb_form'],
+            'infinitive': self._get_infinitive(result)
+        }
+
+    def _get_infinitive(self, result):
+        return Path(result['file_path']).stem
+
+    def _sort_autocomplete(self, results):
+        return sorted(results, key=lambda r: f"_{r['form']}" if r['form'] == r['infinitive'] else f"{r['form']}_{r['infinitive']}")

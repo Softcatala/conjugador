@@ -29,7 +29,7 @@ from forms import Form
 
 
 def _read_file(input_file):
-    with open(input_file) as f:
+    with open(input_file, encoding="utf-8") as f:
         return f.readlines()
 
 def _get_inifitives(lines):
