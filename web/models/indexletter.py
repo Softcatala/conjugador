@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 #
-# Copyright (c) 2019 Jordi Mas i Hernandez <jmas@softcatala.org>
+# Copyright (c) 2019-2020 Jordi Mas i Hernandez <jmas@softcatala.org>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -20,25 +20,35 @@
 
 from whoosh.index import open_dir
 from whoosh.qparser import MultifieldParser
+from whoosh.sorting import FieldFacet, TranslateFacet
 import json
+from pyuca import Collator
 from searchbase import SearchBase
 
-class Search(SearchBase):
-    """Search a term in the Whoosh index."""
+class IndexLetter(SearchBase):
 
     def __init__(self, word):
         self._word = word
         self.searcher = None
         self.query = None
+        self.collator = Collator()
 
+    def sort_key(self, string):
+        s = string.decode("utf-8")
+        return self.collator.sort_key(s)
 
     def get_results(self):
         if self.searcher is None:
             self.search()
 
-        return self.searcher.search(self.query, limit=None,
-                                    sortedby='index_letter',
-                                    collapse='file_path')
+        facet = FieldFacet("verb_form")
+        facet = TranslateFacet(self.sort_key, facet)
+
+        return self.searcher.search(self.query,
+                                    limit=None,
+                                    sortedby=facet,
+                                    collapse_limit=1,
+                                    collapse='verb_form')
 
     def search(self, ix=None):
         if ix is None:
@@ -47,21 +57,19 @@ class Search(SearchBase):
 
         self.searcher = ix.searcher()
         fields = []
-        qs = u' verb_form:({0})'.format(self._word)
+        qs = ''
+
+        qs += u' index_letter:({0})'.format(self.word)
+        fields.append("index_letter")
         self.query = MultifieldParser(fields, ix.schema).parse(qs)
 
-    def get_json_search(self):
+    def get_json(self):
         OK = 200
-
         status = OK
         results = self.get_results()
         all_results = []
         for result in results:
-
-            filepath = "../" + result['file_path']
-
-            with open(filepath, 'r') as j:
-                file = json.loads(j.read())
-                all_results.append(file)
+            verb = result['verb_form']
+            all_results.append(verb)
 
         return json.dumps(all_results, indent=4, separators=(',', ': ')), status

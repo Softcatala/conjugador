@@ -25,7 +25,8 @@ from jinja2 import Environment, FileSystemLoader
 
 sys.path.append('models/')
 from search import Search
-
+from autocomplete import Autocomplete
+from indexletter import IndexLetter
 
 app = Flask(__name__)
 
@@ -49,17 +50,15 @@ def search_api(word):
 
 @app.route('/index/<lletra>', methods=['GET'])
 def index_letter_api(lletra):
-    search = Search(lletra)
-    search.Index = True
-    j, status = search.get_json_index()
+    indexLetter = IndexLetter(lletra)
+    j, status = indexLetter.get_json()
     return json_answer_status(j, status)
 
 @app.route('/autocomplete/<word>', methods=['GET'])
 def autocomplete_api(word):
     word = word + u"*"
-    search = Search(word)
-    search.AutoComplete = True
-    j, status = search.get_json_index()
+    autocomplete = Autocomplete(word)
+    j, status = autocomplete.get_json()
     return json_answer_status(j, status)
 
 

@@ -38,6 +38,7 @@ class IndexCreator(object):
         tokenizer_pattern = rcompile(r"(\w|·)+(\.?(\w|·)+)*") # Includes l·l
         analyzer = StandardAnalyzer(minsize=1, stoplist=None, expression=tokenizer_pattern)
         schema = Schema(verb_form=TEXT(stored=True, sortable=True, analyzer=analyzer),
+                        infinitive=TEXT(stored=True, analyzer=analyzer),
                         index_letter=TEXT(stored=True, analyzer=analyzer),
                         file_path=TEXT(stored=True, sortable=True))
 
@@ -71,24 +72,25 @@ class IndexCreator(object):
         return s
 
 
-    def write_entry(self, verb_form, file_path, infinitive):
+    def write_entry(self, verb_form, file_path, is_infinitive, infinitive):
 
-        if infinitive is True:
+        if is_infinitive is True:
             index_letter = self._get_first_letter_for_index(verb_form)
         else:
             index_letter = None
 
         self.writer.add_document(verb_form = verb_form,
                                  file_path = file_path,
-                                 index_letter = index_letter)
+                                 index_letter = index_letter,
+                                 infinitive = infinitive)
 
-    def _write_term(self, indexed, filename, word, form, infinitive):
+    def _write_term(self, indexed, filename, word, form, is_infinitive, infinitive):
         print(filename)
         print(word)
         print(form)
         print("---")
 
-        self.write_entry(word, filename, infinitive)
+        self.write_entry(word, filename, is_infinitive, infinitive)
         indexed.add(word)
 
 
@@ -113,8 +115,8 @@ class IndexCreator(object):
 
                         words = [x.strip() for x in word.split('/')]
                         for word in words:
-                            infinitive = form['form'] == "Infinitiu"
-                            self._write_term(indexed, filename, word, form['form'], infinitive)
+                            is_infinitive = form['form'] == "Infinitiu"
+                            self._write_term(indexed, filename, word, form['form'], is_infinitive, infinitive)
 
         return len(indexed)
 
