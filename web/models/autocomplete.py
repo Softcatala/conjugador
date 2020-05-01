@@ -36,7 +36,7 @@ class Autocomplete(SearchBase):
 
         return self.searcher.search(self.query,
                                        limit=10,
-                                       sortedby='autocomplete_sorter')
+                                       sortedby='autocomplete_sorting')
 
     def search(self, ix=None):
         if ix is None:

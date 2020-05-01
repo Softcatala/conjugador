@@ -41,7 +41,7 @@ class IndexCreator(object):
                         infinitive=TEXT(stored=True, analyzer=analyzer),
                         index_letter=TEXT(stored=True, analyzer=analyzer),
                         file_path=TEXT(stored=True, sortable=True),
-                        autocompete_sorting=TEXT(stored=True, sortable=True))
+                        autocomplete_sorting=TEXT(stored=True, sortable=True))
 
         if os.path.exists(self.dir_name):
             shutil.rmtree(self.dir_name)
