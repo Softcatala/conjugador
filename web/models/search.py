@@ -103,6 +103,20 @@ class Search(object):
 
         return json.dumps(all_results, indent=4, separators=(',', ': ')), status
 
+    def get_json_autocomplete(self):
+        OK = 200
+        status = OK
+        results = self.get_results()
+        all_results = []
+        for result in results:
+            verb = {}
+            verb['verb_form'] = result['verb_form']
+            verb['infinitive'] = result['infinitive']
+            all_results.append(verb)
+
+        return json.dumps(all_results, indent=4, separators=(',', ': ')), status
+
+
     def get_json_search(self):
         OK = 200
         NOT_FOUND = 404

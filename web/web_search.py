@@ -59,7 +59,7 @@ def autocomplete_api(word):
     word = word + u"*"
     search = Search(word)
     search.AutoComplete = True
-    j, status = search.get_json_index()
+    j, status = search.get_json_autocomplete()
     return json_answer_status(j, status)
 
 
