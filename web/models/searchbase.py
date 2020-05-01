@@ -26,8 +26,9 @@ from whoosh.sorting import FieldFacet, TranslateFacet
 import json
 import cgi
 from pyuca import Collator
+from abc import ABC
 
-class SearchBase(object):
+class SearchBase(ABC):
     dir_name = "../data/indexdir"
 
     def __init__(self, word):
