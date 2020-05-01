@@ -59,12 +59,9 @@ class IndexLetter(SearchBase):
         fields = []
         qs = ''
 
-        if self.word is not None and len(self.word) > 0:
-            qs += u' index_letter:({0})'.format(self.word)
-            fields.append("index_letter")
-
+        qs += u' index_letter:({0})'.format(self.word)
+        fields.append("index_letter")
         self.query = MultifieldParser(fields, ix.schema).parse(qs)
-
 
     def get_json(self):
         OK = 200
