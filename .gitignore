@@ -1,0 +1,10 @@
+# IDE
+.idea
+
+# Python
+
+__pycache__
+
+# Build assests
+
+data/

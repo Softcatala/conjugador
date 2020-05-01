@@ -40,7 +40,8 @@ class IndexCreator(object):
         schema = Schema(verb_form=TEXT(stored=True, sortable=True, analyzer=analyzer),
                         infinitive=TEXT(stored=True, analyzer=analyzer),
                         index_letter=TEXT(stored=True, analyzer=analyzer),
-                        file_path=TEXT(stored=True, sortable=True))
+                        file_path=TEXT(stored=True, sortable=True),
+                        autocompete_sorting=TEXT(stored=True, sortable=True))
 
         if os.path.exists(self.dir_name):
             shutil.rmtree(self.dir_name)
@@ -74,15 +75,18 @@ class IndexCreator(object):
 
     def write_entry(self, verb_form, file_path, is_infinitive, infinitive):
 
-        if is_infinitive is True:
+        if is_infinitive:
             index_letter = self._get_first_letter_for_index(verb_form)
+            autocomplete_sorting = f'_{infinitive}'
         else:
             index_letter = None
+            autocomplete_sorting = f'{verb_form}_{infinitive}'
 
         self.writer.add_document(verb_form = verb_form,
                                  file_path = file_path,
                                  index_letter = index_letter,
-                                 infinitive = infinitive)
+                                 infinitive = infinitive,
+                                 autocomplete_sorting = autocomplete_sorting)
 
     def _write_term(self, indexed, filename, word, form, is_infinitive, infinitive):
         print(filename)
