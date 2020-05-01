@@ -25,7 +25,8 @@ from whoosh.analysis import StandardAnalyzer
 from whoosh.fields import BOOLEAN, TEXT, Schema, STORED, ID
 from whoosh.index import create_in
 from findfiles import FindFiles
-
+from whoosh.analysis import CharsetFilter
+from whoosh.support.charset import accent_map
 
 class IndexCreator(object):
 
@@ -36,7 +37,7 @@ class IndexCreator(object):
 
     def create(self, in_memory=False):
         tokenizer_pattern = rcompile(r"(\w|·)+(\.?(\w|·)+)*") # Includes l·l
-        analyzer = StandardAnalyzer(minsize=1, stoplist=None, expression=tokenizer_pattern)
+        analyzer = StandardAnalyzer(minsize=1, stoplist=None, expression=tokenizer_pattern) | CharsetFilter(accent_map)
         schema = Schema(verb_form=TEXT(stored=True, sortable=True, analyzer=analyzer),
                         infinitive=TEXT(stored=True, analyzer=analyzer),
                         index_letter=TEXT(stored=True, analyzer=analyzer),
