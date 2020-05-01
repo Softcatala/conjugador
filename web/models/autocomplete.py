@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 #
-# Copyright (c) 2019 Jordi Mas i Hernandez <jmas@softcatala.org>
+# Copyright (c) 2019-2020 Jordi Mas i Hernandez <jmas@softcatala.org>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -23,22 +23,22 @@ from whoosh.qparser import MultifieldParser
 import json
 from searchbase import SearchBase
 
-class Search(SearchBase):
-    """Search a term in the Whoosh index."""
+class Autocomplete(SearchBase):
 
     def __init__(self, word):
         self._word = word
         self.searcher = None
         self.query = None
 
-
     def get_results(self):
         if self.searcher is None:
             self.search()
 
-        return self.searcher.search(self.query, limit=None,
-                                    sortedby='index_letter',
-                                    collapse='file_path')
+        return self.searcher.search(self.query,
+                                       limit=10,
+                                       sortedby='verb_form',
+                                       collapse_limit=1,
+                                       collapse='verb_form')
 
     def search(self, ix=None):
         if ix is None:
@@ -48,20 +48,18 @@ class Search(SearchBase):
         self.searcher = ix.searcher()
         fields = []
         qs = u' verb_form:({0})'.format(self._word)
+
         self.query = MultifieldParser(fields, ix.schema).parse(qs)
 
-    def get_json_search(self):
+    def get_json(self):
         OK = 200
-
         status = OK
         results = self.get_results()
         all_results = []
         for result in results:
-
-            filepath = "../" + result['file_path']
-
-            with open(filepath, 'r') as j:
-                file = json.loads(j.read())
-                all_results.append(file)
+            verb = {}
+            verb['verb_form'] = result['verb_form']
+            verb['infinitive'] = result['infinitive']
+            all_results.append(verb)
 
         return json.dumps(all_results, indent=4, separators=(',', ': ')), status
