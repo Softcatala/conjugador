@@ -72,15 +72,14 @@ class IndexCreator(object):
 
         return s
 
-
     def write_entry(self, verb_form, file_path, is_infinitive, infinitive):
 
         if is_infinitive:
             index_letter = self._get_first_letter_for_index(verb_form)
-            autocomplete_sorting = f'_{infinitive}'
         else:
             index_letter = None
-            autocomplete_sorting = f'{verb_form}_{infinitive}'
+
+        autocomplete_sorting = self.get_autocomple_sorting_key(verb_form, is_infinitive, infinitive)
 
         self.writer.add_document(verb_form = verb_form,
                                  file_path = file_path,
@@ -137,4 +136,10 @@ class IndexCreator(object):
 
         print("Processed {0} files, indexed {1} variants".format(len(files), indexed))
 
-
+    def get_autocomple_sorting_key(self, verb_form, is_infinitive, infinitive):
+        SORTING_PREFIX='_'
+        if is_infinitive:
+            # By starting with '_', it forces infinitives to appear first in search
+            return f'{SORTING_PREFIX}{infinitive}'
+        else:
+            return f'{verb_form}{SORTING_PREFIX}{infinitive}'
