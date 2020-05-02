@@ -26,12 +26,12 @@ class Form:
     def __str__(self):
         return "{0} - {1} ".format(self.word, self.variant)
 
-class Forms:
+class Tense:
 
-    def __init__(self, group, form, descriptor):
-        self.group = group
-        self.form = form
-        self.descriptor = descriptor
+    def __init__(self, mode, tense, postag):
+        self.mode = mode
+        self.tense = tense
+        self.postag = postag
         self.singular1 = []
         self.singular2 = []
         self.singular3 = []
@@ -41,7 +41,7 @@ class Forms:
 
     def __str__(self):
         s = "---"
-        s += "* {0} ({1})\n".format(self.form,  self.group)
+        s += "* {0} ({1})\n".format(self.tense,  self.mode)
         s += '{0}\n'.format(''.join(str(p) for p in self.singular1))
         s += '{0}\n'.format(''.join(str(p) for p in self.singular2))
         s += '{0}\n'.format(''.join(str(p) for p in self.singular3))
