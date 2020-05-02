@@ -41,7 +41,6 @@ class Search(SearchBase):
                                     collapse='file_path')
 
         if results.is_empty():
-            print("No results, query expansion")
             results = self.searcher.search(self.query_expansion, limit=None,
                                     sortedby='index_letter',
                                     collapse='file_path')
