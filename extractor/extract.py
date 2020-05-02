@@ -56,7 +56,7 @@ def _add_separator(result):
 
     return result
 
-def _get_variants(descriptors, descriptor):
+def _get_variants(descriptors, descriptor, prefix=''):
 
     result = []
 
@@ -65,19 +65,20 @@ def _get_variants(descriptors, descriptor):
     for variant in variants:
         forma = descriptors.get(descriptor + variant);
         if forma is not None:
-            result.append(Form(forma, variant))
+            result.append(Form(forma, variant, prefix))
 
     return result
 
 def _set_plurals_singulars(form, descriptors):
 
-    form.singular1 = _get_variants(descriptors, form.descriptor + "1S0")
-    form.singular2 = _get_variants(descriptors, form.descriptor + "2S0")
-    form.singular3 = _get_variants(descriptors, form.descriptor + "3S0")
+    if form.descriptor[2] in ['I', 'S', 'M']: #check indicatiu, subjuntiu o imperatiu
+        form.singular1 = _get_variants(descriptors, form.descriptor + "1S0")
+        form.singular2 = _get_variants(descriptors, form.descriptor + "2S0")
+        form.singular3 = _get_variants(descriptors, form.descriptor + "3S0")
 
-    form.plural1 = _get_variants(descriptors, form.descriptor + "1P0")
-    form.plural2 = _get_variants(descriptors, form.descriptor + "2P0")
-    form.plural3 = _get_variants(descriptors, form.descriptor + "3P0")
+        form.plural1 = _get_variants(descriptors, form.descriptor + "1P0")
+        form.plural2 = _get_variants(descriptors, form.descriptor + "2P0")
+        form.plural3 = _get_variants(descriptors, form.descriptor + "3P0")
 
 def _set_plurals_singulars_gerundi(form, descriptors):
 
@@ -90,6 +91,42 @@ def _set_plurals_singulars_gerundi(form, descriptors):
 def _set_plurals_singulars0(form, descriptors):
 
     form.singular1 = _get_variants(descriptors, form.descriptor + "000")
+
+def _set_infinitiu_compost(form, descriptors):
+    form.singular1 = _get_variants(descriptors, form.descriptor + "0SM", "haver ")
+
+def _set_gerundi_compost(form, descriptors):
+    form.singular1 = _get_variants(descriptors, form.descriptor + "0SM", "havent ")
+
+def _set_perfet_indicatiu(form, descriptors):
+    if form.descriptor[2]=='P': # check participi
+        form.singular1 = _get_variants(descriptors, form.descriptor + "0SM", "he ")
+        form.singular2 = _get_variants(descriptors, form.descriptor + "0SM", "has ")
+        form.singular3 = _get_variants(descriptors, form.descriptor + "0SM", "ha ")
+
+        form.plural1 = _get_variants(descriptors, form.descriptor + "0SM", "hem ")
+        form.plural2 = _get_variants(descriptors, form.descriptor + "0SM", "heu ")
+        form.plural3 = _get_variants(descriptors, form.descriptor + "0SM", "han ")
+
+def _set_plusquamperfet_indicatiu(form, descriptors):
+    if form.descriptor[2]=='P': # check participi
+        form.singular1 = _get_variants(descriptors, form.descriptor + "0SM", "havia ")
+        form.singular2 = _get_variants(descriptors, form.descriptor + "0SM", "havies ")
+        form.singular3 = _get_variants(descriptors, form.descriptor + "0SM", "havia ")
+
+        form.plural1 = _get_variants(descriptors, form.descriptor + "0SM", "havíem ")
+        form.plural2 = _get_variants(descriptors, form.descriptor + "0SM", "havíeu ")
+        form.plural3 = _get_variants(descriptors, form.descriptor + "0SM", "havin ")
+
+def _set_passatperifrastic_indicatiu(form, descriptors):
+    if form.descriptor[2]=='N': # check infinitiu
+        form.singular1 = _get_variants(descriptors, form.descriptor + "000", "vaig ")
+        form.singular2 = _get_variants(descriptors, form.descriptor + "000", "vas (o vares) ")
+        form.singular3 = _get_variants(descriptors, form.descriptor + "000", "va ")
+
+        form.plural1 = _get_variants(descriptors, form.descriptor + "000", "vam (o vàrem) ")
+        form.plural2 = _get_variants(descriptors, form.descriptor + "000", "vau (o vàreu) ")
+        form.plural3 = _get_variants(descriptors, form.descriptor + "000", "van (o varen) ")
 
 def _build_infinitive_descriptors(lines, infinitives):
 
@@ -137,15 +174,24 @@ def _get_forms(inf_desc, req_infinitive):
         if form not in descriptors:
             continue
 
-        forms.append(Forms('Indicatiu', 'Present', 'V' + verb_type + 'IP'))     
+        forms.append(Forms('Indicatiu', 'Present', 'V' + verb_type + 'IP'))
+        forms.append(Forms('Indicatiu', 'Perfet', 'V' + verb_type + 'P0'))
+        for form in forms[-1:]:
+            _set_perfet_indicatiu(form, descriptors)|
         forms.append(Forms('Indicatiu', 'Imperfet', 'V' + verb_type + 'II'))
+        forms.append(Forms('Indicatiu', 'Plusquamperfet', 'V' + verb_type + 'P0'))
+        for form in forms[-1:]:
+            _set_plusquamperfet_indicatiu(form, descriptors)|
         forms.append(Forms('Indicatiu', 'Passat simple', 'V' + verb_type + 'IS'))
+        forms.append(Forms('Indicatiu', 'Passat perifràstic', 'V' + verb_type + 'N0'))
+        for form in forms[-1:]:
+            _set_passatperifrastic_indicatiu(form, descriptors)|
         forms.append(Forms('Indicatiu', 'Futur', 'V' + verb_type + 'IF'))
         forms.append(Forms('Indicatiu', 'Condicional', 'V' + verb_type + 'IC'))
 
         forms.append(Forms('Subjuntiu', 'Present', 'V' + verb_type + 'SP'))
         forms.append(Forms('Subjuntiu', 'Imperfet', 'V' + verb_type + 'SI'))
-        
+|
         forms.append(Forms('Imperatiu', 'Present', 'V' + verb_type + 'M0'))
         
         descriptors = inf_desc[req_infinitive]
@@ -153,13 +199,24 @@ def _get_forms(inf_desc, req_infinitive):
             _set_plurals_singulars(form, descriptors)
 
         forms.append(Forms('Formes no personals', 'Infinitiu', 'V' + verb_type + 'N0'))
-        forms.append(Forms('Formes no personals', 'Gerundi', 'V' + verb_type + 'G0'))
-
-        for form in forms[-2:]:
+        for form in forms[-1:]:
             _set_plurals_singulars0(form, descriptors)
+        forms.append(Forms('Formes no personals', 'Infinitiu compost', 'V' + verb_type + 'P0'))
+        for form in forms[-1:]:
+            _set_infinitiu_compost(form, descriptors)
+        forms.append(Forms('Formes no personals', 'Gerundi', 'V' + verb_type + 'G0'))
+        for form in forms[-1:]:
+            _set_plurals_singulars0(form, descriptors)
+        forms.append(Forms('Formes no personals', 'Gerundi compost', 'V' + verb_type + 'P0'))
+        for form in forms[-1:]:
+            _set_gerundi_compost(form, descriptors)
 
         forms.append(Forms('Formes no personals', 'Participi', 'V' + verb_type + 'P0'))
         _set_plurals_singulars_gerundi(forms[len(forms) - 1], descriptors)
+
+        #forms.append(Forms('Formes no personals', 'Infinitiu compost', 'V' + verb_type + 'P0'))
+        #for form in forms:
+        #    _set_participi_with_prefix(form,descriptors,"haver ")
 
     return forms
 
