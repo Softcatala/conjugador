@@ -30,15 +30,22 @@ class Search(SearchBase):
         self._word = word
         self.searcher = None
         self.query = None
-
+        self.query_expansion = None
 
     def get_results(self):
         if self.searcher is None:
             self.search()
 
-        return self.searcher.search(self.query, limit=None,
+        results = self.searcher.search(self.query, limit=None,
                                     sortedby='index_letter',
                                     collapse='file_path')
+
+        if results.is_empty():
+            print("No results, query expansion")
+            results = self.searcher.search(self.query_expansion, limit=None,
+                                    sortedby='index_letter',
+                                    collapse='file_path')
+        return results
 
     def search(self, ix=None):
         if ix is None:
@@ -49,6 +56,9 @@ class Search(SearchBase):
         fields = []
         qs = u' verb_form:({0})'.format(self._word)
         self.query = MultifieldParser(fields, ix.schema).parse(qs)
+
+        qs = u' verb_form_no_diacritics:({0})'.format(self._word)
+        self.query_expansion = MultifieldParser(fields, ix.schema).parse(qs)
 
     def get_json_search(self):
         OK = 200

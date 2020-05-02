@@ -37,8 +37,10 @@ class IndexCreator(object):
 
     def create(self, in_memory=False):
         tokenizer_pattern = rcompile(r"(\w|·)+(\.?(\w|·)+)*") # Includes l·l
-        analyzer = StandardAnalyzer(minsize=1, stoplist=None, expression=tokenizer_pattern) | CharsetFilter(accent_map)
+        analyzer = StandardAnalyzer(minsize=1, stoplist=None, expression=tokenizer_pattern)
+        analyzer_no_diatritics = analyzer | CharsetFilter(accent_map)
         schema = Schema(verb_form=TEXT(stored=True, sortable=True, analyzer=analyzer),
+                        verb_form_no_diacritics=TEXT(stored=True, sortable=True, analyzer=analyzer_no_diatritics),
                         infinitive=TEXT(stored=True, analyzer=analyzer),
                         index_letter=TEXT(stored=True, analyzer=analyzer),
                         file_path=TEXT(stored=True, sortable=True),
@@ -83,6 +85,7 @@ class IndexCreator(object):
         autocomplete_sorting = self.get_autocomple_sorting_key(verb_form, is_infinitive, infinitive)
 
         self.writer.add_document(verb_form = verb_form,
+                                 verb_form_no_diacritics = verb_form,
                                  file_path = file_path,
                                  index_letter = index_letter,
                                  infinitive = infinitive,
