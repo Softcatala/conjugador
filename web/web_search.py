@@ -56,7 +56,6 @@ def index_letter_api(lletra):
 
 @app.route('/autocomplete/<word>', methods=['GET'])
 def autocomplete_api(word):
-    word = word + u"*"
     autocomplete = Autocomplete(word)
     j, status = autocomplete.get_json()
     return json_answer_status(j, status)

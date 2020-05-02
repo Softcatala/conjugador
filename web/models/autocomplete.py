@@ -45,7 +45,7 @@ class Autocomplete(SearchBase):
 
         self.searcher = ix.searcher()
         fields = []
-        qs = u' verb_form:({0})'.format(self._word)
+        qs = u' verb_form:({0}*)'.format(self._word)
 
         self.query = MultifieldParser(fields, ix.schema).parse(qs)
 
