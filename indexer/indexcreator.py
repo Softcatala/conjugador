@@ -22,7 +22,7 @@ import shutil
 import json
 from whoosh.util.text import rcompile
 from whoosh.analysis import StandardAnalyzer
-from whoosh.fields import BOOLEAN, TEXT, Schema, STORED, ID
+from whoosh.fields import TEXT, Schema, STORED, ID
 from whoosh.index import create_in
 from findfiles import FindFiles
 from whoosh.analysis import CharsetFilter
@@ -40,11 +40,11 @@ class IndexCreator(object):
         analyzer = StandardAnalyzer(minsize=1, stoplist=None, expression=tokenizer_pattern)
         analyzer_no_diatritics = analyzer | CharsetFilter(accent_map)
         schema = Schema(verb_form=TEXT(stored=True, sortable=True, analyzer=analyzer),
-                        verb_form_no_diacritics=TEXT(stored=True, sortable=True, analyzer=analyzer_no_diatritics),
+                        verb_form_no_diacritics=TEXT(analyzer=analyzer_no_diatritics),
                         infinitive=TEXT(stored=True, analyzer=analyzer),
-                        index_letter=TEXT(stored=True, analyzer=analyzer),
+                        index_letter=TEXT(sortable=True, analyzer=analyzer),
                         file_path=TEXT(stored=True, sortable=True),
-                        autocomplete_sorting=TEXT(stored=True, sortable=True))
+                        autocomplete_sorting=TEXT(sortable=True))
 
         if os.path.exists(self.dir_name):
             shutil.rmtree(self.dir_name)
