@@ -9,6 +9,10 @@ estades ser VSP00PF0
 estat ser VSP00SM0
 estats ser VSP00PM0
 ets ser VSIP2S00
+fora ser VSIC1S00
+fora ser VSIC3S00
+fora ser VSSI1S03
+fora ser VSSI3S03
 foren ser VSIC3P00
 foren ser VSIS3P00
 foren ser VSSI3P03
@@ -74,6 +78,7 @@ siguin ser VSSP3P0Y
 siguis ser VSSP2S0Y
 sigut ser VSP00SM0
 siguts ser VSP00PM0
+soc ser VSIP1S00
 som ser VSIP1P00
 sou ser VSIP2P00
 só ser VSIP1S00
