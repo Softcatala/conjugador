@@ -122,8 +122,8 @@ class IndexCreator(object):
 
                         words = [x.strip() for x in word.split('/')]
                         for word in words:
-                            is_infinitive = form['form'] == "Infinitiu"
-                            self._write_term(indexed, filename, word, form['form'], is_infinitive, infinitive)
+                            is_infinitive = form['tense'] == "Infinitiu"
+                            self._write_term(indexed, filename, word, form['tense'], is_infinitive, infinitive)
 
         return len(indexed)
 
