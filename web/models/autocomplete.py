@@ -36,9 +36,7 @@ class Autocomplete(SearchBase):
 
         return self.searcher.search(self.query,
                                        limit=10,
-                                       sortedby='verb_form',
-                                       collapse_limit=1,
-                                       collapse='verb_form')
+                                       sortedby='autocomplete_sorting')
 
     def search(self, ix=None):
         if ix is None:
