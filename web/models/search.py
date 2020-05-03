@@ -23,6 +23,10 @@ from whoosh.qparser import MultifieldParser
 import json
 from searchbase import SearchBase
 
+
+dir_name = "../data/search_index/"
+ix = open_dir(dir_name) # static instance reusable across requests
+
 class Search(SearchBase):
     """Search a term in the Whoosh index."""
 
@@ -46,10 +50,7 @@ class Search(SearchBase):
                                     collapse='file_path')
         return results
 
-    def search(self, ix=None):
-        if ix is None:
-            ix = open_dir(self.dir_name)
-            self.search(ix)
+    def search(self):
 
         self.searcher = ix.searcher()
         fields = []

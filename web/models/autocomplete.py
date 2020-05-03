@@ -23,6 +23,10 @@ from whoosh.qparser import MultifieldParser
 import json
 from searchbase import SearchBase
 
+
+dir_name = "../data/autocomplete_index/"
+ix = open_dir(dir_name) # static instance reusable across requests
+
 class Autocomplete(SearchBase):
 
     def __init__(self, word):
@@ -38,11 +42,7 @@ class Autocomplete(SearchBase):
                                        limit=10,
                                        sortedby='autocomplete_sorting')
 
-    def search(self, ix=None):
-        if ix is None:
-            ix = open_dir(self.dir_name)
-            self.search(ix)
-
+    def search(self):
         self.searcher = ix.searcher()
         fields = []
         qs = u' verb_form:({0}*)'.format(self._word)

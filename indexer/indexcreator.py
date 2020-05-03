@@ -22,7 +22,7 @@ import shutil
 import json
 from whoosh.util.text import rcompile
 from whoosh.analysis import StandardAnalyzer
-from whoosh.fields import TEXT, Schema, STORED, ID
+from whoosh.fields import TEXT, Schema
 from whoosh.index import create_in
 from findfiles import FindFiles
 from whoosh.analysis import CharsetFilter
@@ -32,29 +32,55 @@ class IndexCreator(object):
 
     def __init__(self, json_dir):
         self.json_dir = json_dir
-        self.dir_name = "data/indexdir/"
+        self.dir_name_search = "data/search_index/"
+        self.dir_name_autocomplete = "data/autocomplete_index/"
+        self.dir_name_indexletter = "data/indexletter_index/"
         self.writer = None
+        self.writer_autocomplete = None
+        self.writer_indexletter = None
+        self.tokenizer_pattern = rcompile(r"(\w|·)+(\.?(\w|·)+)*") # Includes l·l
+        self.analyzer = StandardAnalyzer(minsize=1, stoplist=None, expression=self.tokenizer_pattern)
+        self.index_letters = 0
 
-    def create(self, in_memory=False):
-        tokenizer_pattern = rcompile(r"(\w|·)+(\.?(\w|·)+)*") # Includes l·l
-        analyzer = StandardAnalyzer(minsize=1, stoplist=None, expression=tokenizer_pattern)
-        analyzer_no_diatritics = analyzer | CharsetFilter(accent_map)
-        schema = Schema(verb_form=TEXT(stored=True, sortable=True, analyzer=analyzer),
+
+    def _create_dir(self, directory):
+        if os.path.exists(directory):
+            shutil.rmtree(directory)
+
+        os.makedirs(directory)
+
+    def create(self):
+        self._create_search()
+        self._create_autocomplete()
+        self._create_indexletter()
+
+    def _create_search(self):
+        analyzer_no_diatritics = self.analyzer | CharsetFilter(accent_map)
+        schema = Schema(verb_form=TEXT(stored=True, sortable=True, analyzer=self.analyzer),
                         verb_form_no_diacritics=TEXT(analyzer=analyzer_no_diatritics),
-                        infinitive=TEXT(stored=True, analyzer=analyzer),
-                        index_letter=TEXT(sortable=True, analyzer=analyzer),
-                        file_path=TEXT(stored=True, sortable=True),
+                        index_letter=TEXT(sortable=True, analyzer=self.analyzer),
+                        file_path=TEXT(stored=True, sortable=True))
+
+        self._create_dir(self.dir_name_search)
+        ix = create_in(self.dir_name_search, schema)
+        self.writer = ix.writer()
+
+    def _create_autocomplete(self):
+        schema = Schema(verb_form=TEXT(stored=True, sortable=True, analyzer=self.analyzer),
+                        infinitive=TEXT(stored=True, analyzer=self.analyzer),
                         autocomplete_sorting=TEXT(sortable=True))
 
-        if os.path.exists(self.dir_name):
-            shutil.rmtree(self.dir_name)
+        self._create_dir(self.dir_name_autocomplete)
+        ix = create_in(self.dir_name_autocomplete, schema)
+        self.writer_autocomplete = ix.writer()
 
-        os.makedirs(self.dir_name)
+    def _create_indexletter(self):
+        schema = Schema(verb_form=TEXT(stored=True, sortable=True, analyzer=self.analyzer),
+                        index_letter=TEXT(sortable=True, analyzer=self.analyzer))
 
-        ix = create_in(self.dir_name, schema)
-
-        self.writer = ix.writer()
-        return ix
+        self._create_dir(self.dir_name_indexletter)
+        ix = create_in(self.dir_name_indexletter, schema)
+        self.writer_indexletter = ix.writer()
 
     def _get_first_letter_for_index(self, word_ca):
         s = ''
@@ -68,7 +94,7 @@ class IndexCreator(object):
                     u'í' : u'i',
                     u'ó' : u'o',
                     u'ò' : u'o',
-                    u'ú' : u'u'} 
+                    u'ú' : u'u'}
 
         if s in mapping:
             s = mapping[s]
@@ -87,15 +113,23 @@ class IndexCreator(object):
         self.writer.add_document(verb_form = verb_form,
                                  verb_form_no_diacritics = verb_form,
                                  file_path = file_path,
-                                 index_letter = index_letter,
+                                 index_letter = index_letter)
+
+        self.writer_autocomplete.add_document(verb_form = verb_form,
                                  infinitive = infinitive,
                                  autocomplete_sorting = autocomplete_sorting)
 
+        if index_letter is not None:
+            self.index_letters = self.index_letters +1
+            self.writer_indexletter.add_document(verb_form = verb_form,
+                                     index_letter = index_letter)
+
+
     def _write_term(self, indexed, filename, word, form, is_infinitive, infinitive):
-        print(filename)
-        print(word)
-        print(form)
-        print("---")
+        #print(filename)
+        #print(word)
+        #print(form)
+        #print("---")
 
         self.write_entry(word, filename, is_infinitive, infinitive)
         indexed.add(word)
@@ -129,6 +163,8 @@ class IndexCreator(object):
 
     def save_index(self):
         self.writer.commit()
+        self.writer_autocomplete.commit()
+        self.writer_indexletter.commit()
 
 
     def process_files(self):
@@ -138,7 +174,8 @@ class IndexCreator(object):
         for filename in files:
             indexed += self._process_file(filename)
 
-        print("Processed {0} files, indexed {1} variants".format(len(files), indexed))
+        print("Processed {0} files, indexed {1} variants, index letters {2}".
+              format(len(files), indexed, self.index_letters))
 
     def get_autocomple_sorting_key(self, verb_form, is_infinitive, infinitive):
         SORTING_PREFIX='_'

@@ -25,6 +25,10 @@ import json
 from pyuca import Collator
 from searchbase import SearchBase
 
+
+dir_name = "../data/indexletter_index/"
+ix_letter = open_dir(dir_name) # static instance reusable across requests
+
 class IndexLetter(SearchBase):
 
     def __init__(self, word):
@@ -50,18 +54,12 @@ class IndexLetter(SearchBase):
                                     collapse_limit=1,
                                     collapse='verb_form')
 
-    def search(self, ix=None):
-        if ix is None:
-            ix = open_dir(self.dir_name)
-            self.search(ix)
-
-        self.searcher = ix.searcher()
+    def search(self):
+        self.searcher = ix_letter.searcher()
         fields = []
-        qs = ''
-
-        qs += u' index_letter:({0})'.format(self.word)
+        qs = u'index_letter:({0})'.format(self.word)
         fields.append("index_letter")
-        self.query = MultifieldParser(fields, ix.schema).parse(qs)
+        self.query = MultifieldParser(fields, ix_letter.schema).parse(qs)
 
     def get_json(self):
         OK = 200
