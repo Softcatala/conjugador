@@ -101,7 +101,26 @@ class IndexCreator(object):
 
         return s
 
-    def write_entry(self, verb_form, file_path, is_infinitive, infinitive):
+    def _verbs_to_ignore_in_autocomplete(self, mode, tense):
+        if mode == 'Indicatiu':
+            if any(t in tense for t in ["Perfet", "Plusquamperfet", "Passat perifràstic",\
+                                        "Passat anterior", "Passat anterior perifràstic",\
+                                        "Futur perfet", "Condicional perfet"]):
+                return True
+
+        if mode == 'Subjuntiu':
+            if any(t in tense for t in ["Perfet", "Plusquamperfet"]):
+                return True
+
+        if mode == 'Formes no personals':
+            if any(t in tense for t in ["Infinitiu compost", "Gerundi compost"]):
+                return True
+
+        return False
+
+
+  #         self._write_entry(indexed, word, file_path, is_infinitive, infinitive, postag, form['tense']
+    def _write_entry(self, indexed, verb_form, file_path, is_infinitive, infinitive, mode, tense):
 
         if is_infinitive:
             index_letter = self._get_first_letter_for_index(verb_form)
@@ -115,25 +134,22 @@ class IndexCreator(object):
                                  file_path = file_path,
                                  index_letter = index_letter)
 
-        self.writer_autocomplete.add_document(verb_form = verb_form,
-                                 infinitive = infinitive,
-                                 autocomplete_sorting = autocomplete_sorting)
+        if not self._verbs_to_ignore_in_autocomplete(mode, tense):
+            self.writer_autocomplete.add_document(verb_form = verb_form,
+                                                  infinitive = infinitive,
+                                                  autocomplete_sorting = autocomplete_sorting)
+#        else:
+#            print("Skip:" + verb_form)
 
         if index_letter is not None:
             self.index_letters = self.index_letters +1
             self.writer_indexletter.add_document(verb_form = verb_form,
                                      index_letter = index_letter)
 
-
-    def _write_term(self, indexed, filename, word, form, is_infinitive, infinitive):
-        #print(filename)
         #print(word)
         #print(form)
         #print("---")
-
-        self.write_entry(word, filename, is_infinitive, infinitive)
-        indexed.add(word)
-
+        indexed.add(verb_form)
 
     def _process_file(self, filename):
         with open(filename) as json_file:
@@ -150,6 +166,7 @@ class IndexCreator(object):
                 for sp in sps:
                     for conjugacio in form[sp]:
                         word = conjugacio['word']
+                        postag = form['postag']
 
                         if word in indexed:
                             continue
@@ -157,8 +174,9 @@ class IndexCreator(object):
                         words = [x.strip() for x in word.split('/')]
                         for word in words:
                             is_infinitive = form['tense'] == "Infinitiu"
-                            self._write_term(indexed, filename, word, form['tense'], is_infinitive, infinitive)
-
+                            #self._write_entry(indexed, word, form['tense'], is_infinitive, infinitive, postag, mode)
+                            self._write_entry(indexed, word, filename, is_infinitive, infinitive, form['mode'], form['tense'])
+                   
         return len(indexed)
 
     def save_index(self):
