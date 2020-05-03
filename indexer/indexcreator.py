@@ -119,7 +119,6 @@ class IndexCreator(object):
         return False
 
 
-  #         self._write_entry(indexed, word, file_path, is_infinitive, infinitive, postag, form['tense']
     def _write_entry(self, indexed, verb_form, file_path, is_infinitive, infinitive, mode, tense):
 
         if is_infinitive:
@@ -138,8 +137,6 @@ class IndexCreator(object):
             self.writer_autocomplete.add_document(verb_form = verb_form,
                                                   infinitive = infinitive,
                                                   autocomplete_sorting = autocomplete_sorting)
-#        else:
-#            print("Skip:" + verb_form)
 
         if index_letter is not None:
             self.index_letters = self.index_letters +1
