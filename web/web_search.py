@@ -22,7 +22,6 @@ from flask import Flask, request, Response
 import sys
 import json
 from jinja2 import Environment, FileSystemLoader
-import datetime
 
 sys.path.append('models/')
 from search import Search
@@ -45,35 +44,21 @@ def json_answer_status(data, status):
 
 @app.route('/search/<word>', methods=['GET'])
 def search_api(word):
-    start_time = datetime.datetime.now()
     search = Search(word)
     j, status = search.get_json_search()
-    r = json_answer_status(j, status)
-    time_used = datetime.datetime.now() - start_time
-    print(f'autocomplete_api time used: {time_used}')
-    return r
+    return json_answer_status(j, status)
 
 @app.route('/index/<lletra>', methods=['GET'])
 def index_letter_api(lletra):
-    start_time = datetime.datetime.now()
     indexLetter = IndexLetter(lletra)
     j, status = indexLetter.get_json()
-    r = json_answer_status(j, status)
-    time_used = datetime.datetime.now() - start_time
-    print(f'index_letter time used: {time_used}')
-    return r
+    return json_answer_status(j, status)
 
 @app.route('/autocomplete/<word>', methods=['GET'])
 def autocomplete_api(word):
-    start_time = datetime.datetime.now()
-
     autocomplete = Autocomplete(word)
     j, status = autocomplete.get_json()
-    r = json_answer_status(j, status)
-
-    time_used = datetime.datetime.now() - start_time
-    print(f'autocomplete_api time used: {time_used}')
-    return r
+    return json_answer_status(j, status)
 
 if __name__ == '__main__':
     app.debug = True
