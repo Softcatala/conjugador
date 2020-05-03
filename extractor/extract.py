@@ -125,7 +125,7 @@ def _set_plusquamperfet_indicatiu(tense, lemma_subdict):
 
     tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "havíem ")
     tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "havíeu ")
-    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "havin ")
+    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "havien ")
 
 def _set_passatperifrastic_indicatiu(tense, lemma_subdict):
     if _get_verb_mode(tense.postag) != 'N':
