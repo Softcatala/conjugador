@@ -20,6 +20,11 @@ Test from the browser:
 * Index: http://localhost:8000/index/a
 * Autocomplete: http://localhost:8000/autocomplete/cantari
 
+# License
+
+GNU Lesser General Public License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
 # Contact
 
 Contact Jordi Mas <jmas@softcatala.org>
