@@ -31,7 +31,8 @@ class IndexLetter(Index):
 
     def create(self):
         schema = Schema(verb_form=TEXT(stored=True, sortable=True, analyzer=self.analyzer),
-                        index_letter=TEXT(sortable=True, analyzer=self.analyzer))
+                        index_letter=TEXT(sortable=True, analyzer=self.analyzer),
+                        infinitive=TEXT(stored=True, analyzer=self.analyzer))
 
         self._create_dir(self.dir_name)
         ix = create_in(self.dir_name, schema)
@@ -46,7 +47,9 @@ class IndexLetter(Index):
         if index_letter is not None:
             self.entries = self.entries + 1
             self.writer.add_document(verb_form = verb_form,
-                                     index_letter = index_letter)
+                                     index_letter = index_letter,
+                                     infinitive = infinitive)
+
 
     def save(self):
         self.writer.commit()
