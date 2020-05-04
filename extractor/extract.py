@@ -185,24 +185,24 @@ def _set_condicionalperfet_indicatiu(tense, lemma_subdict):
 def _set_perfet_subjuntiu(tense, lemma_subdict):
     if _get_verb_mode(tense.postag) != 'P':
         return
-    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagi / haja ")
-    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagis / hages ")
-    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagi / haja ")
+    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagi (haja) ")
+    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagis (hages) ")
+    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagi (haja) ")
 
-    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hàgim / hàgem ")
-    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hàgiu / hàgeu ")
-    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagin / hagen ")
+    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hàgim (hàgem) ")
+    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hàgiu (hàgeu) ")
+    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagin (hagen) ")
 
 def _set_plusquamperfet_subjuntiu(tense, lemma_subdict):
     if _get_verb_mode(tense.postag) != 'P':
         return
-    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagués / haguera ")
-    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haguessis / hagueres ")
-    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagués / haguera ")
+    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagués (haguera) ")
+    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haguessis (hagueres) ")
+    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagués (haguera) ")
 
-    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haguéssim / haguérem ")
-    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haguéssiu / haguéreu ")
-    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haguessin / hagueren ")
+    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haguéssim (haguérem) ")
+    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haguéssiu (haguéreu) ")
+    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haguessin (hagueren) ")
 
 
 def _build_dictionary(lines):
