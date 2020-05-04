@@ -174,13 +174,13 @@ def _set_futurperfet_indicatiu(tense, lemma_subdict):
 def _set_condicionalperfet_indicatiu(tense, lemma_subdict):
     if _get_verb_mode(tense.postag) != 'P':
         return
-    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauria ")
-    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauries ")
-    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauria ")
+    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauria (haguera) ")
+    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauries (hagueres) ")
+    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauria (haguera) ")
 
-    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauríem ")
-    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauríeu ")
-    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haurien ")
+    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauríem (haguérem) ")
+    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauríeu (haguéreu) ")
+    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haurien (hagueren) ")
 
 def _set_perfet_subjuntiu(tense, lemma_subdict):
     if _get_verb_mode(tense.postag) != 'P':
