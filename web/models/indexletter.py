@@ -67,7 +67,10 @@ class IndexLetter(SearchBase):
         results = self.get_results()
         all_results = []
         for result in results:
-            verb = result['verb_form']
+            verb = {}
+            verb['verb_form'] = result['verb_form']
+            if result['verb_form'] != result['infinitive']:
+                verb['infinitive'] = result['infinitive']
             all_results.append(verb)
 
         return json.dumps(all_results, indent=4, separators=(',', ': ')), status
