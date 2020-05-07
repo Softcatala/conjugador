@@ -41,7 +41,10 @@ class Search(Index):
         ix = create_in(self.dir_name_search, schema)
         self.writer = ix.writer()
 
-    def write_entry(self, verb_form, file_path, is_infinitive, infinitive):
+    def write_entry(self, verb_form, file_path, is_infinitive, infinitive, mode, tense):
+
+        if self._verbs_to_ignore_in_autocomplete(mode, tense):
+            return
 
         if is_infinitive:
             index_letter = self._get_first_letter_for_index(verb_form)

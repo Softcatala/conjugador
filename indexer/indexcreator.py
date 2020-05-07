@@ -40,7 +40,7 @@ class IndexCreator(object):
 
     def _write_entry(self, indexed, verb_form, file_path, is_infinitive, infinitive, mode, tense):
 
-        self.search.write_entry(verb_form, file_path, is_infinitive, infinitive)
+        self.search.write_entry(verb_form, file_path, is_infinitive, infinitive, mode, tense)
         self.autocomplete.write_entry(verb_form, file_path, is_infinitive, infinitive, mode, tense)
         self.indexletter.write_entry(verb_form, is_infinitive, infinitive)
 

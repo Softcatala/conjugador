@@ -37,22 +37,6 @@ class Autocomplete(Index):
         ix = create_in(self.dir_name, schema)
         self.writer = ix.writer()
 
-    def _verbs_to_ignore_in_autocomplete(self, mode, tense):
-        if mode == 'Indicatiu':
-            if any(t in tense for t in ["Perfet", "Plusquamperfet", "Passat perifràstic",\
-                                        "Passat anterior", "Passat anterior perifràstic",\
-                                        "Futur perfet", "Condicional perfet"]):
-                return True
-
-        if mode == 'Subjuntiu':
-            if any(t in tense for t in ["Perfet", "Plusquamperfet"]):
-                return True
-
-        if mode == 'Formes no personals':
-            if any(t in tense for t in ["Infinitiu compost", "Gerundi compost"]):
-                return True
-
-        return False
 
     def write_entry(self, verb_form, file_path, is_infinitive, infinitive, mode, tense):
 
