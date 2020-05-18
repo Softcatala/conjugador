@@ -38,7 +38,7 @@ def init_logging():
 
     LOGLEVEL = os.environ.get('LOGLEVEL', 'INFO').upper()
     logger = logging.getLogger()
-    hdlr = logging.handlers.RotatingFileHandler(logfile, maxBytes=1024, backupCount=1)
+    hdlr = logging.handlers.RotatingFileHandler(logfile, maxBytes=1024*1024, backupCount=1)
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     hdlr.setFormatter(formatter)
     logger.addHandler(hdlr)
