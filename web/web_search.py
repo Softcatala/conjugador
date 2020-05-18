@@ -27,8 +27,26 @@ sys.path.append('models/')
 from search import Search
 from autocomplete import Autocomplete
 from indexletter import IndexLetter
+import logging
+import logging.handlers
+import os
 
 app = Flask(__name__)
+
+def init_logging():
+    logfile = 'web-service.log'
+
+    LOGLEVEL = os.environ.get('LOGLEVEL', 'INFO').upper()
+    logger = logging.getLogger()
+    hdlr = logging.handlers.RotatingFileHandler(logfile, maxBytes=1024, backupCount=1)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    hdlr.setFormatter(formatter)
+    logger.addHandler(hdlr)
+    logger.setLevel(LOGLEVEL)
+
+    console = logging.StreamHandler()
+    console.setLevel(LOGLEVEL)
+    logger.addHandler(console)
 
 
 # API calls
@@ -44,22 +62,27 @@ def json_answer_status(data, status):
 
 @app.route('/search/<word>', methods=['GET'])
 def search_api(word):
+    logging.debug(f"/search for '{word}'")
     search = Search(word)
     j, status = search.get_json_search()
     return json_answer_status(j, status)
 
 @app.route('/index/<lletra>', methods=['GET'])
 def index_letter_api(lletra):
+    logging.debug(f"/index for '{lletra}'")
     indexLetter = IndexLetter(lletra)
     j, status = indexLetter.get_json()
     return json_answer_status(j, status)
 
 @app.route('/autocomplete/<word>', methods=['GET'])
 def autocomplete_api(word):
+    logging.debug(f"Autocomplete for '{word}'")
     autocomplete = Autocomplete(word)
     j, status = autocomplete.get_json()
     return json_answer_status(j, status)
 
+
 if __name__ == '__main__':
+    init_logging()
     app.debug = True
     app.run()
