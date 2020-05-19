@@ -73,11 +73,16 @@ def search_api(word):
     logging.debug(f"/search for '{word}': {num_results} results, time: {elapsed_time:.2f}s")
     return json_answer_status(j, status)
 
-@app.route('/index/<lletra>', methods=['GET'])
-def index_letter_api(lletra):
-    logging.debug(f"/index for '{lletra}'")
-    indexLetter = IndexLetter(lletra)
+@app.route('/index/<letter>', methods=['GET'])
+def index_letter_api(letter):
+    start_time = time.time()
+
+    indexLetter = IndexLetter(letter)
     j, status = indexLetter.get_json()
+    num_results = indexLetter.get_num_results()
+
+    elapsed_time = time.time() - start_time
+    logging.debug(f"/index for '{letter}': {num_results} results, time: {elapsed_time:.2f}s")
     return json_answer_status(j, status)
 
 @app.route('/autocomplete/<word>', methods=['GET'])

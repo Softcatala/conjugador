@@ -36,6 +36,10 @@ class IndexLetter(SearchBase):
         self.searcher = None
         self.query = None
         self.collator = Collator()
+        self.num_results = 0
+
+    def get_num_results(self):
+        return self.num_results
 
     def sort_key(self, string):
         s = string.decode("utf-8")
@@ -48,11 +52,14 @@ class IndexLetter(SearchBase):
         facet = FieldFacet("verb_form")
         facet = TranslateFacet(self.sort_key, facet)
 
-        return self.searcher.search(self.query,
-                                    limit=None,
-                                    sortedby=facet,
-                                    collapse_limit=1,
-                                    collapse='verb_form')
+        results = self.searcher.search(self.query,
+                                      limit=None,
+                                      sortedby=facet,
+                                      collapse_limit=1,
+                                      collapse='verb_form')
+
+        self.num_results = len(results)
+        return results
 
     def search(self):
         self.searcher = ix_letter.searcher()
