@@ -30,6 +30,7 @@ from indexletter import IndexLetter
 import logging
 import logging.handlers
 import os
+import time
 
 app = Flask(__name__)
 
@@ -62,9 +63,14 @@ def json_answer_status(data, status):
 
 @app.route('/search/<word>', methods=['GET'])
 def search_api(word):
-    logging.debug(f"/search for '{word}'")
+    start_time = time.time()
+
     search = Search(word)
     j, status = search.get_json_search()
+    num_results = search.get_num_results()
+
+    elapsed_time = time.time() - start_time
+    logging.debug(f"/search for '{word}': {num_results} results, time: {elapsed_time:.2f}s")
     return json_answer_status(j, status)
 
 @app.route('/index/<lletra>', methods=['GET'])
@@ -76,9 +82,14 @@ def index_letter_api(lletra):
 
 @app.route('/autocomplete/<word>', methods=['GET'])
 def autocomplete_api(word):
-    logging.debug(f"Autocomplete for '{word}'")
+    start_time = time.time()
+
     autocomplete = Autocomplete(word)
     j, status = autocomplete.get_json()
+    num_results = autocomplete.get_num_results()
+
+    elapsed_time = time.time() - start_time
+    logging.debug(f"/autocomplete for '{word}': {num_results} results, time: {elapsed_time:.2f}s")
     return json_answer_status(j, status)
 
 

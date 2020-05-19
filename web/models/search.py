@@ -35,6 +35,10 @@ class Search(SearchBase):
         self.searcher = None
         self.query = None
         self.query_expansion = None
+        self.num_results = 0
+
+    def get_num_results(self):
+        return self.num_results
 
     def get_results(self):
         if self.searcher is None:
@@ -48,6 +52,8 @@ class Search(SearchBase):
             results = self.searcher.search(self.query_expansion, limit=None,
                                     sortedby='index_letter',
                                     collapse='file_path')
+
+        self.num_results = len(results)
         return results
 
     def search(self):
