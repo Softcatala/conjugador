@@ -17,7 +17,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from whoosh.fields import TEXT, Schema
+from whoosh.fields import TEXT, Schema, STORED
 from whoosh.index import create_in
 from index import Index
 
@@ -29,8 +29,8 @@ class Autocomplete(Index):
         self.writer = None
 
     def create(self):
-        schema = Schema(verb_form=TEXT(stored=True, sortable=True, analyzer=self.analyzer),
-                        infinitive=TEXT(stored=True, analyzer=self.analyzer),
+        schema = Schema(verb_form=TEXT(stored=True, analyzer=self.analyzer),
+                        infinitive=STORED,
                         autocomplete_sorting=TEXT(sortable=True))
 
         self._create_dir(self.dir_name)
