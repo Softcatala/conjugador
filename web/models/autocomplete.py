@@ -33,14 +33,21 @@ class Autocomplete(SearchBase):
         self._word = word
         self.searcher = None
         self.query = None
+        self.num_results = 0
+
+    def get_num_results(self):
+        return self.num_results
 
     def get_results(self):
         if self.searcher is None:
             self.search()
 
-        return self.searcher.search(self.query,
+        results = self.searcher.search(self.query,
                                        limit=10,
                                        sortedby='autocomplete_sorting')
+
+        self.num_results = len(results)
+        return results
 
     def search(self):
         self.searcher = ix.searcher()

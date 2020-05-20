@@ -6,6 +6,7 @@ RUN mkdir -p /srv/indexer
 COPY indexer/*.py /srv/indexer/
 RUN mkdir -p /srv/extractor
 COPY extractor/*.py /srv/extractor/
+RUN mkdir -p /srv/data/logs
 
 RUN mkdir -p /srv/catalan-dict-tools/
 COPY catalan-dict-tools/ /srv/catalan-dict-tools/
@@ -22,7 +23,9 @@ RUN apt-get update -y && apt-get upgrade -y
 COPY requirements.txt /srv/
 RUN pip install -r /srv/requirements.txt
 COPY docker/entrypoint.sh /srv/
-COPY web/ /srv/web/
+COPY web/*.py /srv/web/
+COPY web/models/*.py /srv/web/models/
+
 
 COPY --from=generate_data /srv/data /srv/data
 RUN pip install gunicorn

@@ -27,8 +27,27 @@ sys.path.append('models/')
 from search import Search
 from autocomplete import Autocomplete
 from indexletter import IndexLetter
+import logging
+import logging.handlers
+import os
+import time
 
 app = Flask(__name__)
+
+def init_logging():
+    logfile = 'web-service.log'
+
+    LOGLEVEL = os.environ.get('LOGLEVEL', 'INFO').upper()
+    logger = logging.getLogger()
+    hdlr = logging.handlers.RotatingFileHandler(logfile, maxBytes=1024*1024, backupCount=1)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    hdlr.setFormatter(formatter)
+    logger.addHandler(hdlr)
+    logger.setLevel(LOGLEVEL)
+
+    console = logging.StreamHandler()
+    console.setLevel(LOGLEVEL)
+    logger.addHandler(console)
 
 
 # API calls
@@ -44,22 +63,45 @@ def json_answer_status(data, status):
 
 @app.route('/search/<word>', methods=['GET'])
 def search_api(word):
+    start_time = time.time()
+
     search = Search(word)
     j, status = search.get_json_search()
+    num_results = search.get_num_results()
+
+    elapsed_time = time.time() - start_time
+    logging.debug(f"/search for '{word}': {num_results} results, time: {elapsed_time:.2f}s")
     return json_answer_status(j, status)
 
-@app.route('/index/<lletra>', methods=['GET'])
-def index_letter_api(lletra):
-    indexLetter = IndexLetter(lletra)
+@app.route('/index/<letter>', methods=['GET'])
+def index_letter_api(letter):
+    start_time = time.time()
+
+    indexLetter = IndexLetter(letter)
     j, status = indexLetter.get_json()
+    num_results = indexLetter.get_num_results()
+
+    elapsed_time = time.time() - start_time
+    logging.debug(f"/index for '{letter}': {num_results} results, time: {elapsed_time:.2f}s")
     return json_answer_status(j, status)
 
 @app.route('/autocomplete/<word>', methods=['GET'])
 def autocomplete_api(word):
+    start_time = time.time()
+
     autocomplete = Autocomplete(word)
     j, status = autocomplete.get_json()
+    num_results = autocomplete.get_num_results()
+
+    elapsed_time = time.time() - start_time
+    logging.debug(f"/autocomplete for '{word}': {num_results} results, time: {elapsed_time:.2f}s")
     return json_answer_status(j, status)
 
+
 if __name__ == '__main__':
+    init_logging()
     app.debug = True
     app.run()
+
+if __name__ != '__main__':
+    init_logging()
