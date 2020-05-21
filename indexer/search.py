@@ -49,7 +49,7 @@ class Search(Index):
             return
 
         if is_infinitive:
-            index_letter =  self.letter.form_word(verb_form)
+            index_letter =  self.letter.from_word(verb_form)
         else:
             index_letter = None
 

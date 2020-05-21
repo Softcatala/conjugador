@@ -20,6 +20,7 @@
 from whoosh.fields import TEXT, Schema, STORED
 from whoosh.index import create_in
 from index import Index
+from firstletter import FirstLetter
 
 class Autocomplete(Index):
 
@@ -27,6 +28,7 @@ class Autocomplete(Index):
         super(Autocomplete, self).__init__()
         self.dir_name = "data/autocomplete_index/"
         self.writers = {}
+        self.letter = FirstLetter()
 
     def create(self):
         return
@@ -47,7 +49,7 @@ class Autocomplete(Index):
         if self._verbs_to_ignore_in_autocomplete(mode, tense):
             return
 
-        letter = self._get_first_letter_for_index(verb_form)
+        letter = index_letter = self.letter.from_word(verb_form)
 
         if letter in self.writers:
             writer = self.writers[letter]
