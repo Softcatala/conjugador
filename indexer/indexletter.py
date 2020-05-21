@@ -20,6 +20,7 @@
 from whoosh.fields import TEXT, Schema
 from whoosh.index import create_in
 from index import Index
+from firstletter import FirstLetter
 
 class IndexLetter(Index):
 
@@ -28,6 +29,7 @@ class IndexLetter(Index):
         self.dir_name = "data/indexletter_index/"
         self.writer = None
         self.entries = 0
+        self.letter = FirstLetter()
 
     def create(self):
         schema = Schema(verb_form=TEXT(stored=True, sortable=True, analyzer=self.analyzer),
@@ -40,7 +42,7 @@ class IndexLetter(Index):
 
     def write_entry(self, verb_form, is_infinitive, infinitive):
         if is_infinitive:
-            index_letter = self._get_first_letter_for_index(verb_form)
+            index_letter = self.letter.form_word(verb_form)
         else:
             index_letter = None
 

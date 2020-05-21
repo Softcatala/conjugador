@@ -22,25 +22,7 @@ from whoosh.index import open_dir
 from whoosh.qparser import MultifieldParser
 import json
 from searchbase import SearchBase
-
-def _get_first_letter_for_index(word_ca):
-    s = ''
-    if word_ca is None:
-        return s
-
-    s = word_ca[0].lower()
-    mapping = { u'à' : u'a',
-                u'è' : u'e',
-                u'é' : u'e',
-                u'í' : u'i',
-                u'ó' : u'o',
-                u'ò' : u'o',
-                u'ú' : u'u'}
-
-    if s in mapping:
-        s = mapping[s]
-
-    return s
+from firstletter import FirstLetter
 
 def open_indexes():
     dir_name = "../data/autocomplete_index/"
@@ -67,12 +49,13 @@ class Autocomplete(SearchBase):
         self.searcher = None
         self.query = None
         self.num_results = 0
+        self.letter = FirstLetter()
 
     def get_num_results(self):
         return self.num_results
 
     def get_results(self):
-        letter = _get_first_letter_for_index(self._word)
+        letter = self.letter.form_word(self.word)
 
         if letter not in idxs:
             results = []
