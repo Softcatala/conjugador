@@ -55,7 +55,7 @@ class Autocomplete(SearchBase):
         return self.num_results
 
     def get_results(self):
-        letter = self.letter.form_word(self.word)
+        letter = self.letter.from_word(self.word)
 
         if letter not in idxs:
             results = []
