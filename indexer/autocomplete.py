@@ -26,26 +26,38 @@ class Autocomplete(Index):
     def __init__(self):
         super(Autocomplete, self).__init__()
         self.dir_name = "data/autocomplete_index/"
-        self.writer = None
+        self.writers = {}
 
     def create(self):
+        return
+
+    def _create(self, letter):
         schema = Schema(verb_form=TEXT(stored=True, analyzer=self.analyzer),
                         infinitive=STORED,
                         autocomplete_sorting=TEXT(sortable=True))
 
-        self._create_dir(self.dir_name)
-        ix = create_in(self.dir_name, schema)
-        self.writer = ix.writer()
+        dir_name = f'{self.dir_name}{letter}/'
+        self._create_dir(dir_name)
+        ix = create_in(dir_name, schema)
+        return ix.writer()
 
 
     def write_entry(self, verb_form, file_path, is_infinitive, infinitive, mode, tense):
 
         if self._verbs_to_ignore_in_autocomplete(mode, tense):
             return
+
+        letter = self._get_first_letter_for_index(verb_form)
+
+        if letter in self.writers:
+            writer = self.writers[letter]
+        else:
+            writer = self._create(letter)
+            self.writers[letter] = writer
     
         autocomplete_sorting = self._get_autocomple_sorting_key(verb_form, is_infinitive, infinitive)
 
-        self.writer.add_document(verb_form = verb_form,
+        writer.add_document(verb_form = verb_form,
                                  infinitive = infinitive,
                                  autocomplete_sorting = autocomplete_sorting)
 
@@ -58,4 +70,5 @@ class Autocomplete(Index):
             return f'{verb_form}{SORTING_PREFIX}{infinitive}'
 
     def save(self):
-        self.writer.commit()
+        for writer in self.writers.values():
+            writer.commit()

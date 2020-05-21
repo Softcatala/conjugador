@@ -23,9 +23,42 @@ from whoosh.qparser import MultifieldParser
 import json
 from searchbase import SearchBase
 
+def _get_first_letter_for_index(word_ca):
+    s = ''
+    if word_ca is None:
+        return s
 
-dir_name = "../data/autocomplete_index/"
-ix = open_dir(dir_name) # static instance reusable across requests
+    s = word_ca[0].lower()
+    mapping = { u'à' : u'a',
+                u'è' : u'e',
+                u'é' : u'e',
+                u'í' : u'i',
+                u'ó' : u'o',
+                u'ò' : u'o',
+                u'ú' : u'u'}
+
+    if s in mapping:
+        s = mapping[s]
+
+    return s
+
+def open_indexes():
+    dir_name = "../data/autocomplete_index/"
+
+    idxs = {}
+    for letter in list(map(chr, range(97, 123))):
+        try:
+            dir_name_letter = f'{dir_name}{letter}'
+            ix = open_dir(dir_name_letter)
+            idxs[letter] = ix
+        except:
+            print("No index:" + letter)
+
+    return idxs
+
+
+idxs = open_indexes()
+
 
 class Autocomplete(SearchBase):
 
@@ -39,17 +72,22 @@ class Autocomplete(SearchBase):
         return self.num_results
 
     def get_results(self):
-        if self.searcher is None:
-            self.search()
+        letter = _get_first_letter_for_index(self._word)
 
-        results = self.searcher.search(self.query,
-                                       limit=10,
-                                       sortedby='autocomplete_sorting')
+        if letter not in idxs:
+            results = []
+        else:
+            self._search(letter)
+            results = self.searcher.search(self.query,
+                                           limit=10,
+                                           sortedby='autocomplete_sorting')
 
         self.num_results = len(results)
         return results
 
-    def search(self):
+    def _search(self, letter):
+        ix = idxs[letter]
+
         self.searcher = ix.searcher()
         fields = []
         qs = u' verb_form:({0}*)'.format(self._word)
