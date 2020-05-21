@@ -34,7 +34,7 @@ def open_indexes():
             ix = open_dir(dir_name_letter)
             idxs[letter] = ix
         except:
-            print("No index:" + letter)
+            print("No index found:" + letter)
 
     return idxs
 
