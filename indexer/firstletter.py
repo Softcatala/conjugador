@@ -24,7 +24,7 @@ class FirstLetter(object):
 
     def from_word(self, word):
         s = ''
-        if word is None:
+        if word is None or len(word) == 0:
             return s
 
         s = word[0].lower()
