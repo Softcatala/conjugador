@@ -18,14 +18,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from whoosh.highlight import WholeFragmenter
-from whoosh.index import open_dir
-from whoosh.qparser import MultifieldParser
-from whoosh.query import FuzzyTerm
-from whoosh.sorting import FieldFacet, TranslateFacet
-import json
 import cgi
-from pyuca import Collator
 from abc import ABC
 
 class SearchBase(ABC):
@@ -39,6 +32,6 @@ class SearchBase(ABC):
 
     def _get_result(self, result, key):
         if key in result:
-            return cgi.escape(result[key]) 
+            return cgi.escape(result[key])
 
         return None
