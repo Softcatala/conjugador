@@ -28,13 +28,13 @@ def open_indexes():
     dir_name = "../data/autocomplete_index/"
 
     idxs = {}
-    for letter in list(map(chr, range(97, 123))):
+    for letter in FirstLetter().get_letters():
         try:
             dir_name_letter = f'{dir_name}{letter}'
             ix = open_dir(dir_name_letter)
             idxs[letter] = ix
         except:
-            print("No index found:" + letter)
+            print(f'No index found for {letter}')
 
     return idxs
 

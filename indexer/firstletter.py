@@ -19,6 +19,9 @@
 
 class FirstLetter(object):
 
+    def __init__(self):
+        self.valid_letters = list(map(chr, range(97, 123)))
+
     def from_word(self, word):
         s = ''
         if word is None:
@@ -37,3 +40,6 @@ class FirstLetter(object):
             s = mapping[s]
 
         return s
+
+    def get_letters(self):
+        return self.valid_letters

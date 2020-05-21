@@ -49,7 +49,9 @@ class Autocomplete(Index):
         if self._verbs_to_ignore_in_autocomplete(mode, tense):
             return
 
-        letter = index_letter = self.letter.from_word(verb_form)
+        letter = self.letter.from_word(verb_form)
+        if letter not in self.letter.get_letters():
+              raise IndexError(f'Letter {letter} is not supported by the client. Review get_letters()')
 
         if letter in self.writers:
             writer = self.writers[letter]
