@@ -22,6 +22,7 @@ from whoosh.index import create_in
 from index import Index
 from whoosh.analysis import CharsetFilter
 from whoosh.support.charset import accent_map
+from firstletter import FirstLetter
 
 class Search(Index):
 
@@ -29,6 +30,7 @@ class Search(Index):
         super(Search, self).__init__()
         self.dir_name_search = "data/search_index/"
         self.writer = None
+        self.letter = FirstLetter()
 
     def create(self):
         analyzer_no_diatritics = self.analyzer | CharsetFilter(accent_map)
@@ -47,7 +49,7 @@ class Search(Index):
             return
 
         if is_infinitive:
-            index_letter = self._get_first_letter_for_index(verb_form)
+            index_letter =  self.letter.from_word(verb_form)
         else:
             index_letter = None
 

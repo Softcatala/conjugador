@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 #
 # Copyright (c) 2019 Jordi Mas i Hernandez <jmas@softcatala.org>
@@ -18,20 +17,29 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-import cgi
-from abc import ABC
+class FirstLetter(object):
 
-class SearchBase(ABC):
+    def __init__(self):
+        self.valid_letters = list(map(chr, range(97, 123)))
 
-    def __init__(self, word):
-        self._word = word
+    def from_word(self, word):
+        s = ''
+        if word is None or len(word) == 0:
+            return s
 
-    @property
-    def word(self):
-        return self._word
+        s = word[0].lower()
+        mapping = { u'à' : u'a',
+                    u'è' : u'e',
+                    u'é' : u'e',
+                    u'í' : u'i',
+                    u'ó' : u'o',
+                    u'ò' : u'o',
+                    u'ú' : u'u'}
 
-    def _get_result(self, result, key):
-        if key in result:
-            return cgi.escape(result[key])
+        if s in mapping:
+            s = mapping[s]
 
-        return None
+        return s
+
+    def get_letters(self):
+        return self.valid_letters

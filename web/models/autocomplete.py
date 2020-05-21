@@ -22,10 +22,25 @@ from whoosh.index import open_dir
 from whoosh.qparser import MultifieldParser
 import json
 from searchbase import SearchBase
+from firstletter import FirstLetter
+
+def open_indexes():
+    dir_name = "../data/autocomplete_index/"
+
+    idxs = {}
+    for letter in FirstLetter().get_letters():
+        try:
+            dir_name_letter = f'{dir_name}{letter}'
+            ix = open_dir(dir_name_letter)
+            idxs[letter] = ix
+        except:
+            print(f'No index found for {letter}')
+
+    return idxs
 
 
-dir_name = "../data/autocomplete_index/"
-ix = open_dir(dir_name) # static instance reusable across requests
+idxs = open_indexes()
+
 
 class Autocomplete(SearchBase):
 
@@ -34,22 +49,28 @@ class Autocomplete(SearchBase):
         self.searcher = None
         self.query = None
         self.num_results = 0
+        self.letter = FirstLetter()
 
     def get_num_results(self):
         return self.num_results
 
     def get_results(self):
-        if self.searcher is None:
-            self.search()
+        letter = self.letter.from_word(self.word)
 
-        results = self.searcher.search(self.query,
-                                       limit=10,
-                                       sortedby='autocomplete_sorting')
+        if letter not in idxs:
+            results = []
+        else:
+            self._search(letter)
+            results = self.searcher.search(self.query,
+                                           limit=10,
+                                           sortedby='autocomplete_sorting')
 
         self.num_results = len(results)
         return results
 
-    def search(self):
+    def _search(self, letter):
+        ix = idxs[letter]
+
         self.searcher = ix.searcher()
         fields = []
         qs = u' verb_form:({0}*)'.format(self._word)

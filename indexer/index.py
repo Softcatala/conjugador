@@ -50,22 +50,3 @@ class Index(object):
                 return True
 
         return False
-        
-    def _get_first_letter_for_index(self, word_ca):
-        s = ''
-        if word_ca is None:
-            return s
-
-        s = word_ca[0].lower()
-        mapping = { u'à' : u'a',
-                    u'è' : u'e',
-                    u'é' : u'e',
-                    u'í' : u'i',
-                    u'ó' : u'o',
-                    u'ò' : u'o',
-                    u'ú' : u'u'}
-
-        if s in mapping:
-            s = mapping[s]
-
-        return s
