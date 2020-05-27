@@ -38,10 +38,7 @@ def _get_lemmas(lines):
 
     lemmas = []
     for line in lines:
-        wordList = re.sub("[^(\w|·)]", " ",  line).split()
-        form = wordList[0]
-        lemma = wordList[1]
-        postag = wordList[2]
+        form, lemma, postag = _get_form_lemma_postag_from_line(line)
 
         if postag not in INFINITIVE_DESCRIPTORS:
             continue
@@ -213,11 +210,7 @@ def _build_dictionary(lines):
     #                   value = form
     main_dict = {}
     for line in lines:
-
-        wordList = re.sub("[^(\w|·)]", " ",  line).split()
-        form = wordList[0]
-        lemma = wordList[1]
-        postag = wordList[2]
+        form, lemma, postag = _get_form_lemma_postag_from_line(line)
 
         if lemma in main_dict:
             lemma_subdict = main_dict[lemma]
@@ -305,9 +298,41 @@ def _serialize_to_file(file_dir, lemma, tenses):
     with open(os.path.join(file_dir, lemma + ".json") ,"w") as file:
         file.write(s)
 
+def _get_form_lemma_postag_from_line(line):
+    wordList = re.sub("[^(\w|·)]", " ",  line).split()
+    form = wordList[0]
+    lemma = wordList[1]
+    postag = wordList[2]
+    return form, lemma, postag
+
+'''
+    La forma en infinitiu "anar" no és una forma auxiliar i no apareix com a infinitiu al diccionari.
+    Com a resultat totes les formes vaja, vam, van queden penjades sense mostrar-se.
+'''
+def _pre_process_anar_auxiliar(lines):
+    lemmas = []
+    for i in range(0, len(lines)):
+        line = lines[i]
+        form, lemma, postag = _get_form_lemma_postag_from_line(line)
+
+        if lemma =='anar' and postag[0:2] == 'VA':
+            line = f'{form} anar_aux {postag}'
+            lines[i] = line
+
+    lines.append("anar anar_aux VAN00000")
+    return lines
+
+def rename_anar_aux_infinitive(lemma):
+    if lemma == 'anar_aux':
+        lemma = 'anar (auxiliar)'
+
+    return lemma
+
 
 def extract_from_dictfile(input_file, output_dir):
     lines = _read_file(input_file)
+    lines = _pre_process_anar_auxiliar(lines)
+
     lemmas = _get_lemmas(lines)
 
     if os.path.exists(output_dir):
@@ -333,6 +358,7 @@ def extract_from_dictfile(input_file, output_dir):
             print(tense)
 
         output_dict.add(lemma)
+        lemma = rename_anar_aux_infinitive(lemma)
         _serialize_to_file(file_dir, lemma, tenses)
 
     return len(output_dict)
