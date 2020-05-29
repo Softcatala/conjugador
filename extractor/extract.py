@@ -314,7 +314,7 @@ def extract_from_dictfile(input_file, output_dir):
         shutil.rmtree(output_dir)
         os.makedirs(output_dir)
 
-    output_dict = {}
+    output_dict = set()
     input_dict = _build_dictionary(lines)
 
     for lemma in lemmas:
@@ -332,7 +332,7 @@ def extract_from_dictfile(input_file, output_dir):
         for tense in tenses:
             print(tense)
 
-        output_dict[lemma] = tenses
+        output_dict.add(lemma)
         _serialize_to_file(file_dir, lemma, tenses)
 
     return len(output_dict)
