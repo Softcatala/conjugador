@@ -325,7 +325,7 @@ def _pre_process_anar_auxiliar(lines):
 def rename_anar_aux_infinitive(lemma, tenses):
     if lemma == 'anar_aux':
 
-        lemma = 'anar (auxiliar)'
+        lemma = 'anar - auxiliar'
         for i in range(0, len(tenses)):
             tense = tenses[i]
             if any(ext in tense.tense for ext in ('Passat perifràstic', 'Infinitiu')):
