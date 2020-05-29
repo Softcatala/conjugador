@@ -322,11 +322,16 @@ def _pre_process_anar_auxiliar(lines):
     lines.append("anar anar_aux VAN00000")
     return lines
 
-def rename_anar_aux_infinitive(lemma):
+def rename_anar_aux_infinitive(lemma, tenses):
     if lemma == 'anar_aux':
-        lemma = 'anar (auxiliar)'
 
-    return lemma
+        lemma = 'anar (auxiliar)'
+        for i in range(0, len(tenses)):
+            tense = tenses[i]
+            if any(ext in tense.tense for ext in ('Passat perifràstic', 'Infinitiu')):
+                tenses[i] = Tense(tense.mode, tense.tense, tense.postag)
+
+    return lemma, tenses
 
 
 def extract_from_dictfile(input_file, output_dir):
@@ -354,11 +359,9 @@ def extract_from_dictfile(input_file, output_dir):
 
         print(lemma)
         tenses = _get_tenses(input_dict, lemma)
-        for tense in tenses:
-            print(tense)
 
         output_dict.add(lemma)
-        lemma = rename_anar_aux_infinitive(lemma)
+        lemma, tenses = rename_anar_aux_infinitive(lemma, tenses)
         _serialize_to_file(file_dir, lemma, tenses)
 
     return len(output_dict)
