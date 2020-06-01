@@ -355,9 +355,7 @@ def extract_from_dictfile(input_file, output_dir):
         file_dir = os.path.join(output_dir, lemma[:2])
         if not os.path.exists(file_dir):
             os.makedirs(file_dir)
-            print(file_dir)
 
-        print(lemma)
         tenses = _get_tenses(input_dict, lemma)
 
         output_dict.add(lemma)
