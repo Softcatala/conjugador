@@ -60,6 +60,7 @@ class IndexCreator(object):
 
             indexed = set()
 
+            infinitive_found = False
             for form in data[infinitive]:
                 sps = ['singular1', 'singular2', 'singular3', 'plural1', 'plural2', 'plural3']
                 for sp in sps:
@@ -72,7 +73,14 @@ class IndexCreator(object):
                         words = [x.strip() for x in word.split('/')]
                         for word in words:
                             is_infinitive = form['tense'] == "Infinitiu"
+                            if is_infinitive:
+                                infinitive_found = True
+
                             self._write_entry(indexed, word, filename, is_infinitive, infinitive, form['mode'], form['tense'])
+
+            # This is the case of anar (auxiliar)
+            if infinitive_found is False:
+                self._write_entry(indexed, infinitive, filename, True, infinitive, 'Formes no personals', 'Infinitiu')
                    
         return len(indexed)
 
