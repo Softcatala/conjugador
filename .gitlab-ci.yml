@@ -1,0 +1,32 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+
+stages:
+  - test
+  - build
+
+test:
+  image: python:3.7.6-slim-buster
+  before_script:
+    - pip install nose
+  stage: test
+  script:
+    - pip install -r requirements.txt
+    - cd extractor && nosetests --with-coverage --cover-package=extracto
+
+build:
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker info
+    - export DATETAG=$(date +%Y%m%d-%H%M%S)
+  stage: build
+  script:
+    - docker build -f docker/dockerfile --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:$DATETAG --tag $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+
+
+
