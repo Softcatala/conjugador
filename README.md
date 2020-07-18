@@ -1,5 +1,5 @@
 
-# How it works
+# How it works:
 
 1. extract.py reads diccionari file and extracts the verbs in JSON format (into data/jsons)
 2. index_creation.py reads the jsons and creates a Whoosh index (into data/indexdir)
