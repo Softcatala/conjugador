@@ -5,6 +5,12 @@
 2. index_creation.py reads the jsons and creates a Whoosh index (into data/indexdir)
 3. Flash application at web/ serves the content
 
+#  Git clone
+
+To clone the repository and its submodules use:
+
+``git clone --recurse-submodules git@github.com:Softcatala/conjugador.git``
+
 #  Docker
 
 To create Docker image, from the <em>docker</em> subdirectory type:
@@ -29,4 +35,3 @@ version 2.1 of the License, or (at your option) any later version.
 
 Contact Jordi Mas <jmas@softcatala.org>
 
-Softcatala.
