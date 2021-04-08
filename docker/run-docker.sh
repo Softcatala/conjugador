@@ -1,1 +1,1 @@
-docker run -p 8503:8000 -i -t conjugador
+docker run -p 8000:8000 -i -t conjugador
