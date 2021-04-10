@@ -25,8 +25,7 @@ build:
     - export DATETAG=$(date +%Y%m%d-%H%M%S)
   stage: build
   script:
-    - docker build -f docker/dockerfile --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:$DATETAG --tag $CI_REGISTRY_IMAGE:latest .
+    - docker build -f docker/dockerfile --cache-from $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:$DATETAG --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-    - docker push $CI_REGISTRY_IMAGE:latest
-
-
+    - docker push $CI_REGISTRY_IMAGE:$DATETAG
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
