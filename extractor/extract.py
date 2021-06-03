@@ -23,7 +23,7 @@ import json
 import datetime
 import os
 import shutil
- 
+from optparse import OptionParser
 from forms import Tense
 from forms import Form
 
@@ -305,6 +305,11 @@ def _get_form_lemma_postag_from_line(line):
     postag = wordList[2]
     return form, lemma, postag
 
+def _load_definitions(definitions_file):
+    with open(definitions_file) as json_file:
+        data = json.load(json_file)
+        return data
+
 '''
     La forma en infinitiu "anar" no és una forma auxiliar i no apareix com a infinitiu al diccionari.
     Com a resultat totes les formes vaja, vam, van queden penjades sense mostrar-se.
@@ -333,8 +338,21 @@ def rename_anar_aux_infinitive(lemma, tenses):
 
     return lemma, tenses
 
+def _set_definition(lemma, tenses, definitions):
+    defintion = {}
+    if lemma in definitions:
+        defintion["definition"] = definitions[lemma]
+    else:
+        defintion["definition_url"] = f"https://dlc.iec.cat/results.asp?txtEntrada={lemma}"
 
-def extract_from_dictfile(input_file, output_dir):
+    defintion["definition_credits"] = "La descripció del verb prové de Viccionari amb " \
+    "<a https://creativecommons.org/licenses/by-sa/3.0/deed.ca>Llicència de Creative Commons Reconeixement/Compartir-Igual.</a>. " \
+    f"Podeu millorar aquesta descripció fent clic a <a href='https://ca.wiktionary.org/wiki/{lemma}'>{lemma}</a>."
+
+    tenses.insert(0, defintion)
+
+
+def extract_from_dictfile(input_file, definitions_file, output_dir):
     lines = _read_file(input_file)
     lines = _pre_process_anar_auxiliar(lines)
 
@@ -347,11 +365,12 @@ def extract_from_dictfile(input_file, output_dir):
     output_dict = set()
     input_dict = _build_dictionary(lines)
 
+    definitions = _load_definitions(definitions_file)
+
     for lemma in lemmas:
 
         #if infinitive != 'cantar':
         #    continue
-
         file_dir = os.path.join(output_dir, lemma[:2])
         if not os.path.exists(file_dir):
             os.makedirs(file_dir)
@@ -360,21 +379,61 @@ def extract_from_dictfile(input_file, output_dir):
 
         output_dict.add(lemma)
         lemma, tenses = rename_anar_aux_infinitive(lemma, tenses)
+
+        _set_definition(lemma, tenses, definitions)
         _serialize_to_file(file_dir, lemma, tenses)
 
     return len(output_dict)
 
+
+def extract_infinitives(input_file, output_file):
+
+    file_dir = os.path.dirname(output_file)
+    if not os.path.exists(file_dir):
+        os.makedirs(file_dir)
+
+    lines = _read_file(input_file)
+    lines = _pre_process_anar_auxiliar(lines)
+    lemmas = _get_lemmas(lines)
+
+    with open(output_file, "w") as f_infinitives:
+        f_infinitives.writelines(["%s\n" % item  for item in lemmas])
+
+    return len(lemmas)
+
+def read_parameters():
+    parser = OptionParser()
+
+    parser.add_option(
+        '-i',
+        '--infinitives-only',
+        action='store_true',
+        dest='infinitives_only',
+        default=False,
+        help='Extract infinitives only'
+    )
+    (options, args) = parser.parse_args()
+    return options.infinitives_only
+
 def main():
+
+    infinitives_only = read_parameters()
 
     input_file = 'catalan-dict-tools/resultats/lt/diccionari.txt'
     output_dir = 'data/jsons/'
+    infinitives_file = 'data/infinitives.txt'
+    definitions_file = 'data/definitions.json'
 
     start_time = datetime.datetime.now()
 
-    print("Read a dictionary file and extracts the verbs into json files")
-    print("Input file: {0}, output dir: {1}".format(input_file, output_dir))
+    print("Read a dictionary file and extracts the verbs")
 
-    num_verbs = extract_from_dictfile(input_file, output_dir)
+    if infinitives_only:
+        print("Input file: {0}, output dir: {1}".format(input_file, infinitives_file))
+        num_verbs = extract_infinitives(input_file, infinitives_file)
+    else:
+        print("Input file: {0}, output dir: {1}".format(input_file, output_dir))
+        num_verbs = extract_from_dictfile(input_file, definitions_file, output_dir)
 
     print("Number of verbs {0}".format(num_verbs))
     s = 'Time used for generation: {0}'.format(datetime.datetime.now() - start_time)

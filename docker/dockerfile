@@ -1,5 +1,6 @@
 FROM python:3.8.6-slim-buster as generate_data
 
+RUN apt-get update && apt-get install bzip2
 RUN mkdir -p /srv
 COPY requirements.txt /srv/
 RUN mkdir -p /srv/indexer
@@ -7,6 +8,9 @@ COPY indexer/*.py /srv/indexer/
 RUN mkdir -p /srv/extractor
 COPY extractor/*.py /srv/extractor/
 RUN mkdir -p /srv/data/logs
+COPY definitions/*.py /srv/definitions/
+COPY definitions/*.bz2 /srv/definitions/
+RUN bzip2 -cdk /srv/definitions/cawiktionary-20210503-pages-meta-current.xml.bz2 > /srv/definitions/cawiktionary-pages-meta-current.xml
 
 RUN mkdir -p /srv/catalan-dict-tools/
 COPY catalan-dict-tools/ /srv/catalan-dict-tools/
@@ -14,6 +18,8 @@ COPY catalan-dict-tools/ /srv/catalan-dict-tools/
 # Generate data set
 WORKDIR /srv
 RUN pip install -r requirements.txt
+RUN ./extractor/extract.py -i
+RUN ./definitions/extract-to-json.py
 RUN ./extractor/extract.py
 RUN ./indexer/index_creation.py
 

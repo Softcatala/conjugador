@@ -62,6 +62,9 @@ class IndexCreator(object):
 
             infinitive_found = False
             for form in data[infinitive]:
+                if 'word' not in form:
+                    continue
+
                 sps = ['singular1', 'singular2', 'singular3', 'plural1', 'plural2', 'plural3']
                 for sp in sps:
                     for conjugacio in form[sp]:

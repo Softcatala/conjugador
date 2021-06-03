@@ -48,7 +48,7 @@ class TestExtractor(unittest.TestCase):
             filename, output_file, signature = line.split(',')
             filename = "test/data/" + filename
 
-            extract_from_dictfile(filename, output_dir)
+            extract_from_dictfile(filename, 'test/data/definitions.json', output_dir)
             signature_file = self._hash_file(output_dir + output_file)
             self.assertEquals(signature, signature_file)
             executed = executed + 1

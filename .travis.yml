@@ -5,7 +5,7 @@ before_install:
 install:
   pip install -r requirements.txt
 script:
-  - cd extractor
-  - nosetests --with-coverage --cover-package=extractor
+    - cd extractor && nosetests
+    - cd ../definitions && nosetests
 after_success:
   coveralls
