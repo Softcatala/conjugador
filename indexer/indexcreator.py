@@ -62,7 +62,7 @@ class IndexCreator(object):
 
             infinitive_found = False
             for form in data[infinitive]:
-                if 'word' not in form:
+                if 'definition_credits' in form:
                     continue
 
                 sps = ['singular1', 'singular2', 'singular3', 'plural1', 'plural2', 'plural3']
