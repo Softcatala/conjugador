@@ -342,12 +342,13 @@ def _set_definition(lemma, tenses, definitions):
     defintion = {}
     if lemma in definitions:
         defintion["definition"] = definitions[lemma]
+        defintion["definition_credits"] = "La descripció del verb prové de Viccionari amb " \
+        "<a https://creativecommons.org/licenses/by-sa/3.0/deed.ca>Llicència de Creative Commons Reconeixement/Compartir-Igual.</a>. " \
+        f"Podeu millorar aquesta descripció fent clic a <a href='https://ca.wiktionary.org/wiki/{lemma}'>{lemma}</a>."
     else:
         defintion["definition_url"] = f"https://dlc.iec.cat/results.asp?txtEntrada={lemma}"
-
-    defintion["definition_credits"] = "La descripció del verb prové de Viccionari amb " \
-    "<a https://creativecommons.org/licenses/by-sa/3.0/deed.ca>Llicència de Creative Commons Reconeixement/Compartir-Igual.</a>. " \
-    f"Podeu millorar aquesta descripció fent clic a <a href='https://ca.wiktionary.org/wiki/{lemma}'>{lemma}</a>."
+        defintion["definition_credits"] = "Aquest verb no existeix al Viccionari que és la font que usem per les definicions. " \
+        f"Podeu crear-la fent clic a <a href='https://ca.wiktionary.org/wiki/{lemma}'>{lemma}</a>."
 
     tenses.insert(0, defintion)
 
