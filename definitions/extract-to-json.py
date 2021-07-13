@@ -33,12 +33,12 @@ def init_logging():
 
 def main():
 
-    print("Reads a Wikidictionary XML dump and extracts verbs and its translations")
+    print("Reads a Wikidictionary XML dump and extracts verbs defintions")
     init_logging()
     start_time = datetime.datetime.now()
 
     definitions = Definitions()
-    definitions.generate('definitions/cawiktionary-pages-meta-current.xml')
+    definitions.generate('definitions/cawiktionary-latest-pages-meta-current.xml')
 
     msg = 'Time {0}'.format(datetime.datetime.now() - start_time)
     logging.info(msg)
