@@ -81,7 +81,55 @@ class TextExtract:
 
     # <ref name="diec"></ref><ref name="grec"></ref><ref name="dcvb"></ref>
     def _remove_xml_tags(self, line):
-        return re.sub('<[^>]*>', '', line)  
+        return re.sub('<[^>]*>', '', line)
+
+    def _convert_to_html(self, line, open_ol, open_dl):
+        line, open_ol = self._html_to_ol(line, open_ol)
+        line, open_dl = self._html_to_dl(line, open_dl)
+        return line, open_ol, open_dl
+
+    def _html_to_ol(self, line, open_ol):
+        html = line.strip()
+        if len(html) > 1 and html[0] == "#" and html[1] != ":":
+
+            text = html[1:].strip()
+            if len(text) == 0:
+                return '', False
+
+            new_line = ''
+
+            if open_ol is False:
+                new_line = '<ol>'
+                open_ol = True
+
+            new_line += f"<li>{text}</li>"
+            return new_line, open_ol
+        elif open_ol is True and html[0:2] != "#:":
+            return '</ol>' +  line, False
+
+        return line, open_ol
+
+
+    def _html_to_dl(self, line, open_dl):
+        html = line.strip()
+        if len(html) > 1 and html[0:2] == "#:":
+
+            text = html[2:].strip()
+            if len(text) == 0:
+                return '', False
+
+            new_line = ''
+
+            if open_dl is False:
+                new_line = '<dl>'
+                open_dl = True
+
+            new_line += f"<dd>{text}</dd>"
+            return new_line, open_dl
+        elif open_dl is True:
+            return '</dl>' +  line, False
+
+        return line, False
 
     def GetDescription(self):
         verb = ''
@@ -104,6 +152,8 @@ class TextExtract:
         s = self.text[start:end]
         buf = StringIO(s)
 
+        open_ol = False
+        open_dl = False
         while True:
             s = buf.readline()
             if len(s) == 0:
@@ -117,6 +167,7 @@ class TextExtract:
             s = self._remove_intenal_links(s)
             s = self._remove_mediawiki_markup(s)
             s = self._remove_xml_tags(s)
+            s, open_ol, open_dl = self._convert_to_html(s, open_ol, open_dl)
 
             if re.search('[a-zA-Z]', s) is None:
                 logging.debug("Discard:" + s)

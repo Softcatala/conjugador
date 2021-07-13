@@ -1,19 +1,15 @@
 acretar
-# Incorporar matèria, un objecte massiu, per l'acció conjunta de la força gravitatòria que exerceix aquest objecte i la dissipació i la pèrdua de l'energia orbital de la matèria incorporada.
-#  Agregar-se gradualment, la matèria, especialment partícules petites de pols i gel que xoquen entre si.
+<ol><li>Incorporar matèria, un objecte massiu, per l'acció conjunta de la força gravitatòria que exerceix aquest objecte i la dissipació i la pèrdua de l'energia orbital de la matèria incorporada.</li><li>Agregar-se gradualment, la matèria, especialment partícules petites de pols i gel que xoquen entre si.</li></ol>
 
 empoderar
-#  Dotar, adquirir empoderament.
+<ol><li>Dotar, adquirir empoderament.</li></ol>
 
 espatarrar
-# Meravellar molt.
+<ol><li>Meravellar molt.</li></ol>
 
 garrejar
-#  llaurar
-#  espeternegar
+<ol><li>llaurar</li><li>espeternegar</li></ol>
 
 putejar
-#  Emprenyar, fer la guitza, fotre.
-#  Exercir la prostitució, ésser de la vida.
-#  Bagassejar, fer de persona putanera.
+<ol><li>Emprenyar, fer la guitza, fotre.</li><li>Exercir la prostitució, ésser de la vida.</li><li>Bagassejar, fer de persona putanera.</li></ol>
 
