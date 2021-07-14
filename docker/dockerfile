@@ -10,7 +10,7 @@ COPY extractor/*.py /srv/extractor/
 RUN mkdir -p /srv/data/logs
 COPY definitions/*.py /srv/definitions/
 COPY definitions/*.bz2 /srv/definitions/
-RUN bzip2 -cdk /srv/definitions/cawiktionary-20210503-pages-meta-current.xml.bz2 > /srv/definitions/cawiktionary-pages-meta-current.xml
+RUN bzip2 -cdk /srv/definitions/cawiktionary-latest-pages-meta-current.xml.bz2 > /srv/definitions/cawiktionary-latest-pages-meta-current.xml
 
 RUN mkdir -p /srv/catalan-dict-tools/
 COPY catalan-dict-tools/ /srv/catalan-dict-tools/
