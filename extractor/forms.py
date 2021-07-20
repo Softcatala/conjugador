@@ -19,9 +19,11 @@
 # Boston, MA 02111-1307, USA.
 
 class Form:
-    def __init__(self, word, variant, prefix=""):
+    def __init__(self, word, variant, prefix="", diacritic = False):
         self.word = prefix + word
         self.variant = variant
+        if diacritic == True:
+            self.diacritic = diacritic
 
     def __str__(self):
         return "{0} - {1} ".format(self.word, self.variant)

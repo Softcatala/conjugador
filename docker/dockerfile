@@ -7,6 +7,7 @@ RUN mkdir -p /srv/indexer
 COPY indexer/*.py /srv/indexer/
 RUN mkdir -p /srv/extractor
 COPY extractor/*.py /srv/extractor/
+COPY extractor/replace_diacritics_iec.txt /srv/extractor/
 RUN mkdir -p /srv/data/logs
 COPY definitions/*.py /srv/definitions/
 COPY definitions/*.bz2 /srv/definitions/

@@ -24,9 +24,12 @@ import datetime
 import os
 import shutil
 from optparse import OptionParser
-from forms import Tense
-from forms import Form
+from forms import Tense, Form
+from diacritics import Diacritics
 
+DIACRITIC_POSTAG = "D"
+
+diacritics = Diacritics()
 
 def _read_file(input_file):
     with open(input_file) as f:
@@ -62,8 +65,13 @@ def _get_forms_with_variant(lemma_subdict, postag, prefix=''):
     for variant in variants:
         word = lemma_subdict.get(postag + variant);
         if word is not None:
-            result.append(Form(word, variant, prefix))
+            result.append(Form(word, variant, prefix, False))
 
+        new_postag = postag + variant + DIACRITIC_POSTAG
+        word = lemma_subdict.get(new_postag)
+        if word is not None:
+            result.append(Form(word, variant, prefix, True))
+ 
     return result
 
 def _get_verb_mode(postag):
@@ -220,9 +228,14 @@ def _build_dictionary(lines):
         if postag not in lemma_subdict:
             lemma_subdict[postag] = form
         else:
-            new_form = lemma_subdict[postag]
-            new_form += " / " + form
-            lemma_subdict[postag] = new_form
+            diacritic = diacritics.has_word_diacritic(form)
+            if diacritic:
+                new_postag = postag + DIACRITIC_POSTAG
+                lemma_subdict[new_postag] = form
+            else:
+                new_form = lemma_subdict[postag]
+                new_form += " / " + form
+                lemma_subdict[postag] = new_form
 
         main_dict[lemma] = lemma_subdict;
 
@@ -419,6 +432,8 @@ def read_parameters():
 def main():
 
     infinitives_only = read_parameters()
+
+    diacritics.load_diacritics()
 
     input_file = 'catalan-dict-tools/resultats/lt/diccionari.txt'
     output_dir = 'data/jsons/'
