@@ -87,7 +87,7 @@ class IndexCreator(object):
                    
         return len(indexed)
 
-    def save_index(self):
+    def _save_index(self):
         self.search.save()
         self.autocomplete.save()
         self.indexletter.save()
@@ -99,5 +99,6 @@ class IndexCreator(object):
         for filename in files:
             indexed += self._process_file(filename)
 
-        print("Processed {0} files, indexed {1} variants, index letters {2}".
-              format(len(files), indexed, self.indexletter.entries))
+        self._save_index()
+        print("Processed {0} files, indexed {1} variants, indexed letters {2}, indexed autocomplete entries {3}".
+              format(len(files), indexed, self.indexletter.entries, self.autocomplete.doc_count()))

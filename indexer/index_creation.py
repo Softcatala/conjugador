@@ -32,8 +32,6 @@ def main():
     indexCreator = IndexCreator("data/jsons/")
     indexCreator.create()
     indexCreator.process_files()
-    indexCreator.save_index()
-
     print("Time used to create the index: {0} ".format(datetime.datetime.now() - start_time))
 
 

@@ -29,6 +29,8 @@ class Autocomplete(Index):
         self.dir_name = "data/autocomplete_index/"
         self.writers = {}
         self.letter = FirstLetter()
+        self.ixs = set()
+        self.duplicates = set()
 
     def create(self):
         return
@@ -41,7 +43,15 @@ class Autocomplete(Index):
         dir_name = f'{self.dir_name}{letter}/'
         self._create_dir(dir_name)
         ix = create_in(dir_name, schema)
+        self.ixs.add(ix)
         return ix.writer()
+
+    def doc_count(self):
+        count = 0
+        for ix in self.ixs:
+            count += ix.doc_count()
+
+        return count
 
 
     def write_entry(self, verb_form, file_path, is_infinitive, infinitive, mode, tense):
@@ -60,6 +70,11 @@ class Autocomplete(Index):
             self.writers[letter] = writer
     
         autocomplete_sorting = self._get_autocomple_sorting_key(verb_form, is_infinitive, infinitive)
+
+        if autocomplete_sorting in self.duplicates:
+            return
+
+        self.duplicates.add(autocomplete_sorting)
 
         writer.add_document(verb_form = verb_form,
                                  infinitive = infinitive,
