@@ -79,9 +79,13 @@ class TextExtract:
         final = line[:start] + line[end:len(line)]
         return self._remove_templates(final)
 
-    # <ref name="diec"></ref><ref name="grec"></ref><ref name="dcvb"></ref>
+    # Remove html tags and remove '<ref>' by ' <i>'
     def _remove_xml_tags(self, line):
-        return re.sub('<[^>]*>', '', line)
+        line = re.sub(r'(<ref>)(.*)(</ref>)', r' {I}\2{/I}', line)
+        line = re.sub(r'<[^>]*>', '', line)
+        line = re.sub(r'{I}', r'<i>', line)
+        line = re.sub(r'{/I}', r'</i>', line)
+        return line
 
     def _convert_to_html(self, line, open_ol, open_dl):
         line, open_ol = self._html_to_ol(line, open_ol)

@@ -75,5 +75,22 @@ class TestTextExtract(unittest.TestCase):
         self.assertEquals("</dl><li>Llançar la pilota de manera que es desplaci arran de paret.</li>", htmls[5])
         self.assertEquals("</ol>", htmls[6])
 
+    def test_remove_xml_tags_tags(self):
+        line = '''Perjudicar la parença d'algú. <i>És un vestit que la desparença molt</i>.'''
+
+        textExtract = TextExtract(line)
+        text = textExtract._remove_xml_tags(line)
+
+        self.assertEquals("Perjudicar la parença d'algú. És un vestit que la desparença molt.", text)
+
+    def test_remove_xml_tags_href(self):
+        line = '''Pantalons de rodamón lligats amb un cordill.<ref>Barbara Kingsolver, 2010</ref>'''
+
+        textExtract = TextExtract(line)
+        text = textExtract._remove_xml_tags(line)
+
+        self.assertEquals("Pantalons de rodamón lligats amb un cordill. <i>Barbara Kingsolver, 2010</i>", text)
+
+
 if __name__ == '__main__':
     unittest.main()
