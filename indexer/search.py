@@ -34,7 +34,7 @@ class Search(Index):
 
     def create(self):
         analyzer_no_diatritics = self.analyzer | CharsetFilter(accent_map)
-        schema = Schema(verb_form=TEXT(stored=True, sortable=True, analyzer=self.analyzer),
+        schema = Schema(verb_form=TEXT(sortable=True, analyzer=self.analyzer),
                         verb_form_no_diacritics=TEXT(analyzer=analyzer_no_diatritics),
                         index_letter=TEXT(sortable=True, analyzer=self.analyzer),
                         file_path=TEXT(stored=True, sortable=True))
