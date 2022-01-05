@@ -18,10 +18,8 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from flask import Flask, request, Response
+from flask import Flask, Response
 import sys
-import json
-from jinja2 import Environment, FileSystemLoader
 
 sys.path.append('models/')
 from search import Search
