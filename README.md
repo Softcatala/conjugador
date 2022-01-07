@@ -13,9 +13,9 @@ To clone the repository and its submodules use:
 
 #  Docker
 
-To create Docker image, from the <em>docker</em> subdirectory type:
+To create Docker image, from the <em>root</em> directory type:
 
-``docker build -t conjugador ../ -f dockerfile``
+``docker build . -t conjugador -f docker/dockerfile``
 
 Simple execution of the Docker image:
 
