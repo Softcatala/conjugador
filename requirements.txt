@@ -1,4 +1,4 @@
-itsdangerous==2.0.1
+#itsdangerous==2.0.1
 Whoosh==2.7.4
-flask==1.1.2
+flask==2.0.3
 pyuca==1.2
