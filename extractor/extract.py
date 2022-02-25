@@ -312,7 +312,7 @@ def _serialize_to_file(file_dir, lemma, tenses):
         file.write(s)
 
 def _get_form_lemma_postag_from_line(line):
-    wordList = re.sub("[^(\w|·)]", " ",  line).split()
+    wordList = re.sub("[^(\w|·|\-)]", " ",  line).split()
     form = wordList[0]
     lemma = wordList[1]
     postag = wordList[2]
