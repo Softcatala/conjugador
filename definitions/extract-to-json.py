@@ -33,7 +33,7 @@ def init_logging():
 
 def main():
 
-    print("Reads a Wikidictionary XML dump and extracts verbs defintions")
+    print("Reads a Wikidictionary XML dump and extracts verbs definitions")
     init_logging()
     start_time = datetime.datetime.now()
 
