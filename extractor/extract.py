@@ -26,29 +26,11 @@ import shutil
 from optparse import OptionParser
 from forms import Tense, Form
 from diacritics import Diacritics
+from dictionaryfile import DictionaryFile
 
 DIACRITIC_POSTAG = "D"
 
 diacritics = Diacritics()
-
-def _read_file(input_file):
-    with open(input_file) as f:
-        return f.readlines()
-
-def _get_lemmas(lines):
-
-    INFINITIVE_DESCRIPTORS = set(['VMN00000', 'VAN00000', 'VSN00000'])
-
-    lemmas = []
-    for line in lines:
-        form, lemma, postag = _get_form_lemma_postag_from_line(line)
-
-        if postag not in INFINITIVE_DESCRIPTORS:
-            continue
-
-        lemmas.append(lemma)
-
-    return lemmas
 
 def _get_forms_with_variant(lemma_subdict, postag, prefix=''):
 
@@ -204,15 +186,14 @@ def _set_plusquamperfet_subjuntiu(tense, lemma_subdict):
     tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haguessin (hagueren) ")
 
 
-def _build_dictionary(lines):
+def _build_dictionary(dictionary_file):
 
     #key = lemma (infinitive)
     #           value dict {}
     #                   key = postag
     #                   value = form
     main_dict = {}
-    for line in lines:
-        form, lemma, postag = _get_form_lemma_postag_from_line(line)
+    for form, lemma, postag in dictionary_file.get_form_lemma_postag():
 
         if lemma in main_dict:
             lemma_subdict = main_dict[lemma]
@@ -304,33 +285,10 @@ def _serialize_to_file(file_dir, lemma, tenses):
     with open(os.path.join(file_dir, lemma + ".json") ,"w") as file:
         file.write(s)
 
-def _get_form_lemma_postag_from_line(line):
-    wordList = re.sub("[^(\w|·|\-)]", " ",  line).split()
-    form = wordList[0]
-    lemma = wordList[1]
-    postag = wordList[2]
-    return form, lemma, postag
-
 def _load_definitions(definitions_file):
     with open(definitions_file) as json_file:
         data = json.load(json_file)
         return data
-
-'''
-    La forma en infinitiu "anar" no és una forma auxiliar i no apareix com a infinitiu al diccionari.
-    Com a resultat totes les formes vaja, vam, van queden penjades sense mostrar-se.
-'''
-def _pre_process_anar_auxiliar(lines):
-    for i in range(0, len(lines)):
-        line = lines[i]
-        form, lemma, postag = _get_form_lemma_postag_from_line(line)
-
-        if lemma =='anar' and postag[0:2] == 'VA':
-            line = f'{form} anar_aux {postag}'
-            lines[i] = line
-
-    lines.append("anar anar_aux VAN00000")
-    return lines
 
 def rename_anar_aux_infinitive(lemma, tenses):
     if lemma == 'anar_aux':
@@ -359,17 +317,15 @@ def _set_definition(lemma, tenses, definitions):
 
 
 def extract_from_dictfile(input_file, definitions_file, output_dir):
-    lines = _read_file(input_file)
-    lines = _pre_process_anar_auxiliar(lines)
-
-    lemmas = _get_lemmas(lines)
+    dictionary = DictionaryFile(input_file)
+    lemmas = dictionary.get_lemmas_for_infinitives()
 
     if os.path.exists(output_dir):
         shutil.rmtree(output_dir)
         os.makedirs(output_dir)
 
     output_dict = set()
-    input_dict = _build_dictionary(lines)
+    input_dict = _build_dictionary(dictionary)
 
     definitions = _load_definitions(definitions_file)
 
@@ -398,9 +354,8 @@ def extract_infinitives(input_file, output_file):
     if not os.path.exists(file_dir):
         os.makedirs(file_dir)
 
-    lines = _read_file(input_file)
-    lines = _pre_process_anar_auxiliar(lines)
-    lemmas = _get_lemmas(lines)
+    dictionary = DictionaryFile(input_file)
+    lemmas = dictionary.get_lemmas_for_infinitives()
 
     with open(output_file, "w") as f_infinitives:
         f_infinitives.writelines(["%s\n" % item  for item in lemmas])
