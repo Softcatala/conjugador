@@ -50,12 +50,6 @@ def _get_lemmas(lines):
 
     return lemmas
 
-def _add_separator(result):
-    if len(result) > 0:
-        result += " - "
-
-    return result
-
 def _get_forms_with_variant(lemma_subdict, postag, prefix=''):
 
     result = []
@@ -63,7 +57,7 @@ def _get_forms_with_variant(lemma_subdict, postag, prefix=''):
     variants = ["0", "1", "2", "3", "4", "5", "6", "7", "C", "X", "Y", "Z", "V", "B"]
 
     for variant in variants:
-        word = lemma_subdict.get(postag + variant);
+        word = lemma_subdict.get(postag + variant)
         if word is not None:
             result.append(Form(word, variant, prefix, False))
 
@@ -327,7 +321,6 @@ def _load_definitions(definitions_file):
     Com a resultat totes les formes vaja, vam, van queden penjades sense mostrar-se.
 '''
 def _pre_process_anar_auxiliar(lines):
-    lemmas = []
     for i in range(0, len(lines)):
         line = lines[i]
         form, lemma, postag = _get_form_lemma_postag_from_line(line)
