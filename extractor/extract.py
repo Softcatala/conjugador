@@ -225,17 +225,16 @@ def _build_dictionary(lines):
         else:
             lemma_subdict = {}
 
+        diacritic = diacritics.has_word_diacritic(form)
+        if diacritic:
+            postag = postag + DIACRITIC_POSTAG
+
         if postag not in lemma_subdict:
             lemma_subdict[postag] = form
         else:
-            diacritic = diacritics.has_word_diacritic(form)
-            if diacritic:
-                new_postag = postag + DIACRITIC_POSTAG
-                lemma_subdict[new_postag] = form
-            else:
-                new_form = lemma_subdict[postag]
-                new_form += " / " + form
-                lemma_subdict[postag] = new_form
+            new_form = lemma_subdict[postag]
+            new_form += " / " + form
+            lemma_subdict[postag] = new_form
 
         main_dict[lemma] = lemma_subdict;
 
