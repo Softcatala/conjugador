@@ -38,6 +38,7 @@ class Autocomplete(Index):
     def _create(self, letter):
         schema = Schema(verb_form=TEXT(stored=True, analyzer=self.analyzer),
                         infinitive=STORED,
+                        url=STORED,
                         autocomplete_sorting=TEXT(sortable=True))
 
         dir_name = f'{self.dir_name}{letter}/'
@@ -54,7 +55,7 @@ class Autocomplete(Index):
         return count
 
 
-    def write_entry(self, verb_form, file_path, is_infinitive, infinitive, mode, tense):
+    def write_entry(self, verb_form, file_path, is_infinitive, infinitive, mode, tense, title):
 
         if self._verbs_to_ignore_in_autocomplete(mode, tense):
             return
@@ -77,7 +78,8 @@ class Autocomplete(Index):
         self.duplicates.add(autocomplete_sorting)
 
         writer.add_document(verb_form = verb_form,
-                                 infinitive = infinitive,
+                                 infinitive = title,
+                                 url = infinitive,
                                  autocomplete_sorting = autocomplete_sorting)
 
     def _get_autocomple_sorting_key(self, verb_form, is_infinitive, infinitive):

@@ -38,17 +38,26 @@ class IndexCreator(object):
         self.indexletter.create()
 
 
-    def _write_entry(self, indexed, verb_form, file_path, is_infinitive, infinitive, mode, tense):
+    def _write_entry(self, indexed, verb_form, file_path, is_infinitive, infinitive, mode, tense, title):
 
-        self.search.write_entry(verb_form, file_path, is_infinitive, infinitive, mode, tense)
-        self.autocomplete.write_entry(verb_form, file_path, is_infinitive, infinitive, mode, tense)
-        self.indexletter.write_entry(verb_form, is_infinitive, infinitive)
+        self.search.write_entry(verb_form, file_path, is_infinitive, infinitive, mode, tense, title)
+        self.autocomplete.write_entry(verb_form, file_path, is_infinitive, infinitive, mode, tense, title)
+        self.indexletter.write_entry(verb_form, is_infinitive, infinitive, title)
 
 #        print(verb_form)
 #        print(mode)
 #        print(tense)
 #        print("---")
         indexed.add(verb_form)
+
+    def _get_title(self, forms):
+        for form in forms:
+            title = form['title']
+            if title:
+                return title
+
+        raise Exception("No title found for the entry")
+
 
     def _process_file(self, filename):
         with open(filename) as json_file:
@@ -59,6 +68,7 @@ class IndexCreator(object):
             #    return 0
 
             indexed = set()
+            title = self._get_title(data[infinitive])
 
             infinitive_found = False
             for form in data[infinitive]:
@@ -79,11 +89,11 @@ class IndexCreator(object):
                             if is_infinitive:
                                 infinitive_found = True
 
-                            self._write_entry(indexed, word, filename, is_infinitive, infinitive, form['mode'], form['tense'])
+                            self._write_entry(indexed, word, filename, is_infinitive, infinitive, form['mode'], form['tense'], title)
 
             # This is the case of anar (auxiliar)
             if infinitive_found is False:
-                self._write_entry(indexed, infinitive, filename, True, infinitive, 'Formes no personals', 'Infinitiu')
+                self._write_entry(indexed, infinitive, filename, True, infinitive, 'Formes no personals', 'Infinitiu', title)
                    
         return len(indexed)
 

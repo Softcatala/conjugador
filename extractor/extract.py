@@ -26,11 +26,14 @@ import shutil
 from optparse import OptionParser
 from forms import Tense, Form
 from diacritics import Diacritics
+from reflexius import Reflexius
 from dictionaryfile import DictionaryFile
 
 DIACRITIC_POSTAG = "D"
+WORDS_SEPARATOR = " / "
 
 diacritics = Diacritics()
+reflexius = Reflexius()
 
 def _get_forms_with_variant(lemma_subdict, postag, prefix=''):
 
@@ -80,6 +83,17 @@ def _set_infinitiu_compost(tense, lemma_subdict):
     if _get_verb_mode(tense.postag) != 'P':
         return
     tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haver ")
+
+def _set_infinitiu(tense, lemma_subdict):
+    _set_plurals_singulars0(tense, lemma_subdict)
+    for form in tense.singular1:
+        words = []
+        for word in form.word.split(WORDS_SEPARATOR):
+            word = reflexius.get_reflexiu(word)
+            words.append(word)
+
+        new_word = WORDS_SEPARATOR.join(words)
+        form.word = new_word
 
 def _set_gerundi_compost(tense, lemma_subdict):
     if _get_verb_mode(tense.postag) != 'P':
@@ -264,7 +278,8 @@ def _get_tenses(input_dict, lemma):
             _set_plurals_singulars(tense, lemma_subdict)
 
         tenses.append(Tense('Formes no personals', 'Infinitiu', 'V' + verb_type + 'N0'))
-        _set_plurals_singulars0(tenses[-1], lemma_subdict)
+        _set_infinitiu(tenses[-1], lemma_subdict)
+
         tenses.append(Tense('Formes no personals', 'Infinitiu compost', 'V' + verb_type + 'P0'))
         _set_infinitiu_compost(tenses[-1], lemma_subdict)
         tenses.append(Tense('Formes no personals', 'Gerundi', 'V' + verb_type + 'G0'))
@@ -313,6 +328,7 @@ def _set_definition(lemma, tenses, definitions):
         defintion["definition_credits"] = "Aquest verb no existeix en el Viccionari, que és la font que usem per a les definicions. " \
         f"Podeu crear-la fent clic en <a href='https://ca.wiktionary.org/wiki/{lemma}'>{lemma}</a>."
 
+    defintion["title"] = reflexius.get_reflexiu(lemma)
     tenses.insert(0, defintion)
 
 
@@ -378,9 +394,12 @@ def read_parameters():
 
 def main():
 
+    print("Read a dictionary file and extracts the verbs")
+
     infinitives_only = read_parameters()
 
     diacritics.load_diacritics()
+    reflexius.load_reflexius()
 
     input_file = 'catalan-dict-tools/resultats/lt/diccionari.txt'
     output_dir = 'data/jsons/'
@@ -388,8 +407,6 @@ def main():
     definitions_file = 'data/definitions.json'
 
     start_time = datetime.datetime.now()
-
-    print("Read a dictionary file and extracts the verbs")
 
     if infinitives_only:
         print("Input file: {0}, output dir: {1}".format(input_file, infinitives_file))

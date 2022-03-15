@@ -43,7 +43,7 @@ class Search(Index):
         ix = create_in(self.dir_name_search, schema)
         self.writer = ix.writer()
 
-    def write_entry(self, verb_form, file_path, is_infinitive, infinitive, mode, tense):
+    def write_entry(self, verb_form, file_path, is_infinitive, infinitive, mode, tense, title):
 
         if self._verbs_to_ignore_in_autocomplete(mode, tense):
             return
@@ -52,6 +52,12 @@ class Search(Index):
             index_letter =  self.letter.from_word(verb_form)
         else:
             index_letter = None
+
+        if verb_form == infinitive and infinitive != title:
+            self.writer.add_document(verb_form = title,
+                                     verb_form_no_diacritics = title,
+                                     file_path = file_path,
+                                     index_letter = index_letter)
 
         self.writer.add_document(verb_form = verb_form,
                                  verb_form_no_diacritics = verb_form,

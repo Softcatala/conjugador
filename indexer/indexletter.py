@@ -40,7 +40,7 @@ class IndexLetter(Index):
         ix = create_in(self.dir_name, schema)
         self.writer = ix.writer()
 
-    def write_entry(self, verb_form, is_infinitive, infinitive):
+    def write_entry(self, verb_form, is_infinitive, infinitive, title):
         if is_infinitive:
             index_letter = self.letter.from_word(verb_form)
         else:
@@ -48,6 +48,9 @@ class IndexLetter(Index):
 
         if index_letter is not None:
             self.entries = self.entries + 1
+            if verb_form == infinitive and infinitive != title:
+                verb_form = title
+
             self.writer.add_document(verb_form = verb_form,
                                      index_letter = index_letter,
                                      infinitive = infinitive)

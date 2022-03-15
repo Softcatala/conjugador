@@ -86,6 +86,7 @@ class Autocomplete(SearchBase):
             verb = {}
             verb['verb_form'] = result['verb_form']
             verb['infinitive'] = result['infinitive']
+            verb['url'] = result['url']
             all_results.append(verb)
 
         return json.dumps(all_results, indent=4, separators=(',', ': ')), status
