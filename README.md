@@ -1,7 +1,11 @@
+# Description
+
+Conjugador is a web application that allows to search and display verbs forms building the
+content from the spelling dictionary.
 
 # How it works
 
-1. extract.py reads diccionari file and extracts the verbs in JSON format (into data/jsons)
+1. extract.py reads diccionary file and extracts the verbs in JSON format (into data/jsons)
 2. index_creation.py reads the jsons and creates a Whoosh index (into data/indexdir)
 3. Flash application at web/ serves the content
 
@@ -28,8 +32,27 @@ Test from the browser:
 
 # License
 
+## Software
+
 GNU Lesser General Public License as published by the Free Software Foundation; either
 version 2.1 of the License, or (at your option) any later version.
+
+## Data
+
+Same license that source projects.
+
+# Maintenance
+
+## Update dictionary
+
+Run:
+
+``git submodule update --remote``
+
+## Update terms' definitions
+
+Download latest version from ``https://dumps.wikimedia.org/cawiktionary/latest/cawiktionary-latest-pages-meta-current.xml.bz2``
+into  the ``/definitions`` subdirectory.
 
 # Contact
 
