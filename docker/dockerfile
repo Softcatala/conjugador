@@ -1,4 +1,4 @@
-FROM python:3.10.2-slim-bullseye as generate_data
+FROM python:3.10.4-slim-bullseye as generate_data
 
 RUN apt-get update && apt-get install bzip2
 RUN mkdir -p /srv
@@ -25,7 +25,7 @@ RUN ./definitions/extract-to-json.py
 RUN ./extractor/extract.py
 RUN ./indexer/index_creation.py
 
-FROM python:3.10.2-slim-bullseye
+FROM python:3.10.4-slim-bullseye
 RUN apt-get update -y && apt-get upgrade -y
 
 COPY requirements.txt /srv/
