@@ -2,3 +2,4 @@
 Whoosh==2.7.4
 flask==2.0.3
 pyuca==1.2
+gunicorn==20.1.0

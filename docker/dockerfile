@@ -36,7 +36,6 @@ COPY web/models/*.py /srv/web/models/
 
 
 COPY --from=generate_data /srv/data /srv/data
-RUN pip install gunicorn
 
 ENTRYPOINT srv/entrypoint.sh
 
