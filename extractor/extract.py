@@ -64,8 +64,8 @@ def _get_forms_with_variant(lemma_subdict, postag, prefix='', is_reflexiu=False)
         if word is not None:
             if is_reflexiu and postag[4:6] in reflex_pronouns:
                 prefix = reflex_pronouns[postag[4:6]]
-                if prefix == 'es' and (word[0] == 's' or word[0:2] in ['ce', 'ci']):
-                   prefix = 'se'                  
+                if prefix == 'es ' and (word[0] == 's' or word[0:2] in ['ce', 'ci']):
+                   prefix = 'se '                  
                 if word[0] in 'aeiouàèéíòóúh':
                     prefix = alt_reflex_pronouns[postag[4:6]] 
             result.append(Form(word, variant, prefix, False))
@@ -421,8 +421,8 @@ def extract_from_dictfile(input_file, definitions_file, output_dir):
 
     for lemma in lemmas:
 
-        if (lemma != 'autoabastir' and lemma != 'colltrencar' and lemma != 'cantar' and lemma != 'halar'):
-            continue
+        #if (lemma != 'autoabastir' and lemma != 'colltrencar' and lemma != 'abstenir' and lemma != 'salinar' and lemma != 'cantar'):
+        #    continue
         file_dir = os.path.join(output_dir, lemma[:2])
         if not os.path.exists(file_dir):
             os.makedirs(file_dir)
