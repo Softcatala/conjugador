@@ -35,20 +35,48 @@ WORDS_SEPARATOR = " / "
 diacritics = Diacritics()
 reflexius = Reflexius()
 
-def _get_forms_with_variant(lemma_subdict, postag, prefix=''):
+def _get_forms_with_variant(lemma_subdict, postag, prefix='', is_reflexiu=False):
 
     result = []
 
     variants = ["0", "1", "2", "3", "4", "5", "6", "7", "C", "X", "Y", "Z", "V", "B"]
-
+    reflex_pronouns = {
+        "1S": "em ",
+        "2S": "et ",
+        "3S": "es ",
+        "1P": "ens ",
+        "2P": "us ",
+        "3P": "es "
+    }
+    alt_reflex_pronouns = {
+        "1S": "m'",
+        "2S": "t'",
+        "3S": "s'",
+        "1P": "ens ",
+        "2P": "us ",
+        "3P": "s'"
+    }
+    
+    
     for variant in variants:
         word = lemma_subdict.get(postag + variant)
+        
         if word is not None:
+            if is_reflexiu and postag[4:6] in reflex_pronouns:
+                prefix = reflex_pronouns[postag[4:6]]
+                if prefix == 'es' and (word[0] == 's' or word[0:2] in ['ce', 'ci']):
+                   prefix = 'se'                  
+                if word[0] in 'aeiouàèéíòóúh':
+                    prefix = alt_reflex_pronouns[postag[4:6]] 
             result.append(Form(word, variant, prefix, False))
 
         new_postag = postag + variant + DIACRITIC_POSTAG
         word = lemma_subdict.get(new_postag)
         if word is not None:
+            if is_reflexiu and postag[4:6] in reflex_pronouns:
+                prefix = reflex_pronouns[postag[4:6]]
+                if word[0] in 'aeiouàèéíòóúh':
+                    prefix = alt_reflex_pronouns[postag[4:6]] 
             result.append(Form(word, variant, prefix, True))
  
     return result
@@ -56,16 +84,17 @@ def _get_forms_with_variant(lemma_subdict, postag, prefix=''):
 def _get_verb_mode(postag):
     return postag[2]
 
-def _set_plurals_singulars(tense, lemma_subdict):
+def _set_plurals_singulars(tense, lemma_subdict, is_reflexiu):
     if _get_verb_mode(tense.postag) not in ['I', 'S', 'M']:
         return
-    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "1S0")
-    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "2S0")
-    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "3S0")
+    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "1S0", '', is_reflexiu)
+    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "2S0", '', is_reflexiu)
+    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "3S0", '', is_reflexiu)
 
-    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "1P0")
-    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "2P0")
-    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "3P0")
+    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "1P0", '', is_reflexiu)
+    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "2P0", '', is_reflexiu)
+    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "3P0",
+     '', is_reflexiu)
 
 def _set_plurals_singulars_participi(tense, lemma_subdict):
     if _get_verb_mode(tense.postag) != 'P':
@@ -76,13 +105,19 @@ def _set_plurals_singulars_participi(tense, lemma_subdict):
     tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0PF")
 
 
-def _set_plurals_singulars0(tense, lemma_subdict):
-    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "000")
+def _set_plurals_singulars0(tense, lemma_subdict, is_reflexiu = False):
+    if is_reflexiu:
+       tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "000", ">-se", is_reflexiu)
+    else:
+       tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "000")
 
-def _set_infinitiu_compost(tense, lemma_subdict):
+def _set_infinitiu_compost(tense, lemma_subdict, is_reflexiu = False):
     if _get_verb_mode(tense.postag) != 'P':
         return
-    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haver ")
+    if is_reflexiu:
+        tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haver-se ")
+    else:
+        tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haver ")
 
 def _set_infinitiu(tense, lemma_subdict):
     _set_plurals_singulars0(tense, lemma_subdict)
@@ -95,109 +130,147 @@ def _set_infinitiu(tense, lemma_subdict):
         new_word = WORDS_SEPARATOR.join(words)
         form.word = new_word
 
-def _set_gerundi_compost(tense, lemma_subdict):
+def _set_gerundi_compost(tense, lemma_subdict, is_reflexiu = False):
     if _get_verb_mode(tense.postag) != 'P':
         return
-    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "havent ")
+    if is_reflexiu:
+        tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "havent-se ")
+    else:
+        tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "havent ")
 
-def _set_perfet_indicatiu(tense, lemma_subdict):
+def _set_perfet_indicatiu(tense, lemma_subdict, is_reflexiu):
     if _get_verb_mode(tense.postag) != 'P':
         return
-    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "he ")
-    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "has ")
-    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "ha ")
+    prefix = ["he ", "has ", "ha ", "hem ", "heu ", "han "]
+    if is_reflexiu:
+        prefix = ["m'he ", "t'has ", "s'ha ", "ens hem ", "us heu ", "s'han "]
+        
+    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[0])
+    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[1])
+    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[2])
 
-    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hem ")
-    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "heu ")
-    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "han ")
+    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[3])
+    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[4])
+    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[5])
 
-def _set_plusquamperfet_indicatiu(tense, lemma_subdict):
+def _set_plusquamperfet_indicatiu(tense, lemma_subdict, is_reflexiu):
     if _get_verb_mode(tense.postag) != 'P':
         return
-    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "havia ")
-    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "havies ")
-    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "havia ")
+    prefix = ["havia ", "havies ", "havia ", "havíem ", "havíeu ", "havien "]
+    if is_reflexiu:
+        prefix = ["m'havia ", "t'havies ", "s'havia ", "ens havíem ", "us havíeu ", "s'havien "]
 
-    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "havíem ")
-    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "havíeu ")
-    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "havien ")
+    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[0])
+    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[1])
+    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[2])
 
-def _set_passatperifrastic_indicatiu(tense, lemma_subdict):
+    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[3])
+    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[4])
+    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[5])
+
+def _set_passatperifrastic_indicatiu(tense, lemma_subdict, is_reflexiu):
     if _get_verb_mode(tense.postag) != 'N':
         return
-    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "000", "vaig ")
-    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "000", "vas (vares) ")
-    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "000", "va ")
+    prefix = ["vaig ", "vas (vares) ", "va ", "vam (vàrem) ", "vau (vàreu) ", "van (varen) "]
+    if is_reflexiu:
+           prefix = ["em vaig ", "em vas (em vares) ", "em va ", "ens vam (ens vàrem) ", "us vau (us vàreu) ", "es van (es varen) "]
+           
+    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "000", prefix[0])
+    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "000", prefix[1])
+    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "000", prefix[2])
 
-    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "000", "vam (vàrem) ")
-    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "000", "vau (vàreu) ")
-    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "000", "van (varen) ")
+    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "000", prefix[3])
+    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "000", prefix[4])
+    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "000", prefix[5])
 
-def _set_passatanterior_indicatiu(tense, lemma_subdict):
+def _set_passatanterior_indicatiu(tense, lemma_subdict, is_reflexiu):
     if _get_verb_mode(tense.postag) != 'P':
         return
-    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haguí ")
-    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagueres ")
-    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagué ")
+    prefix = ["haguí ", "hagueres ", "hagué ", "haguérem ", "haguéreu ", "hagueren "]
+    if is_reflexiu:
+        prefix = ["m'haguí ", "t'hagueres ", "s'hagué ", "ens haguérem ", "us haguéreu ", "s'hagueren "]
+            
+    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[0])
+    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[1])
+    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[2])
 
-    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haguérem ")
-    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haguéreu ")
-    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagueren ")
+    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[3])
+    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[4])
+    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[5])
 
-def _set_passatanteriorperifrastic_indicatiu(tense, lemma_subdict):
+def _set_passatanteriorperifrastic_indicatiu(tense, lemma_subdict, is_reflexiu):
     if _get_verb_mode(tense.postag) != 'P':
         return
-    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "vaig haver ")
-    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "vas haver ")
-    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "va haver ")
+    prefix = ["vaig haver ", "vas haver ", "va haver ", "vam haver ", "vau haver ", "van haver "]
+    if is_reflexiu:
+        prefix = ["em vaig haver ", "et vas haver ", "es va haver ", "ens vam haver ", "us vau haver ", "es van haver "]
+    
+    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[0])
+    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[1])
+    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[2])
 
-    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "vam haver ")
-    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "vau haver ")
-    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "van haver ")
+    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[3])
+    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[4])
+    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[5])
 
-def _set_futurperfet_indicatiu(tense, lemma_subdict):
+def _set_futurperfet_indicatiu(tense, lemma_subdict, is_reflexiu):
     if _get_verb_mode(tense.postag) != 'P':
         return
-    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauré ")
-    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauràs ")
-    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haurà ")
+    prefix = ["hauré ", "hauràs ", "haurà ", "haurem ", "haureu ", "hauran "]
+    if is_reflexiu:
+        prefix = ["m'hauré ", "t'hauràs ", "s'haurà ", "ens haurem ", "us haureu ", "s'hauran "]
 
-    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haurem ")
-    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haureu ")
-    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauran ")
+    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[0])
+    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[1])
+    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[2])
 
-def _set_condicionalperfet_indicatiu(tense, lemma_subdict):
+    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[3])
+    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[4])
+    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[5])
+
+def _set_condicionalperfet_indicatiu(tense, lemma_subdict, is_reflexiu):
     if _get_verb_mode(tense.postag) != 'P':
         return
-    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauria (haguera) ")
-    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauries (hagueres) ")
-    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauria (haguera) ")
+    prefix = ["hauria (haguera) ", "hauries (hagueres) ", "hauria (haguera) ", "hauríem (haguérem) ", "hauríeu (haguéreu) ", "haurien (hagueren)"]
+    if is_reflexiu:
+        prefix = ["m'hauria (m'haguera) ", "t'hauries (t'hagueres) ", "s'hauria (s'haguera) ", "ens hauríem (ens haguérem) ", "us hauríeu (us haguéreu) ", "s'haurien (s'hagueren)"]
+    
+    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[0])
+    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[1])
+    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[2])
 
-    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauríem (haguérem) ")
-    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hauríeu (haguéreu) ")
-    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haurien (hagueren) ")
+    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[3])
+    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[4])
+    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[5])
 
-def _set_perfet_subjuntiu(tense, lemma_subdict):
+def _set_perfet_subjuntiu(tense, lemma_subdict, is_reflexiu):
     if _get_verb_mode(tense.postag) != 'P':
         return
-    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagi (haja) ")
-    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagis (hages) ")
-    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagi (haja) ")
+    prefix = ["hagi (haja)", "hagis (hages)", "hagi (haja)", "hàgim (hàgem)", "hàgiu (hàgeu)", "hagin (hagen)"]
+    if is_reflexiu:
+        prefix = ["m'hagi (m'haja)", "t'hagis (t'hages)", "s'hagi (s'haja)", "ens hàgim (ens hàgem)", "us hàgiu (us hàgeu)", "s'hagin (s'hagen)"]
+    
+    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[0])
+    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[1])
+    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[2])
 
-    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hàgim (hàgem) ")
-    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hàgiu (hàgeu) ")
-    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagin (hagen) ")
+    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[3])
+    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[4])
+    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[5])
 
-def _set_plusquamperfet_subjuntiu(tense, lemma_subdict):
+def _set_plusquamperfet_subjuntiu(tense, lemma_subdict, is_reflexiu):
     if _get_verb_mode(tense.postag) != 'P':
         return
-    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagués (haguera) ")
-    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haguessis (hagueres) ")
-    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "hagués (haguera) ")
+    prefix = ["hagués (haguera) ", "haguessis (hagueres) ", "hagués (haguera) ", "haguéssim (haguérem) ", "haguéssiu (haguéreu) ", "haguessin (hagueren) "]
+    if is_reflexiu:
+        prefix = ["m'hagués (m'haguera) ", "t'haguessis (t'hagueres) ", "s'hagués (s'haguera) ", "ens haguéssim (ens haguérem) ", "us haguéssiu (us haguéreu) ", "s'haguessin (s'hagueren) "]
+    tense.singular1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[0])
+    tense.singular2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[1])
+    tense.singular3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[2])
 
-    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haguéssim (haguérem) ")
-    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haguéssiu (haguéreu) ")
-    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", "haguessin (hagueren) ")
+    tense.plural1 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[3])
+    tense.plural2 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[4])
+    tense.plural3 = _get_forms_with_variant(lemma_subdict, tense.postag + "0SM", prefix[5])
 
 
 def _build_dictionary(dictionary_file):
@@ -232,7 +305,7 @@ def _build_dictionary(dictionary_file):
 
 # Part of speech tags documentation:
 # https://freeling-user-manual.readthedocs.io/en/latest/tagsets/tagset-ca/#part-of-speech-verb
-def _get_tenses(input_dict, lemma):
+def _get_tenses(input_dict, lemma, is_reflexiu):
 
     tenses = []
     verb_types = ['M', 'A', 'S']
@@ -247,45 +320,45 @@ def _get_tenses(input_dict, lemma):
 
         tenses.append(Tense('Indicatiu', 'Present', 'V' + verb_type + 'IP'))
         tenses.append(Tense('Indicatiu', 'Perfet', 'V' + verb_type + 'P0'))
-        _set_perfet_indicatiu(tenses[-1], lemma_subdict)
+        _set_perfet_indicatiu(tenses[-1], lemma_subdict, is_reflexiu)
         tenses.append(Tense('Indicatiu', 'Imperfet', 'V' + verb_type + 'II'))
         tenses.append(Tense('Indicatiu', 'Plusquamperfet', 'V' + verb_type + 'P0'))
-        _set_plusquamperfet_indicatiu(tenses[-1], lemma_subdict)
+        _set_plusquamperfet_indicatiu(tenses[-1], lemma_subdict, is_reflexiu)
         tenses.append(Tense('Indicatiu', 'Passat simple', 'V' + verb_type + 'IS'))
         tenses.append(Tense('Indicatiu', 'Passat perifràstic', 'V' + verb_type + 'N0'))
-        _set_passatperifrastic_indicatiu(tenses[-1], lemma_subdict)
+        _set_passatperifrastic_indicatiu(tenses[-1], lemma_subdict, is_reflexiu)
         tenses.append(Tense('Indicatiu', 'Passat anterior', 'V' + verb_type + 'P0'))
-        _set_passatanterior_indicatiu(tenses[-1], lemma_subdict)
+        _set_passatanterior_indicatiu(tenses[-1], lemma_subdict, is_reflexiu)
         tenses.append(Tense('Indicatiu', 'Passat anterior perifràstic', 'V' + verb_type + 'P0'))
-        _set_passatanteriorperifrastic_indicatiu(tenses[-1], lemma_subdict)
+        _set_passatanteriorperifrastic_indicatiu(tenses[-1], lemma_subdict, is_reflexiu)
         tenses.append(Tense('Indicatiu', 'Futur', 'V' + verb_type + 'IF'))
         tenses.append(Tense('Indicatiu', 'Futur perfet', 'V' + verb_type + 'P0'))
-        _set_futurperfet_indicatiu(tenses[-1], lemma_subdict)
+        _set_futurperfet_indicatiu(tenses[-1], lemma_subdict, is_reflexiu)
         tenses.append(Tense('Indicatiu', 'Condicional', 'V' + verb_type + 'IC'))
         tenses.append(Tense('Indicatiu', 'Condicional perfet', 'V' + verb_type + 'P0'))
-        _set_condicionalperfet_indicatiu(tenses[-1], lemma_subdict)
+        _set_condicionalperfet_indicatiu(tenses[-1], lemma_subdict, is_reflexiu)
 
         tenses.append(Tense('Subjuntiu', 'Present', 'V' + verb_type + 'SP'))
         tenses.append(Tense('Subjuntiu', 'Perfet', 'V' + verb_type + 'P0'))
-        _set_perfet_subjuntiu(tenses[-1], lemma_subdict)
+        _set_perfet_subjuntiu(tenses[-1], lemma_subdict, is_reflexiu)
         tenses.append(Tense('Subjuntiu', 'Imperfet', 'V' + verb_type + 'SI'))
         tenses.append(Tense('Subjuntiu', 'Plusquamperfet', 'V' + verb_type + 'P0'))
-        _set_plusquamperfet_subjuntiu(tenses[-1], lemma_subdict)
+        _set_plusquamperfet_subjuntiu(tenses[-1], lemma_subdict, is_reflexiu)
 
         tenses.append(Tense('Imperatiu', 'Present', 'V' + verb_type + 'M0'))
 
         for tense in tenses:
-            _set_plurals_singulars(tense, lemma_subdict)
+            _set_plurals_singulars(tense, lemma_subdict, is_reflexiu)
 
         tenses.append(Tense('Formes no personals', 'Infinitiu', 'V' + verb_type + 'N0'))
         _set_infinitiu(tenses[-1], lemma_subdict)
-
+        
         tenses.append(Tense('Formes no personals', 'Infinitiu compost', 'V' + verb_type + 'P0'))
-        _set_infinitiu_compost(tenses[-1], lemma_subdict)
+        _set_infinitiu_compost(tenses[-1], lemma_subdict, is_reflexiu)
         tenses.append(Tense('Formes no personals', 'Gerundi', 'V' + verb_type + 'G0'))
-        _set_plurals_singulars0(tenses[-1], lemma_subdict)
+        _set_plurals_singulars0(tenses[-1], lemma_subdict, is_reflexiu)
         tenses.append(Tense('Formes no personals', 'Gerundi compost', 'V' + verb_type + 'P0'))
-        _set_gerundi_compost(tenses[-1], lemma_subdict)
+        _set_gerundi_compost(tenses[-1], lemma_subdict, is_reflexiu)
 
         tenses.append(Tense('Formes no personals', 'Participi', 'V' + verb_type + 'P0'))
         _set_plurals_singulars_participi(tenses[len(tenses) - 1], lemma_subdict)
@@ -348,13 +421,15 @@ def extract_from_dictfile(input_file, definitions_file, output_dir):
 
     for lemma in lemmas:
 
-        #if infinitive != 'cantar':
-        #    continue
+        if (lemma != 'autoabastir' and lemma != 'colltrencar' and lemma != 'cantar' and lemma != 'halar'):
+            continue
         file_dir = os.path.join(output_dir, lemma[:2])
         if not os.path.exists(file_dir):
             os.makedirs(file_dir)
 
-        tenses = _get_tenses(input_dict, lemma)
+        is_reflexiu = reflexius.is_reflexiu(lemma)
+        
+        tenses = _get_tenses(input_dict, lemma, is_reflexiu)
 
         output_dict.add(lemma)
         lemma, tenses = rename_anar_aux_infinitive(lemma, tenses)

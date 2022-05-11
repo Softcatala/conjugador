@@ -46,3 +46,9 @@ class Reflexius:
         else:
             lemma = lemma + "-se"
         return lemma
+
+    def is_reflexiu(self, lemma):
+        if lemma in self.reflexius:
+            return True
+        else:
+            return False

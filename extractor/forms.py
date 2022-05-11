@@ -20,7 +20,11 @@
 
 class Form:
     def __init__(self, word, variant, prefix="", diacritic = False):
-        self.word = prefix + word
+        if prefix == ">-se":
+           prefix = prefix[1:]
+           self.word = word + prefix
+        else:
+            self.word = prefix + word
         self.variant = variant
         if diacritic == True:
             self.diacritic = diacritic
