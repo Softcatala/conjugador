@@ -10,3 +10,6 @@ generate-data:
 	./extractor/extract.py
 	./indexer/index_creation.py
 
+test:
+	- cd extractor && python -m nose2
+	- cd definitions && python -m nose2

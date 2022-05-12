@@ -7,14 +7,14 @@ stages:
   - build
 
 test:
-  image: python:3.8.6-slim-buster
+  image: python:3.10.4-slim-bullseye
   before_script:
-    - pip install nose
+    - apt-get update && apt-get install make
+    - pip install nose2
   stage: test
   script:
     - pip install -r requirements.txt
-    - cd extractor && nosetests
-    - cd ../definitions && nosetests
+    - make test
 
 build:
   image: docker:latest
