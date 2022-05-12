@@ -1,8 +1,8 @@
 FROM python:3.10.4-slim-bullseye as generate_data
 
-RUN apt-get update && apt-get install bzip2
+RUN apt-get update && apt-get install bzip2 make
 RUN mkdir -p /srv
-COPY requirements.txt /srv/
+COPY requirements.txt Makefile /srv/
 RUN mkdir -p /srv/indexer
 COPY indexer/*.py /srv/indexer/
 RUN mkdir -p /srv/extractor
@@ -20,10 +20,7 @@ COPY catalan-dict-tools/ /srv/catalan-dict-tools/
 # Generate data set
 WORKDIR /srv
 RUN pip install -r requirements.txt
-RUN ./extractor/extract.py -i
-RUN ./definitions/extract-to-json.py
-RUN ./extractor/extract.py
-RUN ./indexer/index_creation.py
+RUN make generate-data
 
 FROM python:3.10.4-slim-bullseye
 RUN apt-get update -y && apt-get upgrade -y

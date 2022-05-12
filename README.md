@@ -19,11 +19,11 @@ To clone the repository and its submodules use:
 
 To create Docker image, from the <em>root</em> directory type:
 
-``docker build . -t conjugador -f docker/dockerfile``
+``make docker-build``
 
 Simple execution of the Docker image:
 
-``docker run -p 8000:8000 -i -t conjugador``
+``make docker-run``
 
 Test from the browser:
 * Search: http://localhost:8000/search/cantar
