@@ -39,6 +39,11 @@ class TestDefinitions(unittest.TestCase):
 
         return sha1.hexdigest()
 
+    def test_get_without_reflexive_pronoun(self):
+        definitions = Definitions()
+        self.assertEquals("apoltronar", definitions.get_without_reflexive_pronoun("apoltronar-se"))
+        self.assertEquals("entrebatre", definitions.get_without_reflexive_pronoun("entrebatre's"))
+        self.assertEquals("cantar", definitions.get_without_reflexive_pronoun("cantar"))
 
     def test_generate(self):
 

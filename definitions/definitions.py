@@ -26,14 +26,12 @@ from textextract import TextExtract
 
 class Definitions():
 
-
     def _get_revision_text(self, revision):
         for child in revision:
             if 'text' in child.tag:
                 return child.text
 
         return ''
-
 
     def _get_infinitives(self, filename):
         words = list(line.lower().strip() for line in open(filename))
@@ -43,6 +41,19 @@ class Definitions():
         inf = self._get_infinitives(infinitives)
         defs = self._load_definitions_from_xml(definitions, inf)
         self._save_definitions(defs, inf, save_dir)
+
+    # Wiktionary has the definitions with reflexible pronoums (e.g. apoltronar-se)
+    # which we need to remove to match our list of infinitive verbs
+    def get_without_reflexive_pronoun(self, infinitive):
+        SHORT = "'s"
+        LONG = "-se"
+
+        if infinitive.endswith(SHORT):
+            return infinitive[:-(len(SHORT))]
+        elif infinitive.endswith(LONG):
+            return infinitive[:-(len(LONG))]
+
+        return infinitive
 
     def _load_definitions_from_xml(self, filename, infinitives):
         e = xml.etree.ElementTree.parse(filename).getroot()
@@ -63,7 +74,7 @@ class Definitions():
                     if text is not None and '{{ca-verb' in text:
                         is_verb = True
 
-            verb = ca_label.lower().strip()
+            verb = self.get_without_reflexive_pronoun(ca_label.lower().strip())
             if verb not in infinitives:
                 logging.debug("Discard not in word list: " + ca_label)
                 continue
