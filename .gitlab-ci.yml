@@ -1,10 +1,15 @@
+include:
+  - project: 'docker/process-webhooks'
+    file: '/gitlab/deploy.yml'
+
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-
+  PROJECT_TO_BE_DEPLOYED: 'docker/punctuation-service'
 
 stages:
   - test
   - build
+  - deploy
 
 test:
   image: python:3.10.4-slim-bullseye
@@ -28,3 +33,8 @@ build:
     - docker build -f docker/dockerfile --cache-from $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+
+deploy:
+  stage: deploy
+  extends:
+    .default-deploy
