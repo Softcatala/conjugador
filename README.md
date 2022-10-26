@@ -43,16 +43,11 @@ Same license that source projects.
 
 # Maintenance
 
-## Update dictionary
+## Update dictionary & terms' definitions
 
 Run:
 
-``git submodule update --remote``
-
-## Update terms' definitions
-
-Download latest version from ``https://dumps.wikimedia.org/cawiktionary/latest/cawiktionary-latest-pages-meta-current.xml.bz2``
-into  the ``/definitions`` subdirectory.
+``make update-data``
 
 # Contact
 

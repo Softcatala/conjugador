@@ -11,6 +11,12 @@ generate-data:
 	./extractor/extract.py
 	./indexer/index_creation.py
 
+update-data:
+	echo Update dictionary
+	git submodule update --remote
+	echo Update definitions
+	cd definitions && wget --backups=1 https://dumps.wikimedia.org/cawiktionary/latest/cawiktionary-latest-pages-meta-current.xml.bz2
+
 test:
 	- cd extractor && python -m nose2
 	- cd definitions && python -m nose2
