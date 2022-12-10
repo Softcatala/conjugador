@@ -48,5 +48,14 @@ class TestDictionaryFile(unittest.TestCase):
         self.assertEquals("cantar", lemmas[0])
         self.assertEquals("anar_aux", lemmas[1])
 
+    def test_exclude_lemmas_list(self):
+        current_dir = path.dirname(path.realpath(__file__))
+        filename = path.join(current_dir, "data/diccionari.txt")
+        diccionari = DictionaryFile(filename)
+        lemmas = set()
+        lemmas.add("cantar")
+        diccionari.exclude_lemmas_list(lemmas)
+        self.assertEquals(7, len(diccionari.lines))
+
 if __name__ == '__main__':
     unittest.main()

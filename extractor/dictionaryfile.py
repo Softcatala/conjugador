@@ -53,6 +53,17 @@ class DictionaryFile:
 
         return lemmas
 
+    def exclude_lemmas_list(self, lemmas):
+        size = len(self.lines)
+        for idx in range(size - 1, 0, -1):
+            line = self.lines[idx]
+            form, lemma, postag = self._get_form_lemma_postag_from_line(line)
+            lemma = lemma.lower()
+            if lemma in lemmas:
+                self.lines.remove(line)
+
+        print(f"Removed {(len(self.lines) - size)} lemmas from dictionary")
+
     def _read_file(self, input_file):
         with open(input_file) as f:
             return f.readlines()

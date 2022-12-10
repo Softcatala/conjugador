@@ -28,6 +28,7 @@ from forms import Tense, Form
 from diacritics import Diacritics
 from reflexius import Reflexius
 from dictionaryfile import DictionaryFile
+from exclusionsfile import ExclusionsFile
 
 DIACRITIC_POSTAG = "D"
 WORDS_SEPARATOR = " / "
@@ -332,9 +333,15 @@ def _set_definition(lemma, tenses, definitions):
     defintion["title"] = reflexius.get_reflexiu(lemma)
     tenses.insert(0, defintion)
 
+def _get_dictionary(dictionary_file, exclusions_file):
+    dictionary = DictionaryFile(dictionary_file)
+    exclusions = ExclusionsFile(exclusions_file)
+    dictionary.exclude_lemmas_list(exclusions.get_lemmas())
+    return dictionary
 
-def extract_from_dictfile(input_file, definitions_file, output_dir):
-    dictionary = DictionaryFile(input_file)
+
+def extract_from_dictfile(dictionary_file, exclusions_file, definitions_file, output_dir):
+    dictionary = _get_dictionary(dictionary_file, exclusions_file)
     lemmas = dictionary.get_lemmas_for_infinitives()
 
     if os.path.exists(output_dir):
@@ -365,13 +372,13 @@ def extract_from_dictfile(input_file, definitions_file, output_dir):
     return len(output_dict)
 
 
-def extract_infinitives(input_file, output_file):
+def extract_infinitives(dictionary_file, exclusions_file, output_file):
 
     file_dir = os.path.dirname(output_file)
     if not os.path.exists(file_dir):
         os.makedirs(file_dir)
 
-    dictionary = DictionaryFile(input_file)
+    dictionary = _get_dictionary(dictionary_file, exclusions_file)
     lemmas = dictionary.get_lemmas_for_infinitives()
 
     with open(output_file, "w") as f_infinitives:
@@ -402,7 +409,8 @@ def main():
     diacritics.load_diacritics()
     reflexius.load_reflexius()
 
-    input_file = 'catalan-dict-tools/resultats/lt/diccionari.txt'
+    exclusions_file = 'catalan-dict-tools/fdic-to-hunspell/dades/exclusions.txt'
+    dictionary_file = 'catalan-dict-tools/resultats/lt/diccionari.txt'
     output_dir = 'data/jsons/'
     infinitives_file = 'data/infinitives.txt'
     definitions_file = 'data/definitions.json'
@@ -410,11 +418,11 @@ def main():
     start_time = datetime.datetime.now()
 
     if infinitives_only:
-        print("Input file: {0}, output dir: {1}".format(input_file, infinitives_file))
-        num_verbs = extract_infinitives(input_file, infinitives_file)
+        print("Input file: {0}, output dir: {1}".format(dictionary_file, infinitives_file))
+        num_verbs = extract_infinitives(dictionary_file, exclusions_file, infinitives_file)
     else:
-        print("Input file: {0}, output dir: {1}".format(input_file, output_dir))
-        num_verbs = extract_from_dictfile(input_file, definitions_file, output_dir)
+        print("Input file: {0}, output dir: {1}".format(dictionary_file, output_dir))
+        num_verbs = extract_from_dictfile(dictionary_file, exclusions_file, definitions_file, output_dir)
 
     print("Number of verbs {0}".format(num_verbs))
     s = 'Time used for generation: {0}'.format(datetime.datetime.now() - start_time)
