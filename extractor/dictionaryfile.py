@@ -30,8 +30,8 @@ import re
 class DictionaryFile:
 
     def __init__(self, filename):
-        lines = self._read_file(filename)
-        self.lines = self._pre_process_anar_auxiliar(lines)
+        self.lines = self._read_file(filename)
+        self._pre_process_anar_auxiliar()
 
     def get_form_lemma_postag(self):
         for line in self.lines:
@@ -61,17 +61,16 @@ class DictionaryFile:
         La forma en infinitiu "anar" no és una forma auxiliar i no apareix com a infinitiu al diccionari.
         Com a resultat totes les formes vaja, vam, van queden penjades sense mostrar-se.
     '''
-    def _pre_process_anar_auxiliar(self, lines):
-        for i in range(0, len(lines)):
-            line = lines[i]
+    def _pre_process_anar_auxiliar(self):
+        for i in range(0, len(self.lines)):
+            line = self.lines[i]
             form, lemma, postag = self._get_form_lemma_postag_from_line(line)
 
             if lemma =='anar' and postag[0:2] == 'VA':
                 line = f'{form} anar_aux {postag}'
-                lines[i] = line
+                self.lines[i] = line
 
-        lines.append("anar anar_aux VAN00000")
-        return lines
+        self.lines.append("anar anar_aux VAN00000")
 
 
     def _get_form_lemma_postag_from_line(self, line):
