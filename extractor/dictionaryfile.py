@@ -62,7 +62,7 @@ class DictionaryFile:
             if lemma in lemmas:
                 self.lines.remove(line)
 
-        print(f"Removed {(len(self.lines) - size)} lemmas from dictionary")
+        print(f"Removed {size - len(self.lines)} lemmas from dictionary")
 
     def _read_file(self, input_file):
         with open(input_file) as f:

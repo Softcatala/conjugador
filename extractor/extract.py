@@ -409,7 +409,7 @@ def main():
     diacritics.load_diacritics()
     reflexius.load_reflexius()
 
-    exclusions_file = 'catalan-dict-tools/fdic-to-hunspell/dades/exclusions.txt'
+    exclusions_file = 'catalan-dict-tools/fdic-to-hunspell/dades/exclusions-conjugador.txt'
     dictionary_file = 'catalan-dict-tools/resultats/lt/diccionari.txt'
     output_dir = 'data/jsons/'
     infinitives_file = 'data/infinitives.txt'
