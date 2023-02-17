@@ -18,17 +18,20 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from flask import Flask, Response
+from flask import Flask, request, Response
 import sys
 
 sys.path.append('models/')
 from search import Search
 from autocomplete import Autocomplete
 from indexletter import IndexLetter
+from usage import Usage
 import logging
 import logging.handlers
 import os
 import time
+import datetime
+import json
 
 app = Flask(__name__)
 
@@ -69,6 +72,7 @@ def search_api(word):
 
     elapsed_time = time.time() - start_time
     logging.debug(f"/search for '{word}': {num_results} results, time: {elapsed_time:.2f}s")
+    Usage().log("search", elapsed_time)
     return json_answer_status(j, status)
 
 @app.route('/index/<letter>', methods=['GET'])
@@ -81,6 +85,7 @@ def index_letter_api(letter):
 
     elapsed_time = time.time() - start_time
     logging.debug(f"/index for '{letter}': {num_results} results, time: {elapsed_time:.2f}s")
+    Usage().log("index", elapsed_time)
     return json_answer_status(j, status)
 
 @app.route('/autocomplete/<word>', methods=['GET'])
@@ -93,8 +98,18 @@ def autocomplete_api(word):
 
     elapsed_time = time.time() - start_time
     logging.debug(f"/autocomplete for '{word}': {num_results} results, time: {elapsed_time:.2f}s")
+    Usage().log("autocomplete", elapsed_time)
     return json_answer_status(j, status)
 
+@app.route('/stats/', methods=['GET'])
+def stats():
+    requested = request.args.get('date')
+    date_requested = datetime.datetime.strptime(requested, '%Y-%m-%d')
+    usage = Usage()
+    result = usage.get_stats(date_requested)
+
+    json_data = json.dumps(result, indent=4, separators=(',', ': '))
+    return json_answer(json_data)
 
 if __name__ == '__main__':
     init_logging()
