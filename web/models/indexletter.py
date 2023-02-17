@@ -29,10 +29,10 @@ from searchbase import SearchBase
 dir_name = "../data/indexletter_index/"
 ix_letter = open_dir(dir_name) # static instance reusable across requests
 
-class IndexLetter(SearchBase):
+class IndexLetter():
 
-    def __init__(self, word):
-        self._word = word
+    def __init__(self, letter):
+        self.letter = letter
         self.searcher = None
         self.query = None
         self.collator = Collator()
@@ -64,7 +64,7 @@ class IndexLetter(SearchBase):
     def search(self):
         self.searcher = ix_letter.searcher()
         fields = []
-        qs = u'index_letter:({0})'.format(self.word)
+        qs = u'index_letter:({0})'.format(self.letter)
         fields.append("index_letter")
         self.query = MultifieldParser(fields, ix_letter.schema).parse(qs)
 
