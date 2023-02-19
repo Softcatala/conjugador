@@ -86,7 +86,7 @@ class Usage(object):
             for endpoint in results:
                 result = results[endpoint]
                 calls = result["calls"]
-                result["time_used"] =  result["time_used"] / calls
+                result["time_used"] = result["time_used"] / calls if calls else 0
 
         except Exception as exception:
             logging.error("get_stats. Error:" + str(exception))
