@@ -30,7 +30,7 @@ import logging
 '''
 class Usage(object):
 
-    FILE = "/srv/data/usage.txt"
+    FILE = "/srv/stats/usage.txt"
     DAYS_TO_KEEP = 7
     rotate = True
 
