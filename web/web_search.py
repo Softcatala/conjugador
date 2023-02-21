@@ -32,8 +32,13 @@ import os
 import time
 import datetime
 import json
+from functools import lru_cache
+import psutil
+import datetime
 
 app = Flask(__name__)
+start_time = datetime.datetime.now()
+
 
 def init_logging():
     logfile = 'web-service.log'
@@ -62,27 +67,36 @@ def json_answer_status(data, status):
     resp.status = str(status)
     return resp
 
+@lru_cache(maxsize=500) # Rationale: there are ~10K infitives, cache top 5%
+def _get_search(word):
+    search = Search(word)
+    j, status = search.get_json_search()
+    num_results = search.get_num_results()
+    return j, status, num_results
+
 @app.route('/search/<word>', methods=['GET'])
 def search_api(word):
     start_time = time.time()
 
-    search = Search(word)
-    j, status = search.get_json_search()
-    num_results = search.get_num_results()
+    j, status, num_results = _get_search(word)
 
     elapsed_time = time.time() - start_time
     logging.debug(f"/search for '{word}': {num_results} results, time: {elapsed_time:.2f}s")
     Usage().log("search", elapsed_time)
     return json_answer_status(j, status)
 
+@lru_cache(maxsize=23) # Rationale: there 23 index files only
+def _get_letter_index(letter):
+    indexLetter = IndexLetter(letter)
+    j, status = indexLetter.get_json()
+    num_results = indexLetter.get_num_results()
+    return j, status, num_results
+
 @app.route('/index/<letter>', methods=['GET'])
 def index_letter_api(letter):
     start_time = time.time()
 
-    indexLetter = IndexLetter(letter)
-    j, status = indexLetter.get_json()
-    num_results = indexLetter.get_num_results()
-
+    j, status, num_results = _get_letter_index(letter)
     elapsed_time = time.time() - start_time
     logging.debug(f"/index for '{letter}': {num_results} results, time: {elapsed_time:.2f}s")
     Usage().log("index", elapsed_time)
@@ -101,12 +115,37 @@ def autocomplete_api(word):
     Usage().log("autocomplete", elapsed_time)
     return json_answer_status(j, status)
 
+def _get_cache_info(cache_info):
+    cache = {}
+
+    hits = cache_info.hits
+    misses = cache_info.misses
+
+    total = hits + misses
+    phits = (hits * 100 / total) if total else 0
+
+    cache['misses'] = f"{misses}"
+    cache['hits'] = f"{hits} ({phits:.2f}%)"
+    return cache
+
 @app.route('/stats/', methods=['GET'])
 def stats():
     requested = request.args.get('date')
     date_requested = datetime.datetime.strptime(requested, '%Y-%m-%d')
     usage = Usage()
     result = usage.get_stats(date_requested)
+    rss = psutil.Process(os.getpid()).memory_info().rss // 1024 ** 2
+
+    caches =  {}
+    cache_info = _get_letter_index.cache_info()
+    caches['search'] = _get_cache_info(_get_search.cache_info())
+    cache_info = _get_letter_index.cache_info()
+    caches['letter_index'] = _get_cache_info(_get_letter_index.cache_info())
+    result['cache'] = caches
+
+    result['process_id'] = os.getpid()
+    result['rss'] = f"{rss} MB"
+    result['up_time'] = str(datetime.datetime.now() - start_time)
 
     json_data = json.dumps(result, indent=4, separators=(',', ': '))
     return json_answer(json_data)
