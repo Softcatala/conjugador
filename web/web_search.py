@@ -82,7 +82,7 @@ def search_api(word):
 
     elapsed_time = time.time() - start_time
     logging.debug(f"/search for '{word}': {num_results} results, time: {elapsed_time:.2f}s")
-    Usage().log("search", elapsed_time)
+#    Usage().log("search", elapsed_time)
     return json_answer_status(j, status)
 
 @lru_cache(maxsize=23) # Rationale: there 23 index files only
@@ -99,7 +99,7 @@ def index_letter_api(letter):
     j, status, num_results = _get_letter_index(letter)
     elapsed_time = time.time() - start_time
     logging.debug(f"/index for '{letter}': {num_results} results, time: {elapsed_time:.2f}s")
-    Usage().log("index", elapsed_time)
+#    Usage().log("index", elapsed_time)
     return json_answer_status(j, status)
 
 @app.route('/autocomplete/<word>', methods=['GET'])
@@ -112,7 +112,7 @@ def autocomplete_api(word):
 
     elapsed_time = time.time() - start_time
     logging.debug(f"/autocomplete for '{word}': {num_results} results, time: {elapsed_time:.2f}s")
-    Usage().log("autocomplete", elapsed_time)
+#    Usage().log("autocomplete", elapsed_time)
     return json_answer_status(j, status)
 
 def _get_cache_info(cache_info):
