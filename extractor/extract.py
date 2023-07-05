@@ -318,20 +318,20 @@ def rename_anar_aux_infinitive(lemma, tenses):
     return lemma, tenses
 
 def _set_definition(lemma, tenses, definitions):
-    defintion = {}
+    definition = {}
     if lemma in definitions:
-        defintion["definition"] = definitions[lemma]
-        defintion["definition_credits"] = "La definició del verb prové del Viccionari i està sotmesa " \
+        definition["definition"] = definitions[lemma]
+        definition["definition_credits"] = "La definició del verb prové del Viccionari i està sotmesa " \
         "a les condicions de la llicència Creative Commons " \
         "<a href='https://creativecommons.org/licenses/by-sa/3.0/deed.ca'>Reconeixement-CompartirIgual (CC BY-SA 3.0)</a>. " \
         f"Podeu millorar-la editant <a href='https://ca.wiktionary.org/wiki/{lemma}'>la seva entrada al Viccionari</a>."
     else:
-        defintion["definition_url"] = f"https://dlc.iec.cat/results.asp?txtEntrada={lemma}"
-        defintion["definition_credits"] = "Aquest verb no és al Viccionari, que és la font que usem per a les definicions. " \
+        definition["definition_url"] = f"https://dlc.iec.cat/results.asp?txtEntrada={lemma}"
+        definition["definition_credits"] = "Aquest verb no és al Viccionari, que és la font que usem per a les definicions. " \
         f"Podeu afegir la definició creant <a href='https://ca.wiktionary.org/wiki/{lemma}'>la seva entrada al Viccionari</a>."
 
-    defintion["title"] = reflexius.get_reflexiu(lemma)
-    tenses.insert(0, defintion)
+    definition["title"] = reflexius.get_reflexiu(lemma)
+    tenses.insert(0, definition)
 
 def _get_dictionary(dictionary_file, exclusions_file):
     dictionary = DictionaryFile(dictionary_file)
