@@ -331,6 +331,7 @@ def _set_definition(lemma, tenses, definitions):
         f"Podeu afegir la definició creant <a href='https://ca.wiktionary.org/wiki/{lemma}'>la seva entrada al Viccionari</a>."
 
     definition["title"] = reflexius.get_reflexiu(lemma)
+    definition["infinitive"] = lemma
     tenses.insert(0, definition)
 
 def _get_dictionary(dictionary_file, exclusions_file):
