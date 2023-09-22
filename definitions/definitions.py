@@ -83,7 +83,7 @@ class Definitions():
                 text = ""
 
             if is_verb is False:
-                logging.debug("Discard is not a ver {0} - {1}".format(ca_label, text))
+                logging.debug("Discard is not a verb {0} - {1}".format(ca_label, text))
                 continue
 
             textExtract = TextExtract(text)
