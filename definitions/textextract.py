@@ -189,7 +189,7 @@ class TextExtract:
 
             if len(alternative) > 0:
                 if alternative in infinitives:
-                    s += "</br>Forma alternativa de <a href='conjugador-de-verbs/verb/cantar/{alternative}'>{alternative}</a>"
+                    s += f"</br>Forma alternativa a <a href='conjugador-de-verbs/verb/cantar/{alternative}'>{alternative}</a>"
                 else:
                     print(f"alternative '{alternative}' not in infinitives")
 
