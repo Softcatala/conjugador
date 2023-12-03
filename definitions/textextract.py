@@ -135,7 +135,20 @@ class TextExtract:
 
         return line, False
 
-    def GetDescription(self):
+    # Extracts alternative_word from expression '{{forma-a|ca|([a-z]alternative_word)}}'¡
+    def _get_alternative_form(self, s):
+        FORM = r'.*{{forma-a\|ca\|([a-z]*)}}.*'
+
+        alternative = ""
+        _match = re.search(FORM, s)
+        if _match is not None:
+            count = len(_match.groups())
+            if count > 0:
+                alternative = _match.group(1)
+
+        return alternative
+
+    def GetDescription(self, infinitives = []):
         verb = ''
         VERB_START = '===[ ]*Verb[ ]*==='
        
@@ -167,11 +180,19 @@ class TextExtract:
             if '{{-' in s.lower():
                 break
 
+            alternative = self._get_alternative_form(s)
             s = self._remove_templates(s)
             s = self._remove_intenal_links(s)
             s = self._remove_mediawiki_markup(s)
             s = self._remove_xml_tags(s)
             s, open_ol, open_dl = self._convert_to_html(s, open_ol, open_dl)
+
+            if len(alternative) > 0:
+                if alternative in infinitives:
+                    s += "</br>Forma alternativa de <a href='conjugador-de-verbs/verb/cantar/{alternative}'>{alternative}</a>"
+                    print(alternative)
+                else:
+                    print(f"alternative {alternative} not in infinitives")
 
             if re.search('[a-zA-Z]', s) is None:
                 logging.debug("Discard:" + s)
