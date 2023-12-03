@@ -91,6 +91,19 @@ class TestTextExtract(unittest.TestCase):
 
         self.assertEquals("Pantalons de rodamón lligats amb un cordill. <i>Barbara Kingsolver, 2010</i>", text)
 
+    def test_get_alternative_form_form(self):
+        line = '''{{es-verb|t|present=acenso}} {{forma-a|ca|cantar}}'''
+        textExtract = TextExtract(line)
+        alternative = textExtract._get_alternative_form(line)
+
+        self.assertEquals("cantar", alternative)
+
+    def test_get_alternative_form_no_form(self):
+        line = '''{{es-verb|t|present=acenso}} {{forma-a|es|cantar}}'''
+        textExtract = TextExtract(line)
+        alternative = textExtract._get_alternative_form(line)
+
+        self.assertEquals("", alternative)
 
 if __name__ == '__main__':
     unittest.main()
