@@ -195,7 +195,7 @@ class TextExtract:
                     if not self._is_there_text(s):
                         s = ""
 
-                    s += f"</br>Forma alternativa a <a href='/conjugador-de-verbs/verb/cantar/{alternative}'>{alternative}</a>"
+                    s += f"</br>Forma alternativa a <a href='/conjugador-de-verbs/verb/{alternative}'>{alternative}</a>"
                 else:
                     print(f"alternative '{alternative}' not in infinitives")
 
