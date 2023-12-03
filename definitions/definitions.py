@@ -87,8 +87,7 @@ class Definitions():
                 continue
 
             textExtract = TextExtract(text)
-            ca_desc = textExtract.GetDescription()
-
+            ca_desc = textExtract.GetDescription(infinitives)
 
             if len(ca_desc) == 0:
                 logging.debug("Discard no description: " + ca_label)
