@@ -148,6 +148,9 @@ class TextExtract:
 
         return alternative
 
+    def _is_there_text(self, s):
+        return re.search('[a-zA-Z]', s)
+
     def GetDescription(self, infinitives = []):
         verb = ''
         VERB_START = '===[ ]*Verb[ ]*==='
@@ -189,15 +192,14 @@ class TextExtract:
 
             if len(alternative) > 0:
                 if alternative in infinitives:
-                    s += f"</br>Forma alternativa a <a href='conjugador-de-verbs/verb/cantar/{alternative}'>{alternative}</a>"
+                    if not self._is_there_text(s):
+                        s = ""
+
+                    s += f"</br>Forma alternativa a <a href='/conjugador-de-verbs/verb/cantar/{alternative}'>{alternative}</a>"
                 else:
                     print(f"alternative '{alternative}' not in infinitives")
 
-            if re.search('[a-zA-Z]', s) is None:
-                logging.debug("Discard:" + s)
-                continue
-
-            if s.isspace():
+            if not self._is_there_text(s):
                 logging.debug("Discard:" + s)
                 continue
 
