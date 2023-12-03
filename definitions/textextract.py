@@ -177,10 +177,6 @@ class TextExtract:
                 logging.debug("Discard:" + s)
                 continue
 
-            if s.isspace():
-                logging.debug("Discard:" + s)
-                continue
-
             verb += s
 
         return verb
