@@ -184,9 +184,8 @@ class TextExtract:
             if '{{-' in s.lower():
                 break
 
-            alternative = self._get_alternative_form(s)
             if len(alternative) == 0:
-                alternatives.append(alternative)
+                alternative = self._get_alternative_form(s)
 
             s = self._remove_templates(s)
             s = self._remove_intenal_links(s)
