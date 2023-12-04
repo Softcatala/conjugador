@@ -137,7 +137,7 @@ class TextExtract:
 
     # Extracts alternative_word from expression '{{forma-a|ca|([a-z]alternative_word)}}'¡
     def _get_alternative_form(self, s):
-        FORM = r'.*{{forma-a\|ca\|([a-z]*)}}.*'
+        FORM = r'.*{{forma-a\|ca\|([a-zàéèíóòú·ç]*)}}.*'
 
         alternative = ""
         _match = re.search(FORM, s)
