@@ -174,7 +174,7 @@ class TextExtract:
 
         open_ol = False
         open_dl = False
-        alternatives = []
+        alternative = ""
         while True:
             s = buf.readline()
             if len(s) == 0:
@@ -185,7 +185,7 @@ class TextExtract:
                 break
 
             alternative = self._get_alternative_form(s)
-            if len(alternative) > 0:
+            if len(alternative) == 0:
                 alternatives.append(alternative)
 
             s = self._remove_templates(s)
@@ -200,13 +200,12 @@ class TextExtract:
 
             verb += s
 
-        for alternative in alternatives:
-            if alternative in infinitives:
-                if not self._is_there_text(s):
-                    s = ""
+        if alternative in infinitives:
+            if not self._is_there_text(s):
+                s = ""
 
-                verb += f"<br>Forma alternativa a <a href='/conjugador-de-verbs/verb/{alternative}'>{alternative}</a>"
-            else:
-                logging.debug(f"alternative '{alternative}' not in infinitives")
+            verb += f"<br>Forma alternativa a <a href='/conjugador-de-verbs/verb/{alternative}'>{alternative}</a>"
+        else:
+            logging.debug(f"alternative '{alternative}' not in infinitives")
 
         return verb
