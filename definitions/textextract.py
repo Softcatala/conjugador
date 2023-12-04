@@ -203,8 +203,7 @@ class TextExtract:
             if alternative in infinitives:
                 if not self._is_there_text(s):
                     s = ""
-
-                verb += f"<br>Forma alternativa a <a href='/conjugador-de-verbs/verb/{alternative}'>{alternative}</a>"
+                verb += f"<p style='font-weight: 300'>Forma alternativa a <a href='/conjugador-de-verbs/verb/{alternative}'>{alternative}</a></p>"
             else:
                 logging.debug(f"alternative '{alternative}' not in infinitives")
 
