@@ -209,7 +209,6 @@ class TextExtract:
         open_ol = False
         open_dl = False
         alternative = ""
-
         while True:
             s = buf.readline()
             if len(s) == 0:
