@@ -28,8 +28,8 @@ class TextExtract:
         self.text = text
 
     def _remove_gallery_sections(self, line):
-        SECTION_START = '&lt;gallery&gt;'
-        SECTION_END = '&lt;/gallery&gt;'
+        SECTION_START = '<gallery>'
+        SECTION_END = '</gallery>'
 
         start = line.find(SECTION_START)
         if start < 0:
@@ -203,11 +203,13 @@ class TextExtract:
             return verb
 
         s = self.text[start:end]
+        s = self._remove_gallery_sections(s)
         buf = StringIO(s)
 
         open_ol = False
         open_dl = False
         alternative = ""
+
         while True:
             s = buf.readline()
             if len(s) == 0:
@@ -231,8 +233,6 @@ class TextExtract:
                 continue
 
             verb += s
-
-        verb = self._remove_gallery_sections(verb)
 
         if alternative:
             if alternative in infinitives:

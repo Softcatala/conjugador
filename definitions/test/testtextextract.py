@@ -128,10 +128,10 @@ class TestTextExtract(unittest.TestCase):
         
     def test_remove_gallery_sections(self):
     
-        line = '''Inici &lt;gallery&gt;
+        line = '''Inici <gallery>;
 Fitxer:30 Days of Gratitude- Day 25 (4130230553).jpg|Gos amb ulleres [1]
 Fitxer:Chess-familienschach.PNG|Exemple d'ulleres o forquilla [4] 
-&lt;/gallery&gt; Fi'''
+</gallery> Fi'''
 
         textExtract = TextExtract(line)
         text = textExtract._remove_gallery_sections(line)
