@@ -91,6 +91,13 @@ class TestTextExtract(unittest.TestCase):
 
         self.assertEquals("Pantalons de rodamón lligats amb un cordill. <i>Barbara Kingsolver, 2010</i>", text)
 
+    def test_get_remove_templates(self):
+        line = 'Això és un {{ca.v.conj.para1|dom}} text'
+        textExtract = TextExtract(line)
+        alternative = textExtract._remove_templates(line)
+
+        self.assertEquals("Això és un  text", alternative)
+
     def test_get_alternative_form_form(self):
         line = '''{{es-verb|t|present=acenso}} {{forma-a|ca|complànyer}}'''
         textExtract = TextExtract(line)
