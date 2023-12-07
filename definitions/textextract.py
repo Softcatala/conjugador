@@ -41,8 +41,6 @@ class TextExtract:
 
         final = line[:start] + line[end + len(SECTION_END) :len(line)]
         return final
-        return self._remove_intenal_links(final)
-        
 
     '''Wiki internal link with format [[LINK|TEXT]]'''
     def _remove_intenal_links(self, line):
