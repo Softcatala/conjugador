@@ -233,7 +233,8 @@ class TextExtract:
                 continue
 
             verb += s
-            
+
+        verb = self._remove_gallery_sections(verb)
 
         if alternative:
             if alternative in infinitives:
