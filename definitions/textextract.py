@@ -71,7 +71,7 @@ class TextExtract:
         if start < 0:
             return line
 
-        end = line.find(SECTION_END, start + len(SECTION_START))
+        end = line.rfind(SECTION_END, start + len(SECTION_START), len(line))
         if end < 0:
             return line
 

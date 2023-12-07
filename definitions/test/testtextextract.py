@@ -98,6 +98,13 @@ class TestTextExtract(unittest.TestCase):
 
         self.assertEquals("Això és un  text", alternative)
 
+    def test_get_remove_templates(self):
+        line = 'Això és un {{ex-us|ca|Cal diferenciar el català del segle {{romanes|XV}} del català del segle {{romanes|XVI}}.}} text'
+        textExtract = TextExtract(line)
+        alternative = textExtract._remove_templates(line)
+
+        self.assertEquals("Això és un  text", alternative)
+
     def test_get_alternative_form_form(self):
         line = '''{{es-verb|t|present=acenso}} {{forma-a|ca|complànyer}}'''
         textExtract = TextExtract(line)
