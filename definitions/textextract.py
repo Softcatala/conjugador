@@ -27,6 +27,23 @@ class TextExtract:
     def __init__(self, text):
         self.text = text
 
+    def _remove_gallery_sections(self, line):
+        SECTION_START = '&lt;gallery&gt;'
+        SECTION_END = '&lt;/gallery&gt;'
+
+        start = line.find(SECTION_START)
+        if start < 0:
+            return line
+
+        end = line.find(SECTION_END, start)
+        if end < 0:
+            return line
+
+        final = line[:start] + line[end + len(SECTION_END) :len(line)]
+        return final
+        return self._remove_intenal_links(final)
+        
+
     '''Wiki internal link with format [[LINK|TEXT]]'''
     def _remove_intenal_links(self, line):
         SECTION_START = '[['
@@ -216,6 +233,7 @@ class TextExtract:
                 continue
 
             verb += s
+            
 
         if alternative:
             if alternative in infinitives:
