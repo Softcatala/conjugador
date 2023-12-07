@@ -66,17 +66,35 @@ class TextExtract:
     def _remove_templates(self, line):
         SECTION_START = '{{'
         SECTION_END = '}}'
+        start_pos = - 1
+        end_pos = -1
+        pos = 0
+        opened = 0
+        while True:
+            start = line.find(SECTION_START, pos)
+            end = line.find(SECTION_END, pos)
+            if start < 0 and end < 0:
+                break
 
-        start = line.find(SECTION_START)
-        if start < 0:
+            if start_pos >= 0 and opened == 0:
+                break
+
+            if end < 0 or (start >= 0 and start < end):
+                pos = start + len(SECTION_START)
+                opened += 1
+                if start_pos < 0:
+                    start_pos = start
+            elif start < 0 or (end >= 0 and start > end):
+                pos = end + len(SECTION_END)
+                end_pos = pos
+                opened -= 1
+            else:
+                return line
+
+        if start_pos < 0 or end_pos < 0:
             return line
 
-        end = line.rfind(SECTION_END, start + len(SECTION_START), len(line))
-        if end < 0:
-            return line
-
-        end += len(SECTION_END)
-        final = line[:start] + line[end:len(line)]
+        final = line[:start_pos] + line[end_pos:len(line)]
         return self._remove_templates(final)
 
     # Remove html tags and remove '<ref>' by ' <i>'
