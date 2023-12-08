@@ -91,12 +91,26 @@ class TestTextExtract(unittest.TestCase):
 
         self.assertEquals("Pantalons de rodamón lligats amb un cordill. <i>Barbara Kingsolver, 2010</i>", text)
 
-    def test_get_remove_templates(self):
+    def test_get_remove_templates_single(self):
         line = 'Això és un {{ca.v.conj.para1|dom}} text'
+        textExtract = TextExtract(line)
+        text = textExtract._remove_templates(line)
+
+        self.assertEquals("Això és un  text", text)
+
+    def test_get_remove_templates_double_neested(self):
+        line = 'Això és un {{ex-us|ca|Cal diferenciar el català del segle {{romanes|XV}} del català del segle {{romanes|XVI}}.}} text'
+        textExtract = TextExtract(line)
+        text = textExtract._remove_templates(line)
+
+        self.assertEquals("Això és un  text", text)
+
+    def test_get_remove_templates_double(self):
+        line = '{{marca|ca|mallorquí|menorquí}} [[ensumar|Ensumar]] {{q|aspirar}}'
         textExtract = TextExtract(line)
         alternative = textExtract._remove_templates(line)
 
-        self.assertEquals("Això és un  text", alternative)
+        self.assertEquals(" [[ensumar|Ensumar]] ", alternative)
 
     def test_get_alternative_form_form(self):
         line = '''{{es-verb|t|present=acenso}} {{forma-a|ca|complànyer}}'''
@@ -111,6 +125,19 @@ class TestTextExtract(unittest.TestCase):
         alternative = textExtract._get_alternative_form(line)
 
         self.assertEquals("", alternative)
+        
+    def test_remove_gallery_sections(self):
+    
+        line = '''Inici <gallery>;
+Fitxer:30 Days of Gratitude- Day 25 (4130230553).jpg|Gos amb ulleres [1]
+Fitxer:Chess-familienschach.PNG|Exemple d'ulleres o forquilla [4] 
+</gallery> Fi'''
+
+        textExtract = TextExtract(line)
+        text = textExtract._remove_gallery_sections(line)
+
+        self.assertEquals("Inici  Fi", text)
 
 if __name__ == '__main__':
     unittest.main()
+    
