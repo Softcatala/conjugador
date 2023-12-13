@@ -9,6 +9,7 @@ RUN mkdir -p /srv/extractor
 COPY extractor/*.py /srv/extractor/
 COPY extractor/replace_diacritics_iec.txt /srv/extractor/
 COPY extractor/reflexius.txt /srv/extractor/
+COPY extractor/notes.json /srv/extractor/
 RUN mkdir -p /srv/data/logs
 COPY definitions/*.py /srv/definitions/
 COPY definitions/*.bz2 /srv/definitions/
