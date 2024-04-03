@@ -39,12 +39,11 @@ import datetime
 app = Flask(__name__)
 start_time = datetime.datetime.now()
 
-
 def init_logging():
-    logfile = 'web-service.log'
-
+    LOGDIR = os.environ.get('LOGDIR', '')
     LOGLEVEL = os.environ.get('LOGLEVEL', 'INFO').upper()
     logger = logging.getLogger()
+    logfile = os.path.join(LOGDIR, 'web-service.log')
     hdlr = logging.handlers.RotatingFileHandler(logfile, maxBytes=1024*1024, backupCount=1)
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     hdlr.setFormatter(formatter)
@@ -53,8 +52,9 @@ def init_logging():
 
     console = logging.StreamHandler()
     console.setLevel(LOGLEVEL)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    console.setFormatter(formatter)
     logger.addHandler(console)
-
 
 # API calls
 def json_answer(data):
