@@ -4,7 +4,7 @@ include:
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-  PROJECT_TO_BE_DEPLOYED: 'docker/punctuation-service'
+  PROJECT_TO_BE_DEPLOYED: 'docker/conjugador'
 
 stages:
   - test
