@@ -141,9 +141,7 @@ def stats():
     rss = psutil.Process(os.getpid()).memory_info().rss // 1024 ** 2
 
     caches =  {}
-    cache_info = _get_letter_index.cache_info()
     caches['search'] = _get_cache_info(_get_search.cache_info())
-    cache_info = _get_letter_index.cache_info()
     caches['letter_index'] = _get_cache_info(_get_letter_index.cache_info())
     result['cache'] = caches
 
