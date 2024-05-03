@@ -85,7 +85,7 @@ class DictionaryFile:
 
 
     def _get_form_lemma_postag_from_line(self, line):
-        wordList = re.sub("[^(\w|·|\-)]", " ",  line).split()
+        wordList = re.sub(r"[^(\w|·|\-)]", " ",  line).split()
         form = wordList[0]
         lemma = wordList[1]
         postag = wordList[2]
