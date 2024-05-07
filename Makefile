@@ -8,10 +8,10 @@ docker-run:
 
 generate-data:
 	bzip2 -cdk definitions/cawiktionary-latest-pages-meta-current.xml.bz2 > definitions/cawiktionary-latest-pages-meta-current.xml
-	./extractor/extract.py -i
-	./definitions/extract-to-json.py
-	./extractor/extract.py
-	./indexer/index_creation.py
+	python extractor/extract.py -i
+	python definitions/extract-to-json.py
+	python extractor/extract.py
+	python indexer/index_creation.py
 
 update-data:
 	echo Update dictionary
