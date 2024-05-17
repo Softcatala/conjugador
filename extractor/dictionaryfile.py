@@ -31,7 +31,8 @@ class DictionaryFile:
 
     def __init__(self, filename):
         self.lines = self._read_file(filename)
-        self._valencia()
+        self._valencia("VMP00SM0")
+        self._valencia("VMN00000") 
         self._pre_process_anar_auxiliar()
 
     def get_form_lemma_postag(self):
@@ -65,8 +66,7 @@ class DictionaryFile:
 
         print(f"Removed {size - len(self.lines)} lemmas from dictionary")
 
-    def _valencia(self):
-        tag = "VMP00SM0"
+    def _valencia(self, tag):
         lemmas = {}
     
         # Load all 
@@ -83,7 +83,7 @@ class DictionaryFile:
 
             found_ca = False
             index_va = None
-            for i, form in forms:         
+            for i, form in forms:
                 if form[-2:] == "és":
                     found_ca = True
 
