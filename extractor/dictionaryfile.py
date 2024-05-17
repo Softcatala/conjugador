@@ -31,8 +31,8 @@ class DictionaryFile:
 
     def __init__(self, filename):
         self.lines = self._read_file(filename)
-        self._valencia("VMP00SM0", "és", "ès")
-        self._valencia("VMN00000", "éixer", "èixer")
+        self._valencia("VMP00SM0", "ès", "és", )
+        self._valencia("VMN00000", "èixer", "éixer")
         self._pre_process_anar_auxiliar()
 
     def get_form_lemma_postag(self):
