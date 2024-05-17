@@ -65,23 +65,23 @@ class DictionaryFile:
                 self.lines.remove(line)
 
         print(f"Removed {size - len(self.lines)} lemmas from dictionary")
-
-    def _valencia(self, tag, central, valencia):
+        
+    def _load_specific_lemmas_with_pos(self, tag):
         lemmas = {}
-    
-        # Load all 
         for i in range(0, len(self.lines)):
             line = self.lines[i]
             form, lemma, postag = self._get_form_lemma_postag_from_line(line)
             if postag == tag:
                 lemmas.setdefault(lemma, []).append((i, form))
 
+        return lemmas
+
+    def _valencia(self, tag, central, valencia):
+        lemmas = self._load_specific_lemmas_with_pos(tag)
         total = 0
         for lemma, forms in lemmas.items():
             if len(forms) == 1:
                 continue
-
-            print(forms)                
 
             found_ca = False
             index_va = None
@@ -97,11 +97,10 @@ class DictionaryFile:
                 idx = line.find(tag)
                 val_tag = tag[0:-1] + "V"
                 line = line.replace(tag, val_tag)
-#                print(line)
                 self.lines[index_va] = line
                 total += 1
 
-        print(f"Marked {total} forms as valencian")
+        print(f"Marked {total} forms tagged {tag} as Valencian")
 
             
     def _read_file(self, input_file):
