@@ -66,20 +66,21 @@ class DictionaryFile:
         print(f"Removed {size - len(self.lines)} lemmas from dictionary")
 
     def _valencia(self):
+        tag = "VMP00SM0"
         lemmas = {}
     
         # Load all 
         for i in range(0, len(self.lines)):
             line = self.lines[i]
             form, lemma, postag = self._get_form_lemma_postag_from_line(line)
-            if postag != "VMP00SM0":
+            if postag != tag:
                 continue
                 
             forms = lemmas.get(lemma)
             if not forms:
                 forms = []
 
-            forms.append(form)
+            forms.append((i, form))
             lemmas[lemma] = forms
 
         total = 0
@@ -88,17 +89,20 @@ class DictionaryFile:
                 continue
 
             found_ca = False
-            found_va = False
-            for form in forms:                
+            index_va = None
+            for i, form in forms:         
                 if form[-2:] == "és":
-                    found_ca = True                    
+                    found_ca = True
 
                 if form[-2:] == "ès":
-                    found_va = True                    
-                    
-            if found_ca and found_va:
-                print(f"lemma: {lemma}")                                                              
-#                print(f"forms: {forms} - {len(forms)}")
+                   index_va = i
+
+            if found_ca and index_va:
+                line = self.lines[index_va]
+                idx = line.find(tag)
+                val_tag = tag[0:-1] + "V"
+                line = line.replace(tag, val_tag)
+                self.lines[index_va] = line
                 total += 1
 
         print(f"Found: {total}")                
