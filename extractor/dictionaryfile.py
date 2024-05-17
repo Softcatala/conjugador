@@ -80,18 +80,12 @@ class DictionaryFile:
         lemmas = self._load_specific_lemmas_with_pos(tag)
         total = 0
         for lemma, forms in lemmas.items():
-            if len(forms) == 1:
+            if len(forms) <= 1:
                 continue
 
-            found_ca = False
-            index_va = None
-            for i, form in forms:
-                if form[-len(central):] == central:
-                    found_ca = True
-
-                if form[-len(valencia):] == valencia:
-                   index_va = i
-
+            found_ca = any(form.endswith(central) for i, form in forms)
+            index_va = next((i for i, form in forms if form.endswith(valencia)), None)
+        
             if found_ca and index_va:
                 line = self.lines[index_va]
                 idx = line.find(tag)
