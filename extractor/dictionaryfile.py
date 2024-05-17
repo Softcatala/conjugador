@@ -79,10 +79,8 @@ class DictionaryFile:
     def _valencia(self, tag, central, valencia):
         lemmas = self._load_specific_lemmas_with_pos(tag)
         total = 0
-        for lemma, forms in lemmas.items():
-            if len(forms) <= 1:
-                continue
 
+        for forms in (forms for forms in lemmas.values() if len(forms) > 1):
             found_ca = any(form.endswith(central) for i, form in forms)
             index_va = next((i for i, form in forms if form.endswith(valencia)), None)
         
