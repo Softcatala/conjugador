@@ -31,8 +31,7 @@ class DictionaryFile:
 
     def __init__(self, filename):
         self.lines = self._read_file(filename)
-        self._valencia("VMP00SM0", "ès", "és", )
-        self._valencia("VMN00000", "èixer", "éixer")
+        self._valencia()
         self._pre_process_anar_auxiliar()
 
     def get_form_lemma_postag(self):
@@ -76,7 +75,11 @@ class DictionaryFile:
 
         return lemmas
 
-    def _valencia(self, tag, central, valencia):
+    def _valencia(self):
+        self._valencia_form("VMP00SM0", "ès", "és", )
+        self._valencia_form("VMN00000", "èixer", "éixer")
+
+    def _valencia_form(self, tag, central, valencia):
         lemmas = self._load_specific_lemmas_with_pos(tag)
         total = 0
 
