@@ -73,15 +73,8 @@ class DictionaryFile:
         for i in range(0, len(self.lines)):
             line = self.lines[i]
             form, lemma, postag = self._get_form_lemma_postag_from_line(line)
-            if postag != tag:
-                continue
-                
-            forms = lemmas.get(lemma)
-            if not forms:
-                forms = []
-
-            forms.append((i, form))
-            lemmas[lemma] = forms
+            if postag == tag:
+                lemmas.setdefault(lemma, []).append((i, form))
 
         total = 0
         for lemma, forms in lemmas.items():
@@ -102,6 +95,7 @@ class DictionaryFile:
                 idx = line.find(tag)
                 val_tag = tag[0:-1] + "V"
                 line = line.replace(tag, val_tag)
+                print(line)
                 self.lines[index_va] = line
                 total += 1
 
