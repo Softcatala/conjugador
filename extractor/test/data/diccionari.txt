@@ -4,4 +4,8 @@ repermeabilitzades repermeabilitzar VMP00PF0
 encolomàreu encolomar VMIS2P00
 afanye afanyar VMM03S0V
 equalitzaven equalitzar VMII3P00
+reconèixer reconèixer VMN00000
+reconéixer reconèixer VMN00000
 cantar cantar VMN00000
+transmés transmetre VMP00SM0
+transmès transmetre VMP00SM0
