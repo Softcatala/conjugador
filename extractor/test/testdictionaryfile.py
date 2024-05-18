@@ -36,7 +36,7 @@ class TestDictionaryFile(unittest.TestCase):
         diccionari = self._get_dictionary()
         results = list(diccionari.get_form_lemma_postag())
 
-        self.assertEquals(10, len(results))
+        self.assertEquals(12, len(results))
         self.assertEquals("dobleguéssim", results[0][FORM])
         self.assertEquals("doblegar", results[0][LEMMA])
         self.assertEquals("VMSI1P02", results[0][POSTAG])
@@ -55,7 +55,7 @@ class TestDictionaryFile(unittest.TestCase):
         lemmas = set()
         lemmas.add("cantar")
         diccionari.exclude_lemmas_list(lemmas)
-        self.assertEquals(9, len(diccionari.lines))
+        self.assertEquals(11, len(diccionari.lines))
 
     def test_form_lemma_postag_from_line_specialcases(self):
         diccionari = self._get_dictionary()
@@ -63,6 +63,12 @@ class TestDictionaryFile(unittest.TestCase):
         self.assertEquals(('col·latària', 'col·latari', 'NCFS000'), rst)
         rst = diccionari._get_form_lemma_postag_from_line("mont-rogenc mont-rogenc AQ0MS0")
         self.assertEquals(('mont-rogenc', 'mont-rogenc', 'AQ0MS0'), rst)
+
+   def test_valencia(self):
+        diccionari = self._get_dictionary()
+
+        self.assertIn(('transmés', 'transmetre', 'VMP00SMV'), diccionari.get_form_lemma_postag())
+        self.assertIn(('reconéixer', 'reconèixer', 'VMN0000V'), diccionari.get_form_lemma_postag())
 
 if __name__ == '__main__':
     unittest.main()    

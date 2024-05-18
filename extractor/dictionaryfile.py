@@ -89,7 +89,6 @@ class DictionaryFile:
         
             if found_ca and index_va:
                 line = self.lines[index_va]
-                print(line)
                 idx = line.find(tag)
                 val_tag = tag[0:-1] + "V"
                 line = line.replace(tag, val_tag)
