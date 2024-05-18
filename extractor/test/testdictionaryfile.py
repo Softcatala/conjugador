@@ -64,7 +64,7 @@ class TestDictionaryFile(unittest.TestCase):
         rst = diccionari._get_form_lemma_postag_from_line("mont-rogenc mont-rogenc AQ0MS0")
         self.assertEquals(('mont-rogenc', 'mont-rogenc', 'AQ0MS0'), rst)
 
-   def test_valencia(self):
+    def test_valencia(self):
         diccionari = self._get_dictionary()
 
         self.assertIn(('transmés', 'transmetre', 'VMP00SMV'), diccionari.get_form_lemma_postag())

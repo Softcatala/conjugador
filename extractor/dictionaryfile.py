@@ -85,6 +85,14 @@ class DictionaryFile:
         self._valencia_form("VMP00SM0", "ès", "és", )
         self._valencia_form("VMN00000", "èixer", "éixer")
 
+    # Transforms a tag VMN00000 into VMN0000V
+    def _valencia_update_tag_in_line(self, line_idx, tag):
+        line = self.lines[line_idx]
+        idx = line.find(tag)
+        val_tag = tag[0:-1] + "V"
+        line = line.replace(tag, val_tag)
+        self.lines[line_idx] = line
+
     def _valencia_form(self, tag, central, valencia):
         lemmas = self._load_specific_lemmas_with_pos(tag)
         total = 0
@@ -94,15 +102,10 @@ class DictionaryFile:
             index_va = next((i for i, form in forms if form.endswith(valencia)), None)
         
             if found_ca and index_va:
-                line = self.lines[index_va]
-                idx = line.find(tag)
-                val_tag = tag[0:-1] + "V"
-                line = line.replace(tag, val_tag)
-                self.lines[index_va] = line
+                self._valencia_update_tag_in_line(index_va, tag)
                 total += 1
 
         print(f"Marked {total} forms tagged {tag} as Valencian")
-
             
     def _read_file(self, input_file):
         with open(input_file) as f:
