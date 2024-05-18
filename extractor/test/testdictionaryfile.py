@@ -71,4 +71,4 @@ class TestDictionaryFile(unittest.TestCase):
         self.assertIn(('reconéixer', 'reconèixer', 'VMN0000V'), diccionari.get_form_lemma_postag())
 
 if __name__ == '__main__':
-    unittest.main()    
+    unittest.main()

@@ -75,6 +75,12 @@ class DictionaryFile:
 
         return lemmas
 
+    '''
+        El diccionari d'on llegim les dades no marca correctament algunes formes i esmenar-ho
+        no es pot fer a curt plaç, ja que té implicacions en altres eines. Com a solució, marquem
+        aquí de forma dinàmica aquestes formes com a valencianes
+    '''
+
     def _valencia(self):
         self._valencia_form("VMP00SM0", "ès", "és", )
         self._valencia_form("VMN00000", "èixer", "éixer")
