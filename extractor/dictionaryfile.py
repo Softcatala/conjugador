@@ -76,9 +76,9 @@ class DictionaryFile:
         return lemmas
 
     '''
-        El diccionari d'on llegim les dades no marca correctament algunes formes i esmenar-ho
-        no es pot fer a curt plaç, ja que té implicacions en altres eines. Com a solució, marquem
-        aquí de forma dinàmica aquestes formes com a valencianes
+        El diccionari d'on llegim les dades té etiquetades correctament algunes formes com a valencianes.
+        Esmenar-ho no es pot fer a curt plaç, ja que té implicacions en altres eines. Com a solució, marquem
+        aquí de forma dinàmica aquestes formes com a valencianes.
     '''
 
     def _valencia(self):
