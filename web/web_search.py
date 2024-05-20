@@ -19,7 +19,9 @@
 # Boston, MA 02111-1307, USA.
 
 from flask import Flask, request, Response
+from flask_compress import Compress
 import sys
+Compress(app)
 
 sys.path.append('models/')
 from search import Search
