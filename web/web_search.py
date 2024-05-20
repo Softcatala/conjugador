@@ -142,7 +142,7 @@ def stats():
 
     caches =  {}
     search_words = []
-    for key, _ in cache_contents.items():
+    for key, _ in _get_search.cache:
         search_words.append(key)
     
     caches['search'] = _get_cache_info(_get_search.cache_info())
