@@ -67,7 +67,7 @@ def json_answer_status(data, status):
     resp.status = str(status)
     return resp
 
-@lru_cache(maxsize=500) # Rationale: there are ~10K infitives, cache top 5%
+#@lru_cache(maxsize=500) # Rationale: there are ~10K infitives, cache top 5%
 def _get_search(word):
     search = Search(word)
     j, status = search.get_json_search()
@@ -111,7 +111,7 @@ def autocomplete_api(word):
     num_results = autocomplete.get_num_results()
 
     elapsed_time = time.time() - start_time
-    logging.debug(f"/autocomplete for '{word}': {num_results} results, time: {elapsed_time:.2f}s")
+#    logging.debug(f"/autocomplete for '{word}': {num_results} results, time: {elapsed_time:.2f}s")
 #    Usage().log("autocomplete", elapsed_time)
     return json_answer_status(j, status)
 
