@@ -19,9 +19,7 @@
 # Boston, MA 02111-1307, USA.
 
 from flask import Flask, request, Response
-from flask_compress import Compress
 import sys
-Compress(app)
 
 sys.path.append('models/')
 from search import Search
@@ -69,7 +67,7 @@ def json_answer_status(data, status):
     resp.status = str(status)
     return resp
 
-#@lru_cache(maxsize=500) # Rationale: there are ~10K infitives, cache top 5%
+@lru_cache(maxsize=500) # Rationale: there are ~10K infitives, cache top 5%
 def _get_search(word):
     search = Search(word)
     j, status = search.get_json_search()
@@ -83,10 +81,9 @@ def search_api(word):
     j, status, num_results = _get_search(word)
 
     elapsed_time = time.time() - start_time
-    r = json_answer_status(j, status)
-    logging.debug(f"/search for '{word}': {num_results} results, size: {len(j)} time: {elapsed_time:.2f}s")
-    return r
+    logging.debug(f"/search for '{word}': {num_results} results, time: {elapsed_time:.2f}s")
 #    Usage().log("search", elapsed_time)
+    return json_answer_status(j, status)
 
 @lru_cache(maxsize=23) # Rationale: there 23 index files only
 def _get_letter_index(letter):
@@ -114,7 +111,7 @@ def autocomplete_api(word):
     num_results = autocomplete.get_num_results()
 
     elapsed_time = time.time() - start_time
-#    logging.debug(f"/autocomplete for '{word}': {num_results} results, time: {elapsed_time:.2f}s")
+    logging.debug(f"/autocomplete for '{word}': {num_results} results, time: {elapsed_time:.2f}s")
 #    Usage().log("autocomplete", elapsed_time)
     return json_answer_status(j, status)
 
