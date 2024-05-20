@@ -81,7 +81,7 @@ def search_api(word):
     j, status, num_results = _get_search(word)
 
     elapsed_time = time.time() - start_time
-    logging.debug(f"/search for '{word}': {num_results} results, time: {elapsed_time:.2f}s")
+    logging.debug(f"/search for '{word}': {num_results} results, size: {len(j)} time: {elapsed_time:.2f}s")
 #    Usage().log("search", elapsed_time)
     return json_answer_status(j, status)
 
