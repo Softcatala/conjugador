@@ -3,4 +3,3 @@ flask==3.0.2
 pyuca==1.2
 gunicorn==22.0.0
 psutil
-Flask-Compress
