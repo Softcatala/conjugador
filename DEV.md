@@ -10,7 +10,7 @@ Usem tres fonts de dades.
 La font principal de dades lingüístiques és el diccionari _catalan-dict-tools_ de Softcatalà des d'on
 en generen els verbs. 
 
-Les dades tenen els format: form, lemma postag. Per exemple:
+Les dades tenen el format: form, lemma postag. Per exemple:
 	
  cantaria cantar VMIC1S00
 
@@ -38,8 +38,8 @@ El resultat del proces de generació de dades són una col·leció d'uns 10.000 
 
 L'aplicació extract.py té dos objectius:
 
-a) Extreu només els infinitius en fitxer de text
-b) Generar les formes verbals en format JSON
+ a) Extreu només els infinitius en fitxer de text
+ b) Generar les formes verbals en format JSON
 
 Els infinitius a) són necessaris després per poder importar les definicions des del bolcat de dades del Viccionari.
 
