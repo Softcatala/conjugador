@@ -32,7 +32,7 @@ Dades específiques del conjugador:
 
 # Descripció general de la preparació de les dades
 
-El resultat del procés de generació de dades és una col·leció d'uns 10.000 fitxers (un per infinitiu) en format JSON que contenten tota la informació del verb combinada de les diferents fonts. Aquests fitxers són els mateixos que retorna el servidor quan se li demana un verb, és a dir, els JSON amb la informació dels verbs està generada estàticament.
+El resultat del procés de generació de dades és una col·lecció d'uns 10.000 fitxers (un per infinitiu) en format JSON que conteten tota la informació del verb combinada de les diferents fonts. Aquests fitxers són els mateixos que retorna el servidor quan se li demana un verb, és a dir, els JSON amb la informació dels verbs està generada estàticament.
 
 ## Extract
 
@@ -46,14 +46,8 @@ Els infinitius a) són necessaris després per poder importar les definicions de
 
 ## Defintion
 
-L'aplicació _definitions/extract-to-json.py_ té com a objectiu extreure les defincions del Viccionari en un JSON amb les definicions que després l'ordre extract.py usarà.
+L'aplicació _definitions/extract-to-json.py_ té com a objectiu extreure les definicions del Viccionari en un JSON amb les definicions que després l'ordre extract.py usarà.
 
 # Index
 
-L'aplicació _indexer/index_creation.py_ s'encarrega de generar un índex amb el motor de cerca Whoosh que després usarem per oferir la cerca i l'autocomplete. 
-
-
-
-
-
-
+L'aplicació _indexer/index_creation.py_ s'encarrega de generar un índex amb el motor de cerca Whoosh que després usarem per oferir la cerca i l'autocomplete a la web.
