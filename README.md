@@ -30,6 +30,10 @@ Test from the browser:
 * Index: http://localhost:8000/index/a
 * Autocomplete: http://localhost:8000/autocomplete/cantari
 
+# How the system works
+
+See document [DEV.md](DEV.md) (in Catalan)
+
 # License
 
 ## Software
