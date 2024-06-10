@@ -10,7 +10,7 @@ Usem tres fonts de dades.
 
 Els verbs es generen a partir de les dades lingüístiques del diccionari _catalan-dict-tools_ de Softcatalà.
 
-Les dades tenen el format: forma, lemma postag. Per exemple:
+Les dades tenen el format: forma, lemma, postag. Per exemple:
 	
 > cantaria cantar VMIC1S00
 
