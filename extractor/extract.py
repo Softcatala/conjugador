@@ -27,6 +27,7 @@ from optparse import OptionParser
 from forms import Tense, Form
 from diacritics import Diacritics
 from reflexius import Reflexius
+from notes import Notes
 from dictionaryfile import DictionaryFile
 from exclusionsfile import ExclusionsFile
 
@@ -35,6 +36,7 @@ WORDS_SEPARATOR = " / "
 
 diacritics = Diacritics()
 reflexius = Reflexius()
+notes = Notes()
 
 def _get_forms_with_variant(lemma_subdict, postag, prefix=''):
 
@@ -332,6 +334,9 @@ def _set_definition(lemma, tenses, definitions):
 
     definition["title"] = reflexius.get_reflexiu(lemma)
     definition["infinitive"] = lemma
+    if notes.has_note_for(lemma):
+        definition["note"] = notes.get_note(lemma)
+
     tenses.insert(0, definition)
 
 def _get_dictionary(dictionary_file, exclusions_file):
@@ -409,6 +414,7 @@ def main():
 
     diacritics.load_diacritics()
     reflexius.load_reflexius()
+    notes.load_notes()
 
     exclusions_file = 'catalan-dict-tools/fdic-to-hunspell/dades/exclusions-conjugador.txt'
     dictionary_file = 'catalan-dict-tools/resultats/lt/diccionari.txt'
