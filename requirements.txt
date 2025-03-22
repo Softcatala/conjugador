@@ -1,5 +1,5 @@
 Whoosh==2.7.4
 flask==3.0.2
 pyuca==1.2
-gunicorn==22.0.0
+gunicorn==23.0.0
 psutil
