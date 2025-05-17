@@ -43,7 +43,7 @@ class TextExtract:
         return final
 
     '''Wiki internal link with format [[LINK|TEXT]]'''
-    def _remove_intenal_links(self, line):
+    def _remove_internal_links(self, line):
         SECTION_START = '[['
         SECTION_END = ']]'
 
@@ -68,7 +68,7 @@ class TextExtract:
         final = line[:start] + text + line[end + len(SECTION_END) :len(line)]
         logging.debug("Removed link '{0}' -> '{1}'".format(line, final))
 
-        return self._remove_intenal_links(final)
+        return self._remove_internal_links(final)
 
     def _remove_mediawiki_markup(self, line):
         MEDIAWIKI_BOLD = "'''"
@@ -222,7 +222,7 @@ class TextExtract:
                 alternative = self._get_alternative_form(s)
 
             s = self._remove_templates(s)
-            s = self._remove_intenal_links(s)
+            s = self._remove_internal_links(s)
             s = self._remove_mediawiki_markup(s)
             s = self._remove_xml_tags(s)
             s, open_ol, open_dl = self._convert_to_html(s, open_ol, open_dl)
