@@ -18,7 +18,6 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-import re
 import json
 import datetime
 import os
@@ -228,7 +227,7 @@ def _build_dictionary(dictionary_file):
             new_form += " / " + form
             lemma_subdict[postag] = new_form
 
-        main_dict[lemma] = lemma_subdict;
+        main_dict[lemma] = lemma_subdict
 
     return main_dict
 
