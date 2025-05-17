@@ -56,7 +56,7 @@ class DictionaryFile:
 
     def exclude_lemmas_list(self, lemmas):
         size = len(self.lines)
-        for idx in range(size - 1, 0, -1):
+        for idx in range(size - 1, -1, -1):
             line = self.lines[idx]
             form, lemma, postag = self._get_form_lemma_postag_from_line(line)
             lemma = lemma.lower()
