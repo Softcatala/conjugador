@@ -23,6 +23,11 @@ To both develop locally and build the image you need to have `uv` installed.
 
 To install `uv`, follow the [official instructions](https://docs.astral.sh/uv/getting-started/installation/).
 
+Once installed, install the project dependencies into a virtual environment as follows:
+```bash
+uv python install $(cat .python-version) && uv sync
+```
+
 #  Docker
 
 To create Docker image, from the <em>root</em> directory type:
