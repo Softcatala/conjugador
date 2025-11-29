@@ -9,7 +9,7 @@ variables:
 stages:
   - test
   - build
-  - deploy
+#  - deploy
 
 test:
   image: python:3.11.0-slim-bullseye
