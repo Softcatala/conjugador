@@ -15,6 +15,14 @@ To clone the repository and its submodules use:
 
 ``git clone --recurse-submodules git@github.com:Softcatala/conjugador.git``
 
+# Prerequisites
+
+To both develop locally and build the image you need to have `uv` installed.
+
+`uv` is a fast, modern integrated package and version manager for Python. This substitutes the need for separate tools like `pyenv` and `pip`.
+
+To install `uv`, follow the [official instructions](https://docs.astral.sh/uv/getting-started/installation/).
+
 #  Docker
 
 To create Docker image, from the <em>root</em> directory type:
