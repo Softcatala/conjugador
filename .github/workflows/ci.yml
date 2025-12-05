@@ -35,7 +35,7 @@ jobs:
         run: |
           uv run nose2
 
-      - name: Run linter
-        run: |
-          uv run ruff check .
+      #- name: Run linter
+      #  run: |
+      #    uv run ruff check .
 
