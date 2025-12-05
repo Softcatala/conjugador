@@ -15,11 +15,13 @@ test:
   image: python:3.11.0-slim-bullseye
   before_script:
     - apt-get update && apt-get install make
-    - pip install nose2
+    - python -m pip install --upgrade pip
+    - pip install uv
+    - uv sync
+
   stage: test
   script:
-    - pip install -r requirements.txt
-    - make test
+    - uv run nose2
 
 build:
   image: docker:latest
