@@ -18,31 +18,54 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-"""
-Reads a dictionary text file with entries with the following format:
-
-    form lemma postag
-    cantaria cantar VMIC1S00
-
-Makes the data accessible in the form of: form, lemma and postag.
-"""
 
 import re
 from pathlib import Path
+from typing import Iterator
 
 
 class DictionaryFile:
-    def __init__(self, filename):
-        self.lines = self._read_file(filename)
+    """
+    Reads a dictionary text file with entries with the following format:
+    - form lemma postag
+    - cantaria cantar VMIC1S00
+
+    Makes the data accessible in the form of: form, lemma and postag.
+
+    Args:
+        file_path (str): The path of the file to read.
+    """
+
+    def __init__(self, file_path: str) -> None:
+        """
+        Initializes the DictionaryFile with a given file name.
+
+        Args:
+            file_path (str): The path of the file to read.
+        """
+        self.lines = self._read_file(file_path)
         self._valencia()
         self._pre_process_anar_auxiliar()
 
-    def get_form_lemma_postag(self):
+    def get_form_lemma_postag(self) -> Iterator[tuple[str, str, str]]:
+        """
+        Gets all the forms, lemmas and postags for each entry in the dictionary
+        in an iterator.
+
+        Yields:
+            tuple[str, str ,str]: A tuple containing the form, lemma and postag.
+        """
         for line in self.lines:
             form, lemma, postag = self._get_form_lemma_postag_from_line(line)
             yield form, lemma, postag
 
-    def get_lemmas_for_infinitives(self):
+    def get_lemmas_for_infinitives(self) -> list[str]:
+        """
+        Gets all the lemmas for the infinitive variants (VMN00000, VAN00000, VSN00000).
+
+        Returns:
+            list[str]: A list of all the lemmas of all the infinitives in the dictionary.
+        """
         INFINITIVE_DESCRIPTORS = {"VMN00000", "VAN00000", "VSN00000"}
 
         lemmas = []
@@ -56,7 +79,13 @@ class DictionaryFile:
 
         return lemmas
 
-    def exclude_lemmas_list(self, lemmas):
+    def exclude_lemmas_list(self, lemmas: list[str]) -> None:
+        """
+        Excludes a given list of lemmas from the dictionary.
+
+        Args:
+            lemmas (list[str]): The list of lemmas to exclude.
+        """
         size = len(self.lines)
         for idx in range(size - 1, -1, -1):
             line = self.lines[idx]
@@ -67,7 +96,9 @@ class DictionaryFile:
 
         print(f"Removed {size - len(self.lines)} lemmas from dictionary")
 
-    def _load_specific_lemmas_with_pos(self, tag):
+    def _load_specific_lemmas_with_pos(
+        self, tag: str
+    ) -> dict[str, list[tuple[int, str]]]:
         lemmas = {}
         for i in range(len(self.lines)):
             line = self.lines[i]
@@ -77,13 +108,10 @@ class DictionaryFile:
 
         return lemmas
 
-    """
-        El diccionari d'on llegim les dades no té etiquetades correctament algunes formes com a valencianes.
-        Esmenar-ho no es pot fer a curt plaç, ja que té implicacions en altres eines. Com a solució, marquem
-        aquí de forma dinàmica aquestes formes com a valencianes.
-    """
-
-    def _valencia(self):
+    def _valencia(self) -> None:
+        # El diccionari d'on llegim les dades no té etiquetades correctament algunes formes com a valencianes.
+        # Esmenar-ho no es pot fer a curt plaç, ja que té implicacions en altres eines. Com a solució, marquem
+        # aquí de forma dinàmica aquestes formes com a valencianes.
         self._valencia_form(
             "VMP00SM0",
             "ès",
@@ -91,14 +119,20 @@ class DictionaryFile:
         )
         self._valencia_form("VMN00000", "èixer", "éixer")
 
-    # Transforms a tag VMN00000 into VMN0000V
-    def _valencia_update_tag_in_line(self, line_idx, tag):
+    def _valencia_update_tag_in_line(self, line_idx: int, tag: str) -> None:
+        """
+        Transforms a tag VMN00000 into VMN0000V
+
+        Args:
+            line_idx (int): The line index to update.
+            tag (str): The tag value you want to replace the original for.
+        """
         line = self.lines[line_idx]
         val_tag = tag[0:-1] + "V"
         line = line.replace(tag, val_tag)
         self.lines[line_idx] = line
 
-    def _valencia_form(self, tag, central, valencia):
+    def _valencia_form(self, tag: str, central: str, valencia: str) -> None:
         lemmas = self._load_specific_lemmas_with_pos(tag)
         total = 0
 
@@ -114,16 +148,14 @@ class DictionaryFile:
 
         print(f"Marked {total} forms tagged {tag} as Valencian")
 
-    def _read_file(self, input_file):
+    def _read_file(self, input_file: str) -> list[str]:
         with Path(input_file).open() as f:
             return f.readlines()
 
-    """
-        La forma en infinitiu "anar" no és una forma auxiliar i no apareix com a infinitiu al diccionari.
-        Com a resultat totes les formes vaja, vam, van queden penjades sense mostrar-se.
-    """
-
-    def _pre_process_anar_auxiliar(self):
+    def _pre_process_anar_auxiliar(self) -> None:
+        # La forma en infinitiu "anar" no és una forma auxiliar i no apareix com
+        # a infinitiu al diccionari.
+        # Com a resultat, totes les formes vaja, vam, van queden penjades sense mostrar-se.
         for i in range(len(self.lines)):
             line = self.lines[i]
             form, lemma, postag = self._get_form_lemma_postag_from_line(line)
@@ -134,7 +166,9 @@ class DictionaryFile:
 
         self.lines.append("anar anar_aux VAN00000")
 
-    def _get_form_lemma_postag_from_line(self, line):
+    def _get_form_lemma_postag_from_line(
+        self, line: str
+    ) -> tuple[str, str, str]:
         wordList = re.sub(r"[^(\w|·|\-)]", " ", line).split()
         form = wordList[0]
         lemma = wordList[1]

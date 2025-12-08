@@ -17,8 +17,10 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from textextract import TextExtract
 import unittest
+
+from definitions.textextract import TextExtract
+
 
 class TestTextExtract(unittest.TestCase):
 
@@ -37,7 +39,7 @@ class TestTextExtract(unittest.TestCase):
         for line in lines:
             textExtract = TextExtract(line)
 
-            html, open_ol, open_dl = textExtract._convert_to_html(line, open_ol, open_dl)
+            html, open_ol, open_dl = textExtract._convert_to_html(line, open_ol=open_ol, open_dl=open_dl)
             htmls.append(html)
 
         self.assertEqual(4, len(htmls))
@@ -63,7 +65,7 @@ class TestTextExtract(unittest.TestCase):
         for line in lines:
             textExtract = TextExtract(line)
 
-            html, open_ol, open_dl = textExtract._convert_to_html(line, open_ol, open_dl)
+            html, open_ol, open_dl = textExtract._convert_to_html(line, open_ol=open_ol, open_dl=open_dl)
             htmls.append(html)
 
         self.assertEqual(7, len(htmls))

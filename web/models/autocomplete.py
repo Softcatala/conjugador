@@ -20,14 +20,23 @@
 
 import json
 
-from firstletter import FirstLetter
-from searchbase import SearchBase
-from whoosh.index import open_dir
+from whoosh.index import FileIndex, open_dir
 from whoosh.qparser import MultifieldParser
+from whoosh.searching import Results, Searcher
+
+from web.firstletter import FirstLetter
+from web.models.searchbase import SearchBase
 
 
-def open_indexes():
-    dir_name = "../data/autocomplete_index/"
+def open_indexes() -> dict[str, FileIndex]:
+    """
+    Opens all the indexes in the autocomplete directory with Whoosh.
+
+    Returns:
+        dict[str, FileIndex]: A dict with alphabet letters as keys and Whoosh
+            indexes as values.
+    """
+    dir_name = "data/autocomplete_index/"
 
     idxs = {}
     for letter in FirstLetter().get_letters():
@@ -45,31 +54,56 @@ idxs = open_indexes()
 
 
 class Autocomplete(SearchBase):
-    def __init__(self, word):
+    """
+    Autocomplete a word based on the information on the Whoosh indices.
+
+    Args:
+        word (str): The word to try to autocomplete from.
+    """
+
+    def __init__(self, word: str) -> None:
+        """
+        Initializes the Autocomplete class with a word to autocomplete.
+
+        Args:
+            word (str): The word to try to autocomplete from.
+        """
         self._word = word
-        self.searcher = None
+        self.searcher: Searcher | None = None
         self.query = None
         self.num_results = 0
         self.letter = FirstLetter()
 
-    def get_num_results(self):
+    def get_num_results(self) -> int:
+        """
+        Retrieves the number of results found.
+
+        Returns:
+            int: Num of results.
+        """
         return self.num_results
 
-    def get_results(self):
+    def get_results(self) -> list[dict] | Results:
+        """
+        Gets the results from the prepared query, based on the word to autocomplete.
+
+        Returns:
+            Results: A wrapper over a list of dicts containing the results.
+        """
         letter = self.letter.from_word(self.word)
 
         if letter not in idxs:
             results = []
         else:
             self._search(letter)
-            results = self.searcher.search(
+            results = self.searcher.search(  # pyrefly: ignore
                 self.query, limit=10, sortedby="autocomplete_sorting"
             )
 
         self.num_results = len(results)
         return results
 
-    def _search(self, letter):
+    def _search(self, letter: str) -> None:
         ix = idxs[letter]
 
         self.searcher = ix.searcher()
@@ -78,7 +112,14 @@ class Autocomplete(SearchBase):
 
         self.query = MultifieldParser(fields, ix.schema).parse(qs)
 
-    def get_json(self):
+    def get_json(self) -> tuple[str, int]:
+        """
+        Gets a stringified JSON for all the results found for the initialized
+        autocomplete word.
+
+        Returns:
+            tuple[str, int]: A tuple containing the stringified JSON and the status code.
+        """
         OK = 200
         status = OK
         results = self.get_results()

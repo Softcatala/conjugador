@@ -20,28 +20,33 @@
 
 import datetime
 import logging
-import os
-from definitions import Definitions
+from pathlib import Path
 
-def init_logging():
-    logfile = 'extract-to-json.log'
+from definitions.definitions import Definitions
 
-    if os.path.isfile(logfile):
-        os.remove(logfile)
+
+def init_logging() -> None:  # noqa: D103
+    logfile = Path("extract-to-json.log")
+
+    if logfile.is_file():
+        logfile.unlink()
 
     logging.basicConfig(filename=logfile, level=logging.DEBUG)
 
-def main():
 
+def main() -> None:  # noqa: D103
     print("Reads a Wikidictionary XML dump and extracts verbs definitions")
     init_logging()
     start_time = datetime.datetime.now()
 
     definitions = Definitions()
-    definitions.generate('definitions/cawiktionary-latest-pages-meta-current.xml')
+    definitions.generate(
+        "definitions/cawiktionary-latest-pages-meta-current.xml"
+    )
 
-    msg = 'Time {0}'.format(datetime.datetime.now() - start_time)
+    msg = "Time {0}".format(datetime.datetime.now() - start_time)
     logging.info(msg)
+
 
 if __name__ == "__main__":
     main()

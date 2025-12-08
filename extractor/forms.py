@@ -20,18 +20,67 @@
 
 
 class Form:
-    def __init__(self, word, variant, prefix="", diacritic=False):
+    """
+    Defines a specific conjugation of a word, known as a Form.
+
+    Args:
+        word (str): The word to conjugate.
+        variant (str): The variant to apply to the word.
+        prefix (str | None): The prefix which to apply to the word.
+        diacritic (bool): Whether the form has a diacrític or not.
+    """
+
+    def __init__(
+        self,
+        word: str,
+        variant: str,
+        prefix: str | None = None,
+        *,
+        diacritic: bool = False,
+    ) -> None:
+        """
+        Initializes a Form with a word, variant, prefix and whether it incorporates
+        a diacritic accent or not.
+
+        Args:
+            word (str): The word to conjugate.
+            variant (str): The variant to apply to the word.
+            prefix (str | None): The prefix which to apply to the word.
+            diacritic (bool): Whether the form has a diacrític or not.
+        """
+        if prefix is None:
+            prefix = ""
+
         self.word = prefix + word
         self.variant = variant
         if diacritic:
             self.diacritic = diacritic
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """Represents a Form in a string format."""
         return "{0} - {1} ".format(self.word, self.variant)
 
 
 class Tense:
-    def __init__(self, mode, tense, postag):
+    """
+    Describes a verbal tense with the mode, tense, postag (M, A, S),
+    and all the conjugations.
+
+    Args:
+        mode (str): Gramatical mode.
+        tense (str): Verbal tense.
+        postag (str): The postag representing the tense.
+    """
+
+    def __init__(self, mode: str, tense: str, postag: str) -> None:
+        """
+        Initializes a tense with a mode, verbal tense and postag.
+
+        Args:
+            mode (str): Gramatical mode.
+            tense (str): Verbal tense.
+            postag (str): The postag representing the tense.
+        """
         self.mode = mode
         self.tense = tense
         self.postag = postag
@@ -42,7 +91,8 @@ class Tense:
         self.plural2 = []
         self.plural3 = []
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """Represents a Tense in a string format."""
         s = "---"
         s += "* {0} ({1})\n".format(self.tense, self.mode)
         s += "{0}\n".format("".join(str(p) for p in self.singular1))

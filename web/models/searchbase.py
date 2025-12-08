@@ -18,20 +18,24 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-import cgi
-from abc import ABC
 
+class SearchBase:
+    """
+    Base class that provides functionality to store a word for later search.
+    """
 
-class SearchBase(ABC):
-    def __init__(self, word):
+    def __init__(self, word: str) -> None:
+        """
+        Initializes the SearchBase class with a word.
+
+        Args:
+            word (str): The word to search.
+        """
         self._word = word
 
     @property
-    def word(self):
+    def word(self) -> str:
+        """
+        Gets the current word.
+        """
         return self._word
-
-    def _get_result(self, result, key):
-        if key in result:
-            return cgi.escape(result[key])
-
-        return None

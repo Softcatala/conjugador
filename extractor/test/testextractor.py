@@ -17,7 +17,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from extract import extract_from_dictfile
+from extractor.extract import extract_from_dictfile
 import unittest
 import hashlib
 

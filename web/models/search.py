@@ -21,32 +21,57 @@
 import json
 from pathlib import Path
 
-from searchbase import SearchBase
 from whoosh.index import open_dir
 from whoosh.qparser import MultifieldParser
+from whoosh.searching import Results, Searcher
 
-dir_name = "../data/search_index/"
+from web.models.searchbase import SearchBase
+
+dir_name = "data/search_index/"
 ix = open_dir(dir_name)  # static instance reusable across requests
 
 
 class Search(SearchBase):
-    """Search a term in the Whoosh index."""
+    """
+    Search a term in the Whoosh index.
 
-    def __init__(self, word):
+    Args:
+        word (str): The word to search for.
+    """
+
+    def __init__(self, word: str) -> None:
+        """
+        Initializes the Search class with a word to look.
+
+        Args:
+            word (str): The word to search for.
+        """
         self._word = word
-        self.searcher = None
+        self.searcher: Searcher | None = None
         self.query = None
         self.query_expansion = None
         self.num_results = 0
 
-    def get_num_results(self):
+    def get_num_results(self) -> int:
+        """
+        Retrieves the number of results found.
+
+        Returns:
+            int: Num of results.
+        """
         return self.num_results
 
-    def get_results(self):
+    def get_results(self) -> Results:
+        """
+        Gets the results from the prepared query.
+
+        Returns:
+            Results: A wrapper over a list of dicts containing the results.
+        """
         if self.searcher is None:
             self.search()
 
-        results = self.searcher.search(
+        results: Results = self.searcher.search(  # pyrefly: ignore
             self.query,
             limit=None,
             sortedby="index_letter",
@@ -54,7 +79,7 @@ class Search(SearchBase):
         )
 
         if results.is_empty():
-            results = self.searcher.search(
+            results = self.searcher.search(  # pyrefly: ignore
                 self.query_expansion,
                 limit=None,
                 sortedby="index_letter",
@@ -64,7 +89,10 @@ class Search(SearchBase):
         self.num_results = len(results)
         return results
 
-    def search(self):
+    def search(self) -> None:
+        """
+        Performs a search based on the initialized word.
+        """
         self.searcher = ix.searcher()
         fields = []
         qs = " verb_form:({0})".format(self._word)
@@ -73,14 +101,21 @@ class Search(SearchBase):
         qs = " verb_form_no_diacritics:({0})".format(self._word)
         self.query_expansion = MultifieldParser(fields, ix.schema).parse(qs)
 
-    def get_json_search(self):
+    def get_json_search(self) -> tuple[str, int]:
+        """
+        Gets a stringified JSON for all the results found for the initialized
+        word.
+
+        Returns:
+            tuple[str, int]: A tuple containing the stringified JSON and the status code.
+        """
         OK = 200
 
         status = OK
         results = self.get_results()
         all_results = []
         for result in results:
-            filepath = "../" + result["file_path"]
+            filepath = result["file_path"]
 
             with Path(filepath).open("r") as j:
                 file = json.loads(j.read())

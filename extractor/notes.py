@@ -24,10 +24,16 @@ from pathlib import Path
 
 
 class Notes:
-    def __init__(self):
-        self.notes = set()
+    """
+    Loads all the notes for verbs that need clarifications.
+    """
 
-    def load_notes(self):
+    def __init__(self) -> None:
+        """Initializes the Notes class with defaults."""
+        self.notes = {}
+
+    def load_notes(self) -> None:
+        """Loads all the notes from the `notes.json` static file."""
         FILENAME = "notes.json"
 
         directory = Path(os.path.realpath(__file__)).parent
@@ -40,10 +46,26 @@ class Notes:
 
         self.notes = notes
 
-    def has_note_for(self, lemma):
+    def has_note_for(self, lemma: str) -> bool:
+        """
+        Checks whether a given lemma has an associated note or not.
+
+        Args:
+            lemma (str): The lemma to check for.
+
+        Returns:
+            bool: Whether it has an associated note.
+        """
         return lemma in self.notes
 
-    def get_note(self, lemma):
-        if lemma in self.notes:
-            return self.notes[lemma]
-        return None
+    def get_note(self, lemma: str) -> str | None:
+        """
+        Retrieves the note for the given lemma if it exists.
+
+        Args:
+            lemma (str): The lemma to retrieve the note of.
+
+        Returns:
+            str | None: The note if the lemma has it, otherwise None.
+        """
+        return self.notes.get(lemma, None)

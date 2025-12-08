@@ -4,14 +4,14 @@ docker-build:
 	docker build . -t conjugador -f docker/dockerfile;
 
 docker-run:
-	docker run -p 8000:8000 -i -t conjugador;
+	docker run -p 8000:8000 -i -t conjugador
 
 generate-data:
 	bzip2 -cdk definitions/cawiktionary-latest-pages-meta-current.xml.bz2 > definitions/cawiktionary-latest-pages-meta-current.xml
-	uv run extractor/extract.py -i
-	uv run definitions/extract-to-json.py
-	uv run extractor/extract.py
-	uv run indexer/index_creation.py
+	uv run -m extractor.extract -i
+	uv run -m definitions.extract-to-json
+	uv run -m extractor.extract
+	uv run -m indexer.index_creation
 
 update-data:
 	# Extract current version

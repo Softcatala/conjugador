@@ -18,31 +18,31 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-import sys
-
-from flask import Flask, Response, request
-
-sys.path.append("models/")
 import datetime
 import json
 import logging
 import logging.handlers
 import os
 import time
-from functools import lru_cache
+from functools import _CacheInfo, lru_cache
 from pathlib import Path
 
 import psutil
-from autocomplete import Autocomplete
-from indexletter import IndexLetter
-from search import Search
-from usage import Usage
+from flask import Flask, Response, request
+
+from web.models.autocomplete import Autocomplete
+from web.models.indexletter import IndexLetter
+from web.models.search import Search
+from web.usage import Usage
 
 app = Flask(__name__)
 start_time = datetime.datetime.now()
 
 
-def init_logging():
+def init_logging() -> None:
+    """
+    Initializes all the logging environment such as the Log Level, and Log File.
+    """
     LOGDIR = os.environ.get("LOGDIR", "")
     LOGLEVEL = os.environ.get("LOGLEVEL", "INFO").upper()
     logger = logging.getLogger()
@@ -63,20 +63,39 @@ def init_logging():
 
 
 # API calls
-def json_answer(data):
+def json_answer(data: str) -> Response:
+    """
+    Envelopes a JSON string into a Flask response and adds CORS headers.
+
+    Args:
+        data (str): The JSON string to use as a response body.
+
+    Returns:
+        Response: A flask response with the body and headers applied.
+    """
     resp = Response(data, mimetype="application/json")
     resp.headers["Access-Control-Allow-Origin"] = "*"
     return resp
 
 
-def json_answer_status(data, status):
+def json_answer_status(data: str, status: int) -> Response:
+    """
+    Envelopes a JSON string and a status code into a Flask Response.
+
+    Args:
+        data (str): The JSON string to use as response body.
+        status (int): The status code to apply to the response.
+
+    Returns:
+        Response: A Flask response with the body, headers and status code applied.
+    """
     resp = json_answer(data)
     resp.status = str(status)
     return resp
 
 
 @lru_cache(maxsize=500)  # Rationale: there are ~10K infitives, cache top 5%
-def _get_search(word):
+def _get_search(word: str) -> tuple[str, int, int]:
     search = Search(word)
     j, status = search.get_json_search()
     num_results = search.get_num_results()
@@ -84,7 +103,11 @@ def _get_search(word):
 
 
 @app.route("/search/<word>", methods=["GET"])
-def search_api(word):
+def search_api(word: str) -> Response:
+    """
+    Endpoint for the search functionality. Allows the user to input a word as
+    a query parameter and check for verbs matching it or their conjugations.
+    """
     start_time = time.time()
 
     j, status, num_results = _get_search(word)
@@ -93,12 +116,11 @@ def search_api(word):
     logging.debug(
         f"/search for '{word}': {num_results} results, time: {elapsed_time:.2f}s"
     )
-    #    Usage().log("search", elapsed_time)
     return json_answer_status(j, status)
 
 
 @lru_cache(maxsize=23)  # Rationale: there 23 index files only
-def _get_letter_index(letter):
+def _get_letter_index(letter: str) -> tuple[str, int, int]:
     indexLetter = IndexLetter(letter)
     j, status = indexLetter.get_json()
     num_results = indexLetter.get_num_results()
@@ -106,7 +128,11 @@ def _get_letter_index(letter):
 
 
 @app.route("/index/<letter>", methods=["GET"])
-def index_letter_api(letter):
+def index_letter_api(letter: str) -> Response:
+    """
+    Endpoint for the letter index functionality. Allows the user to input a letter as
+    a query parameter and check all the verbs starting with that letter.
+    """
     start_time = time.time()
 
     j, status, num_results = _get_letter_index(letter)
@@ -114,12 +140,15 @@ def index_letter_api(letter):
     logging.debug(
         f"/index for '{letter}': {num_results} results, time: {elapsed_time:.2f}s"
     )
-    #    Usage().log("index", elapsed_time)
     return json_answer_status(j, status)
 
 
 @app.route("/autocomplete/<word>", methods=["GET"])
-def autocomplete_api(word):
+def autocomplete_api(word: str) -> Response:
+    """
+    Endpoint for the autocomplete functionality. Allows the user to input a piece of
+    a verb as a query parameter and checks all the verbs that match the pattern.
+    """
     start_time = time.time()
 
     autocomplete = Autocomplete(word)
@@ -133,7 +162,7 @@ def autocomplete_api(word):
     return json_answer_status(j, status)
 
 
-def _get_cache_info(cache_info):
+def _get_cache_info(cache_info: _CacheInfo) -> dict:
     cache = {}
 
     hits = cache_info.hits
@@ -148,10 +177,17 @@ def _get_cache_info(cache_info):
 
 
 @app.route("/stats/", methods=["GET"])
-def stats():
+def stats() -> Response:
+    """
+    This endpoint retrieves all the stats of the API, uptime, process id,
+    MBs and cache information.
+    """
     try:
         requested = request.args.get("date")
-        date_requested = datetime.datetime.strptime(requested, "%Y-%m-%d")
+        date_requested = datetime.datetime.strptime(
+            requested,  # pyrefly: ignore
+            "%Y-%m-%d",
+        )
     except Exception:
         return Response({}, mimetype="application/json", status=400)
 
@@ -174,7 +210,7 @@ def stats():
 
 if __name__ == "__main__":
     init_logging()
-    app.debug = True
+    app.debug = True  # pyrefly: ignore
     app.run()
 
 if __name__ != "__main__":

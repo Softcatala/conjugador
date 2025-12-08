@@ -17,7 +17,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from dictionaryfile import DictionaryFile
+from extractor.dictionaryfile import DictionaryFile
 import unittest
 from os import path
 

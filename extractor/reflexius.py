@@ -23,10 +23,16 @@ from pathlib import Path
 
 
 class Reflexius:
-    def __init__(self):
+    """
+    Loads all the reflexive verbs in catalan and attaches the correct suffix.
+    """
+
+    def __init__(self) -> None:
+        """Initializes the Reflexius class"""
         self.reflexius = set()
 
-    def load_reflexius(self):
+    def load_reflexius(self) -> None:
+        """Loads all the reflexive verbs from the `reflexius.txt` file."""
         FILENAME = "reflexius.txt"
 
         directory = Path(os.path.realpath(__file__)).parent
@@ -38,7 +44,17 @@ class Reflexius:
         print(f"Read {len(reflexius)} reflexius")
         self.reflexius = reflexius
 
-    def get_reflexiu(self, lemma):
+    def get_reflexiu(self, lemma: str) -> str:
+        """
+        Gets the reflexive form of a given lemma if it exists, otherwise returns
+        the same lemma.
+
+        Args:
+            lemma (str): The lemma to get the reflexive form of.
+
+        Returns:
+            str: The reflexive form of the lemma or the lemma itself.
+        """
         if lemma not in self.reflexius:
             return lemma
 

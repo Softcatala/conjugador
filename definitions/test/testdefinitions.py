@@ -17,12 +17,13 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-import unittest
-import tempfile
-import os
 import hashlib
+import os
+import tempfile
+import unittest
 
-from definitions import Definitions
+from definitions.definitions import Definitions
+
 
 class TestDefinitions(unittest.TestCase):
 
@@ -49,7 +50,7 @@ class TestDefinitions(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as dirpath:
             definitions = Definitions()
-            definitions.generate("test/data/definitions.xml", infinitives = 'test/data/infinitives.txt', save_dir = dirpath)
+            definitions.generate("test/data/definitions.xml", infinitives_path= 'test/data/infinitives.txt', save_dir = dirpath)
 
             def_gen = self._hash_file(os.path.join(dirpath, "definitions.txt"))
             def_ref = self._hash_file("test/data/definitions.txt")

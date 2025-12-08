@@ -20,48 +20,78 @@
 import json
 from pathlib import Path
 
-from autocomplete import Autocomplete
-from findfiles import FindFiles
-from indexletter import IndexLetter
-from search import Search
+from indexer.autocomplete import Autocomplete
+from indexer.findfiles import FindFiles
+from indexer.indexletter import IndexLetter
+from indexer.search import Search
 
 
-class IndexCreator(object):
-    def __init__(self, json_dir):
+class IndexCreator:
+    """
+    Class that creates of an index for each feature (Search, Autocomplete and
+    Letter), and later allows the population of those indices with `process_files()`.
+
+    Args:
+        json_dir (str): The path to the directory containing the JSON files to index.
+    """
+
+    def __init__(self, json_dir: str) -> None:
+        """
+        Initializes an IndexCreator instance with a directory where to
+        fetch the JSON files to index.
+
+        Args:
+            json_dir (str): The path to the directory containing the JSON
+                files to index.
+        """
         self.json_dir = json_dir
         self.index_letters = 0
         self.search = Search()
         self.autocomplete = Autocomplete()
         self.indexletter = IndexLetter()
 
-    def create(self):
         self.search.create()
-        self.autocomplete.create()
         self.indexletter.create()
 
     def _write_entry(
         self,
-        indexed,
-        verb_form,
-        file_path,
-        is_infinitive,
-        infinitive,
-        mode,
-        tense,
-        title,
-    ):
+        indexed: set,
+        verb_form: str,
+        file_path: str,
+        infinitive: str,
+        mode: str,
+        tense: str,
+        title: str,
+        *,
+        is_infinitive: bool,
+    ) -> None:
         self.search.write_entry(
-            verb_form, file_path, is_infinitive, infinitive, mode, tense, title
+            verb_form,
+            file_path,
+            infinitive,
+            mode,
+            tense,
+            title,
+            is_infinitive=is_infinitive,
         )
         self.autocomplete.write_entry(
-            verb_form, file_path, is_infinitive, infinitive, mode, tense, title
+            verb_form,
+            file_path,
+            infinitive,
+            mode,
+            tense,
+            title,
+            is_infinitive=is_infinitive,
         )
         self.indexletter.write_entry(
-            verb_form, is_infinitive, infinitive, title
+            verb_form,
+            infinitive,
+            title,
+            is_infinitive=is_infinitive,
         )
         indexed.add(verb_form)
 
-    def _get_title(self, forms):
+    def _get_title(self, forms: list[dict]) -> str:
         for form in forms:
             title = form["title"]
             if title:
@@ -69,13 +99,10 @@ class IndexCreator(object):
 
         raise Exception("No title found for the entry")
 
-    def _process_file(self, filename):
+    def _process_file(self, filename: str) -> int:
         with Path(filename).open() as json_file:
             data = json.load(json_file)
             infinitive = list(data.keys())[0]
-
-            # if infinitive != 'cantar':
-            #    return 0
 
             indexed = set()
             title = self._get_title(data[infinitive])
@@ -110,11 +137,11 @@ class IndexCreator(object):
                                 indexed,
                                 word,
                                 filename,
-                                is_infinitive,
                                 infinitive,
                                 form["mode"],
                                 form["tense"],
                                 title,
+                                is_infinitive=is_infinitive,
                             )
 
             # This is the case of anar (auxiliar)
@@ -123,28 +150,32 @@ class IndexCreator(object):
                     indexed,
                     infinitive,
                     filename,
-                    True,
                     infinitive,
                     "Formes no personals",
                     "Infinitiu",
                     title,
+                    is_infinitive=True,
                 )
 
         return len(indexed)
 
-    def _save_index(self):
+    def _save_indexes(self) -> None:
         self.search.save()
         self.autocomplete.save()
         self.indexletter.save()
 
-    def process_files(self):
-        findFiles = FindFiles()
-        files = findFiles.find_recursive(self.json_dir, "*.json")
+    def process_files(self) -> None:
+        """
+        Processes all the files found in the set directory and indexes the
+        information of them into the three different indices (Search, Autocomplete
+        and Letter).
+        """
+        files = FindFiles.find_recursive(self.json_dir, "*.json")
         indexed = 0
         for filename in files:
             indexed += self._process_file(filename)
 
-        self._save_index()
+        self._save_indexes()
         print(
             "Processed {0} files, indexed {1} variants, indexed letters {2}, indexed autocomplete entries {3}".format(
                 len(files),

@@ -22,24 +22,29 @@ import os
 from pathlib import Path
 
 
-class FindFiles(object):
-    def find(self, directory, pattern):
-        filelist = []
+class FindFiles:
+    """
+    Utility class that provides functionality for finding files, directories or
+    both with a given pattern.
+    """
 
-        for root, _, files in os.walk(directory):
-            for basename in files:
-                if fnmatch.fnmatch(basename, pattern):
-                    filename = Path(root) / basename
-                    filelist.append(str(filename))
+    @staticmethod
+    def find_recursive(directory: str, pattern: str) -> list[str]:
+        """
+        Recursively find files matching a pattern inside a directory tree.
 
-        filelist.sort()
-        return filelist
+        Args:
+            directory (str): The root directory from which the recursive search
+                begins.
+            pattern (str): Unix shell-style wildcard pattern to match file names.
 
-    def find_recursive(self, directory, pattern):
+        Returns:
+            list[str]: A sorted list of unique file paths that match the pattern.
+        """
         filelist_set = set()
-        dirs = self.find_dirs(directory, "*")
+        dirs = FindFiles.find_dirs(directory, "*")
         for _dir in dirs:
-            files = self.find(_dir, pattern)
+            files = FindFiles.find(_dir, pattern)
             for f in files:
                 filelist_set.add(f)
 
@@ -47,7 +52,18 @@ class FindFiles(object):
         filelist.sort()
         return filelist
 
-    def find_dirs(self, directory, pattern):
+    @staticmethod
+    def find_dirs(directory: str, pattern: str) -> list[str]:
+        """
+        Find directories matching a pattern inside a directory tree.
+
+        Args:
+            directory (str): The root directory where the search starts.
+            pattern (str): Unix shell-style wildcard pattern to match directory names.
+
+        Returns:
+            list[str]: A sorted list of directory paths that match the pattern.
+        """
         dirlist = []
 
         for root, dirs, _ in os.walk(directory):
@@ -58,3 +74,26 @@ class FindFiles(object):
 
         dirlist.sort()
         return dirlist
+
+    @staticmethod
+    def find(directory: str, pattern: str) -> list[str]:
+        """
+        Find files matching a pattern inside a directory tree.
+
+        Args:
+            directory (str): The root directory where the file search starts.
+            pattern (str): Unix shell-style wildcard pattern to match file names.
+
+        Returns:
+            list[str]: A sorted list of file paths that match the pattern.
+        """
+        filelist = []
+
+        for root, _, files in os.walk(directory):
+            for basename in files:
+                if fnmatch.fnmatch(basename, pattern):
+                    filename = Path(root) / basename
+                    filelist.append(str(filename))
+
+        filelist.sort()
+        return filelist

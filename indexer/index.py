@@ -24,8 +24,15 @@ from whoosh.analysis import StandardAnalyzer
 from whoosh.util.text import rcompile
 
 
-class Index(object):
-    def __init__(self):
+class Index:
+    """
+    Initializes an Index instance with a tokenizer pattern and a Whoosh analyzer.
+    This class is meant to be inherited by other specific index types.
+    """
+    def __init__(self) -> None:
+        """
+        Initializes an Index instance with a tokenizer pattern and a Whoosh analyzer.
+        """
         self.tokenizer_pattern = rcompile(
             r"(\w|·)+(\.?(\w|·)+)*"
         )  # Includes l·l
@@ -33,13 +40,13 @@ class Index(object):
             minsize=1, stoplist=None, expression=self.tokenizer_pattern
         )
 
-    def _create_dir(self, directory):
+    def _create_dir(self, directory: str) -> None:
         if Path(directory).exists():
             shutil.rmtree(directory)
 
         Path(directory).mkdir(parents=True)
 
-    def _verbs_to_ignore_in_autocomplete(self, mode, tense):
+    def _verbs_to_ignore_in_autocomplete(self, mode: str, tense: str) -> bool:
         if mode == "Indicatiu" and any(
             t in tense
             for t in [

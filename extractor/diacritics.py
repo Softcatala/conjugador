@@ -22,10 +22,21 @@ from pathlib import Path
 
 
 class Diacritics:
-    def __init__(self):
+    """
+    Contains all the deprecated IEC diacritic accents to identify
+    obsolete diacritics and how the word is written nowadays.
+    """
+
+    def __init__(self) -> None:
+        """
+        Initializes a Diacritics instance with defaults.
+        """
         self.diacritics = set()
 
-    def load_diacritics(self):
+    def load_diacritics(self) -> None:
+        """
+        Loads from a file all the no longer accepted diacrítics from IEC.
+        """
         COMMENT = "#"
         FILENAME = "replace_diacritics_iec.txt"
 
@@ -44,13 +55,23 @@ class Diacritics:
             if line[0] == COMMENT:
                 continue
 
-            src, trg = line.split("=")
+            src, _ = line.split("=")
             diacritics.add(src)
 
         print(f"Read {len(diacritics)} diacritics")
         self.diacritics = diacritics
 
-    def has_word_diacritic(self, word):
+    def has_word_diacritic(self, word: str) -> bool:
+        """
+        Returns whether a given word or set of words is in the list of
+        deprecated diacrític accents.
+
+        Args:
+            word (str): The specific word, or set of words separated by "/".
+
+        Returns:
+            bool: Whether the word/s have a deprecated diacrític accent.
+        """
         TWO_WORDS_SEPARATOR = "/"
 
         if TWO_WORDS_SEPARATOR in word:

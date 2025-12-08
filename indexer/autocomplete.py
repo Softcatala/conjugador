@@ -17,25 +17,33 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from firstletter import FirstLetter
-from index import Index
 from whoosh.fields import STORED, TEXT, Schema
 from whoosh.index import create_in
+from whoosh.multiproc import MpWriter
+from whoosh.writing import SegmentWriter
+
+from indexer.firstletter import FirstLetter
+from indexer.index import Index
 
 
 class Autocomplete(Index):
-    def __init__(self):
-        super(Autocomplete, self).__init__()
+    """
+    Creates a filesystem Whoosh-based index for the Autocompletion feature, that allows
+    for full-text search and stores entries in disk.
+    """
+
+    def __init__(self) -> None:
+        """
+        Initializes a filesystem Whoosh-based index for the Autocompletion feature.
+        """
+        super().__init__()
         self.dir_name = "data/autocomplete_index/"
         self.writers = {}
         self.letter = FirstLetter()
         self.ixs = set()
         self.duplicates = set()
 
-    def create(self):
-        return
-
-    def _create(self, letter):
+    def _create(self, letter: str) -> MpWriter | SegmentWriter:
         schema = Schema(
             verb_form=TEXT(stored=True, analyzer=self.analyzer),
             infinitive=STORED,
@@ -49,7 +57,13 @@ class Autocomplete(Index):
         self.ixs.add(ix)
         return ix.writer()
 
-    def doc_count(self):
+    def doc_count(self) -> int:
+        """
+        Gets the total count of the documents in the Autocomplete index.
+
+        Returns:
+            int: The total counts of documents in the index.
+        """
         count = 0
         for ix in self.ixs:
             count += ix.doc_count()
@@ -58,14 +72,26 @@ class Autocomplete(Index):
 
     def write_entry(
         self,
-        verb_form,
-        file_path,
-        is_infinitive,
-        infinitive,
-        mode,
-        tense,
-        title,
-    ):
+        verb_form: str,
+        _file_path: str,
+        infinitive: str,
+        mode: str,
+        tense: str,
+        title: str,
+        *,
+        is_infinitive: bool,
+    ) -> None:
+        """
+        Writes an entry of a verb to the Autocomplete index.
+
+        Args:
+            verb_form (str): The verb form to write.
+            file_path (str): Not used.
+            is_infinitive (bool): Whether the form is an infinitive or not (auxiliar).
+            mode (str): The mode of the verb.
+            tense (str): The tense of the verb.
+            title (str): The title of the entry.
+        """
         if self._verbs_to_ignore_in_autocomplete(mode, tense):
             return
 
@@ -82,7 +108,7 @@ class Autocomplete(Index):
             self.writers[letter] = writer
 
         autocomplete_sorting = self._get_autocomple_sorting_key(
-            verb_form, is_infinitive, infinitive
+            verb_form, infinitive, is_infinitive=is_infinitive
         )
 
         if autocomplete_sorting in self.duplicates:
@@ -98,15 +124,18 @@ class Autocomplete(Index):
         )
 
     def _get_autocomple_sorting_key(
-        self, verb_form, is_infinitive, infinitive
-    ):
+        self, verb_form: str, infinitive: str, *, is_infinitive: bool
+    ) -> str:
         SORTING_PREFIX = "_"
         if is_infinitive:
             # By starting with '_', it forces infinitives to appear first in search
             return f"{SORTING_PREFIX}{infinitive}"
-        else:
-            return f"{verb_form}{SORTING_PREFIX}{infinitive}"
 
-    def save(self):
+        return f"{verb_form}{SORTING_PREFIX}{infinitive}"
+
+    def save(self) -> None:
+        """
+        Commits all the scheduled document insertions to the Autocomplete index.
+        """
         for writer in self.writers.values():
             writer.commit()

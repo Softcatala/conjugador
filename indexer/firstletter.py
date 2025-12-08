@@ -18,11 +18,28 @@
 # Boston, MA 02111-1307, USA.
 
 
-class FirstLetter(object):
-    def __init__(self):
+class FirstLetter:
+    """
+    Utility class to get the equivalent ASCII letter of a given word.
+    """
+
+    def __init__(self) -> None:
+        """
+        Initializes the FirstLetter instance with all the valid ASCII chars.
+        """
         self.valid_letters = list(map(chr, range(97, 123)))
 
-    def from_word(self, word):
+    def from_word(self, word: str) -> str:
+        """
+        Gets the first character of a word, translating any accentuated character
+        to its valid ASCII format.
+
+        Args:
+            word (str): The word from whom to get the parsed first char.
+
+        Returns:
+            str: A character representing the first letter of the word, parsed.
+        """
         s = ""
         if word is None or len(word) == 0:
             return s
@@ -43,5 +60,11 @@ class FirstLetter(object):
 
         return s
 
-    def get_letters(self):
+    def get_letters(self) -> list[str]:
+        """
+        Gets all the accepted letters in ASCII format.
+
+        Returns:
+            list[str]: A list of the accepted letters.
+        """
         return self.valid_letters

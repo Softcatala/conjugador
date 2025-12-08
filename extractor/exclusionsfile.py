@@ -18,28 +18,56 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-"""
-Reads a plain text file with forms that we need to ignore
-"""
-
 from pathlib import Path
 
 
 class ExclusionsFile:
-    def __init__(self, exclusion_file):
-        self.lemmas = self._process_exclusions(exclusion_file)
+    """
+    Loads a given file containing forms to exclude from a dictionary.
 
-    def get_lemmas(self):
+    Args:
+        exclusion_file_path (str): The path to the file containing the lemmas.
+    """
+
+    def __init__(self, exclusion_file_path: str) -> None:
+        """
+        Initializes the ExclusionsFile by reading the excluded forms from
+        a given file path.
+
+        Args:
+            exclusion_file_path (str): The path to the file with the excluded lemmas.
+        """
+        self.lemmas = self._process_exclusions(exclusion_file_path)
+
+    def get_lemmas(self) -> set[str]:
+        """
+        Gets all the processed lemmas to exclude.
+
+        Returns:
+            set[str]: A set containing the lemmas in the exclusions file.
+        """
         return self.lemmas
 
-    def _read_file(self, input_file):
-        with Path(input_file).open() as f:
+    def _read_file(self, file_path: str) -> list[str]:
+        with Path(file_path).open() as f:
             return f.readlines()
 
-    def _process_exclusions(self, exclusion_file):
+    def _process_exclusions(self, exclusion_file_path: str) -> set[str]:
+        """
+        Generates a set of unique lemmas to exclude based on a file that contains
+        them. Ignores all comments and empty lines but does not safely check that
+        the line is a lemma.
+
+        Args:
+            exclusion_file_path (str): The path to the file containing the lemmas
+            to exclude.
+
+        Returns:
+            set[str]: A set with all the lemmas to exclude.
+        """
         lemmas = set()
-        if len(exclusion_file) > 0:
-            exclude_lemmas = self._read_file(exclusion_file)
+        if len(exclusion_file_path) > 0:
+            exclude_lemmas = self._read_file(exclusion_file_path)
             for lemma in exclude_lemmas:
                 lemma = lemma.lower().strip()
                 if len(lemma) == 0:

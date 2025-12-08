@@ -35,6 +35,9 @@ WORKDIR /srv
 RUN uv python install $(cat .python-version)
 RUN uv sync
 COPY docker/entrypoint.sh /srv/
+COPY definitions/*.py /srv/indexer/
+COPY indexer/*.py /srv/indexer/
+COPY extractor/*.py /srv/extractor/
 COPY web/*.py /srv/web/
 COPY web/models/*.py /srv/web/models/
 

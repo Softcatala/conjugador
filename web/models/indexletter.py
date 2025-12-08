@@ -19,39 +19,66 @@
 # Boston, MA 02111-1307, USA.
 
 import json
+from typing import Any
 
 from pyuca import Collator
 from whoosh.index import open_dir
 from whoosh.qparser import MultifieldParser
+from whoosh.searching import Results, Searcher
 from whoosh.sorting import FieldFacet, TranslateFacet
 
-dir_name = "../data/indexletter_index/"
+dir_name = "data/indexletter_index/"
 ix_letter = open_dir(dir_name)  # static instance reusable across requests
 
 
 class IndexLetter:
-    def __init__(self, letter):
+    """
+    Search a letter in the Whoosh index.
+
+    Args:
+        letter (str): The letter to search for.
+    """
+
+    def __init__(self, letter: str) -> None:
+        """
+        Initializes the IndexLetter class with a letter to look for.
+
+        Args:
+            letter (str): The letter to search for.
+        """
         self.letter = letter
-        self.searcher = None
+        self.searcher: Searcher | None = None
         self.query = None
         self.collator = Collator()
         self.num_results = 0
 
-    def get_num_results(self):
+    def get_num_results(self) -> int:
+        """
+        Retrieves the number of results found.
+
+        Returns:
+            int: Num of results.
+        """
         return self.num_results
 
-    def sort_key(self, string):
+    def _sort_key(self, string: Any) -> tuple:
         s = string.decode("utf-8")
         return self.collator.sort_key(s)
 
-    def get_results(self):
+    def get_results(self) -> Results:
+        """
+        Gets the results from the prepared query, based on the letter.
+
+        Returns:
+            Results: A wrapper over a list of dicts containing the results.
+        """
         if self.searcher is None:
             self.search()
 
         facet = FieldFacet("verb_form")
-        facet = TranslateFacet(self.sort_key, facet)
+        facet = TranslateFacet(self._sort_key, facet)
 
-        results = self.searcher.search(
+        results = self.searcher.search(  # pyrefly: ignore
             self.query,
             limit=None,
             sortedby=facet,
@@ -62,14 +89,24 @@ class IndexLetter:
         self.num_results = len(results)
         return results
 
-    def search(self):
+    def search(self) -> None:
+        """
+        Performs a search based on the initialized letter.
+        """
         self.searcher = ix_letter.searcher()
         fields = []
         qs = "index_letter:({0})".format(self.letter)
         fields.append("index_letter")
         self.query = MultifieldParser(fields, ix_letter.schema).parse(qs)
 
-    def get_json(self):
+    def get_json(self) -> tuple[str, int]:
+        """
+        Gets a stringified JSON for all the results found for the initialized
+        letter.
+
+        Returns:
+            tuple[str, int]: A tuple containing the stringified JSON and the status code.
+        """
         OK = 200
         status = OK
         results = self.get_results()

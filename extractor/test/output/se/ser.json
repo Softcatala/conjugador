@@ -1,0 +1,888 @@
+{
+    "ser": [
+        {
+            "definition_credits": "Aquest verb no \u00e9s al Viccionari, que \u00e9s la font que usem per a les definicions. Podeu afegir la definici\u00f3 creant <a href='https://ca.wiktionary.org/wiki/ser'>la seva entrada al Viccionari</a>.",
+            "title": "ser",
+            "infinitive": "ser"
+        },
+        {
+            "mode": "Indicatiu",
+            "tense": "Present",
+            "postag": "VSIP",
+            "singular1": [
+                {
+                    "word": "soc / s\u00f3 / s\u00f3c",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "ets",
+                    "variant": "0"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "\u00e9s",
+                    "variant": "0"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "som",
+                    "variant": "0"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "sou",
+                    "variant": "0"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "s\u00f3n",
+                    "variant": "0"
+                }
+            ]
+        },
+        {
+            "mode": "Indicatiu",
+            "tense": "Perfet",
+            "postag": "VSP0",
+            "singular1": [
+                {
+                    "word": "he estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "has estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "ha estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "hem estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "heu estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "han estat / sigut",
+                    "variant": "0"
+                }
+            ]
+        },
+        {
+            "mode": "Indicatiu",
+            "tense": "Imperfet",
+            "postag": "VSII",
+            "singular1": [
+                {
+                    "word": "era",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "eres",
+                    "variant": "0"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "era",
+                    "variant": "0"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "\u00e9rem",
+                    "variant": "0"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "\u00e9reu",
+                    "variant": "0"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "eren",
+                    "variant": "0"
+                }
+            ]
+        },
+        {
+            "mode": "Indicatiu",
+            "tense": "Plusquamperfet",
+            "postag": "VSP0",
+            "singular1": [
+                {
+                    "word": "havia estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "havies estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "havia estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "hav\u00edem estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "hav\u00edeu estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "havien estat / sigut",
+                    "variant": "0"
+                }
+            ]
+        },
+        {
+            "mode": "Indicatiu",
+            "tense": "Passat simple",
+            "postag": "VSIS",
+            "singular1": [
+                {
+                    "word": "fui",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "fores",
+                    "variant": "0"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "fou",
+                    "variant": "0"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "f\u00f3rem",
+                    "variant": "0"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "f\u00f3reu",
+                    "variant": "0"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "foren",
+                    "variant": "0"
+                }
+            ]
+        },
+        {
+            "mode": "Indicatiu",
+            "tense": "Passat perifr\u00e0stic",
+            "postag": "VSN0",
+            "singular1": [
+                {
+                    "word": "vaig ser / \u00e9sser",
+                    "variant": "0"
+                },
+                {
+                    "word": "vaig esser",
+                    "variant": "B"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "vas (vares) ser / \u00e9sser",
+                    "variant": "0"
+                },
+                {
+                    "word": "vas (vares) esser",
+                    "variant": "B"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "va ser / \u00e9sser",
+                    "variant": "0"
+                },
+                {
+                    "word": "va esser",
+                    "variant": "B"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "vam (v\u00e0rem) ser / \u00e9sser",
+                    "variant": "0"
+                },
+                {
+                    "word": "vam (v\u00e0rem) esser",
+                    "variant": "B"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "vau (v\u00e0reu) ser / \u00e9sser",
+                    "variant": "0"
+                },
+                {
+                    "word": "vau (v\u00e0reu) esser",
+                    "variant": "B"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "van (varen) ser / \u00e9sser",
+                    "variant": "0"
+                },
+                {
+                    "word": "van (varen) esser",
+                    "variant": "B"
+                }
+            ]
+        },
+        {
+            "mode": "Indicatiu",
+            "tense": "Passat anterior",
+            "postag": "VSP0",
+            "singular1": [
+                {
+                    "word": "hagu\u00ed estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "hagueres estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "hagu\u00e9 estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "hagu\u00e9rem estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "hagu\u00e9reu estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "hagueren estat / sigut",
+                    "variant": "0"
+                }
+            ]
+        },
+        {
+            "mode": "Indicatiu",
+            "tense": "Passat anterior perifr\u00e0stic",
+            "postag": "VSP0",
+            "singular1": [
+                {
+                    "word": "vaig haver estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "vas haver estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "va haver estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "vam haver estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "vau haver estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "van haver estat / sigut",
+                    "variant": "0"
+                }
+            ]
+        },
+        {
+            "mode": "Indicatiu",
+            "tense": "Futur",
+            "postag": "VSIF",
+            "singular1": [
+                {
+                    "word": "ser\u00e9",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "ser\u00e0s",
+                    "variant": "0"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "ser\u00e0",
+                    "variant": "0"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "serem",
+                    "variant": "0"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "sereu",
+                    "variant": "0"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "seran",
+                    "variant": "0"
+                }
+            ]
+        },
+        {
+            "mode": "Indicatiu",
+            "tense": "Futur perfet",
+            "postag": "VSP0",
+            "singular1": [
+                {
+                    "word": "haur\u00e9 estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "haur\u00e0s estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "haur\u00e0 estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "haurem estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "haureu estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "hauran estat / sigut",
+                    "variant": "0"
+                }
+            ]
+        },
+        {
+            "mode": "Indicatiu",
+            "tense": "Condicional",
+            "postag": "VSIC",
+            "singular1": [
+                {
+                    "word": "fora / f\u00f3ra / seria",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "fores / series",
+                    "variant": "0"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "fora / f\u00f3ra / seria",
+                    "variant": "0"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "f\u00f3rem / ser\u00edem",
+                    "variant": "0"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "f\u00f3reu / ser\u00edeu",
+                    "variant": "0"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "foren / serien",
+                    "variant": "0"
+                }
+            ]
+        },
+        {
+            "mode": "Indicatiu",
+            "tense": "Condicional perfet",
+            "postag": "VSP0",
+            "singular1": [
+                {
+                    "word": "hauria (haguera) estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "hauries (hagueres) estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "hauria (haguera) estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "haur\u00edem (hagu\u00e9rem) estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "haur\u00edeu (hagu\u00e9reu) estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "haurien (hagueren) estat / sigut",
+                    "variant": "0"
+                }
+            ]
+        },
+        {
+            "mode": "Subjuntiu",
+            "tense": "Present",
+            "postag": "VSSP",
+            "singular1": [
+                {
+                    "word": "sigui",
+                    "variant": "Y"
+                },
+                {
+                    "word": "siga",
+                    "variant": "V"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "siguis",
+                    "variant": "Y"
+                },
+                {
+                    "word": "sigues",
+                    "variant": "V"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "sigui",
+                    "variant": "Y"
+                },
+                {
+                    "word": "siga",
+                    "variant": "V"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "siguem",
+                    "variant": "0"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "sigueu",
+                    "variant": "0"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "siguin",
+                    "variant": "Y"
+                },
+                {
+                    "word": "siguen",
+                    "variant": "V"
+                }
+            ]
+        },
+        {
+            "mode": "Subjuntiu",
+            "tense": "Perfet",
+            "postag": "VSP0",
+            "singular1": [
+                {
+                    "word": "hagi (haja) estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "hagis (hages) estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "hagi (haja) estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "h\u00e0gim (h\u00e0gem) estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "h\u00e0giu (h\u00e0geu) estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "hagin (hagen) estat / sigut",
+                    "variant": "0"
+                }
+            ]
+        },
+        {
+            "mode": "Subjuntiu",
+            "tense": "Imperfet",
+            "postag": "VSSI",
+            "singular1": [
+                {
+                    "word": "fos",
+                    "variant": "1"
+                },
+                {
+                    "word": "fora / f\u00f3ra",
+                    "variant": "3"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "fossis",
+                    "variant": "2"
+                },
+                {
+                    "word": "fores",
+                    "variant": "3"
+                },
+                {
+                    "word": "fosses",
+                    "variant": "5"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "fos",
+                    "variant": "1"
+                },
+                {
+                    "word": "fora / f\u00f3ra",
+                    "variant": "3"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "f\u00f3ssim",
+                    "variant": "2"
+                },
+                {
+                    "word": "f\u00f3rem",
+                    "variant": "3"
+                },
+                {
+                    "word": "f\u00f3ssem",
+                    "variant": "5"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "f\u00f3ssiu",
+                    "variant": "2"
+                },
+                {
+                    "word": "f\u00f3reu",
+                    "variant": "3"
+                },
+                {
+                    "word": "f\u00f3sseu",
+                    "variant": "5"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "fossin",
+                    "variant": "2"
+                },
+                {
+                    "word": "foren",
+                    "variant": "3"
+                },
+                {
+                    "word": "fossen",
+                    "variant": "5"
+                }
+            ]
+        },
+        {
+            "mode": "Subjuntiu",
+            "tense": "Plusquamperfet",
+            "postag": "VSP0",
+            "singular1": [
+                {
+                    "word": "hagu\u00e9s (haguera) estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "haguessis (hagueres) estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "hagu\u00e9s (haguera) estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "hagu\u00e9ssim (hagu\u00e9rem) estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "hagu\u00e9ssiu (hagu\u00e9reu) estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "haguessin (hagueren) estat / sigut",
+                    "variant": "0"
+                }
+            ]
+        },
+        {
+            "mode": "Imperatiu",
+            "tense": "Present",
+            "postag": "VSM0",
+            "singular1": [],
+            "singular2": [
+                {
+                    "word": "sigues",
+                    "variant": "0"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "sigui",
+                    "variant": "Y"
+                },
+                {
+                    "word": "siga",
+                    "variant": "V"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "siguem",
+                    "variant": "0"
+                }
+            ],
+            "plural2": [
+                {
+                    "word": "sigueu",
+                    "variant": "0"
+                }
+            ],
+            "plural3": [
+                {
+                    "word": "siguin",
+                    "variant": "Y"
+                },
+                {
+                    "word": "siguen",
+                    "variant": "V"
+                }
+            ]
+        },
+        {
+            "mode": "Formes no personals",
+            "tense": "Infinitiu",
+            "postag": "VSN0",
+            "singular1": [
+                {
+                    "word": "ser / \u00e9sser",
+                    "variant": "0"
+                },
+                {
+                    "word": "esser",
+                    "variant": "B"
+                }
+            ],
+            "singular2": [],
+            "singular3": [],
+            "plural1": [],
+            "plural2": [],
+            "plural3": []
+        },
+        {
+            "mode": "Formes no personals",
+            "tense": "Infinitiu compost",
+            "postag": "VSP0",
+            "singular1": [
+                {
+                    "word": "haver estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [],
+            "singular3": [],
+            "plural1": [],
+            "plural2": [],
+            "plural3": []
+        },
+        {
+            "mode": "Formes no personals",
+            "tense": "Gerundi",
+            "postag": "VSG0",
+            "singular1": [
+                {
+                    "word": "essent / sent",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [],
+            "singular3": [],
+            "plural1": [],
+            "plural2": [],
+            "plural3": []
+        },
+        {
+            "mode": "Formes no personals",
+            "tense": "Gerundi compost",
+            "postag": "VSP0",
+            "singular1": [
+                {
+                    "word": "havent estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [],
+            "singular3": [],
+            "plural1": [],
+            "plural2": [],
+            "plural3": []
+        },
+        {
+            "mode": "Formes no personals",
+            "tense": "Participi",
+            "postag": "VSP0",
+            "singular1": [
+                {
+                    "word": "estat / sigut",
+                    "variant": "0"
+                }
+            ],
+            "singular2": [
+                {
+                    "word": "estada / siguda",
+                    "variant": "0"
+                }
+            ],
+            "singular3": [
+                {
+                    "word": "estats / siguts",
+                    "variant": "0"
+                }
+            ],
+            "plural1": [
+                {
+                    "word": "estades / sigudes",
+                    "variant": "0"
+                }
+            ],
+            "plural2": [],
+            "plural3": []
+        }
+    ]
+}
