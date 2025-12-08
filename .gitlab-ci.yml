@@ -21,7 +21,7 @@ test:
 
   stage: test
   script:
-    - uv run nose2
+    - make test
 
 build:
   image: docker:latest
