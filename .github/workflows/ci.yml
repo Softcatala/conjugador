@@ -33,7 +33,7 @@ jobs:
 
       - name: Run tests
         run: |
-          uv run nose2
+          make test
 
       - name: Run linter
         run: |
