@@ -50,12 +50,12 @@ class TestDefinitions(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as dirpath:
             definitions = Definitions()
-            definitions.generate("test/data/definitions.xml", infinitives_path= 'test/data/infinitives.txt', save_dir = dirpath)
+            definitions.generate("definitions/test/data/definitions.xml", infinitives_path= 'definitions/test/data/infinitives.txt', save_dir = dirpath)
 
             def_gen = self._hash_file(os.path.join(dirpath, "definitions.txt"))
-            def_ref = self._hash_file("test/data/definitions.txt")
+            def_ref = self._hash_file("definitions/test/data/definitions.txt")
             defj_gen = self._hash_file(os.path.join(dirpath, "definitions.json"))
-            defj_ref = self._hash_file("test/data/definitions.json")
+            defj_ref = self._hash_file("definitions/test/data/definitions.json")
 
         self.assertEqual(def_ref, def_gen)
         self.assertEqual(defj_ref, defj_gen)
