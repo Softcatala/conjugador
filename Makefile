@@ -1,17 +1,25 @@
-.PHONY: docker-build docker-run generate-data update-data test
+.PHONY: docker-build docker-run generate-data update-data test generate-data-without-indexation
 
 docker-build:
-	docker build . -t conjugador -f docker/dockerfile;
+	docker compose build
 
 docker-run:
-	docker run -p 8000:8000 -i -t conjugador
+	docker compose up
 
 generate-data:
-	bzip2 -cdk definitions/cawiktionary-latest-pages-meta-current.xml.bz2 > definitions/cawiktionary-latest-pages-meta-current.xml
-	uv run -m extractor.extract -i
-	uv run -m definitions.extract-to-json
-	uv run -m extractor.extract
+	set -e; \
+	bzip2 -cdk definitions/cawiktionary-latest-pages-meta-current.xml.bz2 > definitions/cawiktionary-latest-pages-meta-current.xml; \
+	uv run -m extractor.extract -i; \
+	uv run -m definitions.extract-to-json; \
+	uv run -m extractor.extract; \
 	uv run -m indexer.index_creation
+
+generate-data-without-indexation:
+	set -e; \
+	bzip2 -cdk definitions/cawiktionary-latest-pages-meta-current.xml.bz2 > definitions/cawiktionary-latest-pages-meta-current.xml; \
+	uv run -m extractor.extract -i; \
+	uv run -m definitions.extract-to-json; \
+	uv run -m extractor.extract; \
 
 update-data:
 	# Extract current version

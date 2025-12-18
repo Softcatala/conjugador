@@ -20,10 +20,10 @@
 import json
 from pathlib import Path
 
-from indexer.autocomplete import Autocomplete
 from indexer.findfiles import FindFiles
-from indexer.indexletter import IndexLetter
-from indexer.search import Search
+from indexer.indices.autocomplete import AutocompleteIndex
+from indexer.indices.letter import LetterIndex
+from indexer.indices.search import SearchIndex
 
 
 class IndexCreator:
@@ -46,12 +46,9 @@ class IndexCreator:
         """
         self.json_dir = json_dir
         self.index_letters = 0
-        self.search = Search()
-        self.autocomplete = Autocomplete()
-        self.indexletter = IndexLetter()
-
-        self.search.create()
-        self.indexletter.create()
+        self.search = SearchIndex()
+        self.autocomplete = AutocompleteIndex()
+        self.indexletter = LetterIndex()
 
     def _write_entry(
         self,
@@ -76,7 +73,6 @@ class IndexCreator:
         )
         self.autocomplete.write_entry(
             verb_form,
-            file_path,
             infinitive,
             mode,
             tense,

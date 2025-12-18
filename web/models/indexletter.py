@@ -19,38 +19,40 @@
 # Boston, MA 02111-1307, USA.
 
 import json
-from typing import Any
+import logging
 
+from elasticsearch import Elasticsearch
 from pyuca import Collator
-from whoosh.index import open_dir
-from whoosh.qparser import MultifieldParser
-from whoosh.searching import Results, Searcher
-from whoosh.sorting import FieldFacet, TranslateFacet
-
-dir_name = "data/indexletter_index/"
-ix_letter = open_dir(dir_name)  # static instance reusable across requests
 
 
 class IndexLetter:
     """
-    Search a letter in the Whoosh index.
+    Search a letter in the Elasticsearch index.
 
     Args:
         letter (str): The letter to search for.
+        es_url (str | None): The url to connect to an Elasticsearch instance.
     """
 
-    def __init__(self, letter: str) -> None:
+    DEFAULT_ES_HOST = "http://localhost:9200"
+
+    def __init__(self, letter: str, es_url: str | None = None) -> None:
         """
         Initializes the IndexLetter class with a letter to look for.
 
         Args:
             letter (str): The letter to search for.
+            es_url (str | None): The url to connect to an Elasticsearch instance.
         """
+        if not es_url:
+            es_url = self.DEFAULT_ES_HOST
+
         self.letter = letter
-        self.searcher: Searcher | None = None
-        self.query = None
+        self.es_client = Elasticsearch(es_url)
+        self.index_name = "letter-index"
         self.collator = Collator()
         self.num_results = 0
+        self.results = []
 
     def get_num_results(self) -> int:
         """
@@ -61,43 +63,40 @@ class IndexLetter:
         """
         return self.num_results
 
-    def _sort_key(self, string: Any) -> tuple:
-        s = string.decode("utf-8")
-        return self.collator.sort_key(s)
-
-    def get_results(self) -> Results:
+    def get_results(self) -> list[dict]:
         """
         Gets the results from the prepared query, based on the letter.
 
         Returns:
-            Results: A wrapper over a list of dicts containing the results.
+            list[dict]: A list of dicts containing the results.
         """
-        if self.searcher is None:
-            self.search()
+        if not self.es_client.indices.exists(index=self.index_name):
+            self.results = []
+            self.num_results = 0
+            return self.results
 
-        facet = FieldFacet("verb_form")
-        facet = TranslateFacet(self._sort_key, facet)
+        query = {
+            "query": {"term": {"index_letter.keyword": self.letter}},
+            "collapse": {"field": "verb_form.keyword"},
+            "size": 10000,
+            "_source": ["verb_form", "infinitive"],
+        }
 
-        results = self.searcher.search(  # pyrefly: ignore
-            self.query,
-            limit=None,
-            sortedby=facet,
-            collapse_limit=1,
-            collapse="verb_form",
-        )
+        try:
+            response = self.es_client.search(index=self.index_name, body=query)
+            hits = response["hits"]["hits"]
+            self.results = [hit["_source"] for hit in hits]
+            self.results.sort(
+                key=lambda x: self.collator.sort_key(x["verb_form"])
+            )
+            self.num_results = len(self.results)
 
-        self.num_results = len(results)
-        return results
+        except Exception as e:
+            logging.error(f"Error searching index {self.index_name}: {e}")
+            self.results = []
+            self.num_results = 0
 
-    def search(self) -> None:
-        """
-        Performs a search based on the initialized letter.
-        """
-        self.searcher = ix_letter.searcher()
-        fields = []
-        qs = "index_letter:({0})".format(self.letter)
-        fields.append("index_letter")
-        self.query = MultifieldParser(fields, ix_letter.schema).parse(qs)
+        return self.results
 
     def get_json(self) -> tuple[str, int]:
         """
@@ -112,8 +111,7 @@ class IndexLetter:
         results = self.get_results()
         all_results = []
         for result in results:
-            verb = {}
-            verb["verb_form"] = result["verb_form"]
+            verb = {"verb_form": result["verb_form"]}
             if result["verb_form"] != result["infinitive"]:
                 verb["infinitive"] = result["infinitive"]
             all_results.append(verb)

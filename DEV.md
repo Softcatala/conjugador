@@ -48,6 +48,6 @@ Els infinitius a) són necessaris després per poder importar les definicions de
 
 L'aplicació _definitions/extract-to-json.py_ té com a objectiu extreure les definicions del Viccionari en un JSON amb les definicions que després l'ordre extract.py usarà.
 
-# Index
+## Index
 
-L'aplicació _indexer/index_creation.py_ s'encarrega de generar un índex amb el motor de cerca Whoosh que després usarem per oferir la cerca i l'autocomplete a la web.
+L'aplicació _indexer/index_creation.py_ s'encarrega de generar diversos índexos a Elasticsearch que després usarem per oferir la cerca i l'autocomplete a la web.

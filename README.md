@@ -6,8 +6,8 @@ content from the spelling dictionary.
 # How it works
 
 1. extract.py reads diccionary file and extracts the verbs in JSON format (into data/jsons)
-2. index_creation.py reads the jsons and creates a Whoosh index (into data/indexdir)
-3. Flash application at web/ serves the content
+2. index_creation.py reads the jsons and creates multiple indices in Elasticsearch
+3. Flask application at web/ serves the content
 
 #  Git clone
 

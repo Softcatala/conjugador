@@ -17,7 +17,11 @@ test:
     - apt-get update && apt-get install make
     - python -m pip install --upgrade pip
     - pip install uv
-    - uv sync
+    - uv sync    INDEXING_SUCCESS=0 && \
+    (make generate-data && INDEXING_SUCCESS=1) || INDEXING_SUCCESS=0 && \
+    echo "Flushing data to disk..." && \
+
+
 
   stage: test
   script:
@@ -32,11 +36,19 @@ build:
     - docker info
   stage: build
   script:
-    - docker build -f docker/dockerfile --cache-from $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME .
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - export REPO_NAME=$CI_REGISTRY_IMAGE/conjugador-elastic
+    - export IMAGE_NAME=$REPO_NAME:$CI_COMMIT_REF_NAME
+    - export DOCKER_PATH=docker/elasticsearch/Dockerfile
+    - docker build -f $DOCKER_PATH --tag $IMAGE_NAME .
+    - docker push $IMAGE_NAME
 
-#deploy:
-#  stage: deploy
-#  extends:
-#    .default-deploy
+    - export REPO_NAME=$CI_REGISTRY_IMAGE/conjugador-webserver
+    - export IMAGE_NAME=$REPO_NAME:$CI_COMMIT_REF_NAME
+    - export DOCKER_PATH=docker/webserver/Dockerfile
+    - docker build -f $DOCKER_PATH --tag $IMAGE_NAME .
+    - docker push $IMAGE_NAME
+    
+deploy:
+  stage: deploy
+  extends:
+    .default-deploy

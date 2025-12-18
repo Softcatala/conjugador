@@ -18,20 +18,26 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+from elasticsearch import Elasticsearch
 
-class SearchBase:
+
+class BaseSearch:
     """
     Base class that provides functionality to store a word for later search.
     """
 
-    def __init__(self, word: str) -> None:
+    DEFAULT_ES_HOST = "http://localhost:9200"
+
+    def __init__(self, word: str, es_url: str = DEFAULT_ES_HOST) -> None:
         """
         Initializes the SearchBase class with a word.
 
         Args:
             word (str): The word to search.
+            es_url (str): The url of the Elasticsearch instance to connect to.
         """
         self._word = word
+        self.es_client = Elasticsearch(es_url)
 
     @property
     def word(self) -> str:

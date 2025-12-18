@@ -54,9 +54,6 @@ class Usage:
         return line.split("\t", 1)[0]
 
     def log(self, endpoint, time_used) -> None:  # noqa: ANN001, D102
-        """
-        TODO: This function isn't used anywhere, is it erasable?
-        """
         try:
             with Path(self.FILE).open("a+") as file_out:
                 current_time = self._get_time_now().strftime(

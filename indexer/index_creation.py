@@ -24,7 +24,7 @@ from indexer.indexcreator import IndexCreator
 
 
 def main() -> None:  # noqa: D103
-    print("Create Whoosh index from a directory with JSONs")
+    print("Create Elasticsearch indices from a directory with JSONs")
 
     start_time = datetime.datetime.now()
 

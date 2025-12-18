@@ -37,6 +37,9 @@ from web.usage import Usage
 
 app = Flask(__name__)
 start_time = datetime.datetime.now()
+es_url = os.getenv("ES_URL", "http://conjugador-elastic:9200")
+es_logger = logging.getLogger("elastic_transport.transport")
+es_logger.setLevel(os.getenv("LOGLEVEL", "WARNING"))
 
 
 def init_logging() -> None:
@@ -96,7 +99,7 @@ def json_answer_status(data: str, status: int) -> Response:
 
 @lru_cache(maxsize=500)  # Rationale: there are ~10K infitives, cache top 5%
 def _get_search(word: str) -> tuple[str, int, int]:
-    search = Search(word)
+    search = Search(word, es_url)
     j, status = search.get_json_search()
     num_results = search.get_num_results()
     return j, status, num_results
@@ -121,7 +124,7 @@ def search_api(word: str) -> Response:
 
 @lru_cache(maxsize=23)  # Rationale: there 23 index files only
 def _get_letter_index(letter: str) -> tuple[str, int, int]:
-    indexLetter = IndexLetter(letter)
+    indexLetter = IndexLetter(letter, es_url)
     j, status = indexLetter.get_json()
     num_results = indexLetter.get_num_results()
     return j, status, num_results
@@ -142,12 +145,14 @@ def index_letter_api(letter: str) -> Response:
     )
     return json_answer_status(j, status)
 
+
 @lru_cache(maxsize=500)
-def _get_autocomplete(word: str) -> Response:
-    autocomplete = Autocomplete(word)
+def _get_autocomplete(word: str) -> tuple[str, int, int]:
+    autocomplete = Autocomplete(word, es_url)
     j, status = autocomplete.get_json()
     num_results = autocomplete.get_num_results()
     return j, status, num_results
+
 
 @app.route("/autocomplete/<word>", methods=["GET"])
 def autocomplete_api(word: str) -> Response:
@@ -156,6 +161,7 @@ def autocomplete_api(word: str) -> Response:
     a verb as a query parameter and checks all the verbs that match the pattern.
     """
     start_time = time.time()
+
     j, status, num_results = _get_autocomplete(word)
     elapsed_time = time.time() - start_time
     logging.debug(

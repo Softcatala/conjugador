@@ -32,6 +32,7 @@ class Definitions:
     Generates a dictionary of the definitions of all the verbs in catalan and saves it
     by default at `data/definitions.txt`.
     """
+
     def _get_revision_text(self, revision: Element) -> str:
         for child in revision:
             if "text" in child.tag:
@@ -40,7 +41,10 @@ class Definitions:
         return ""
 
     def _get_infinitives(self, filename: str) -> list[str]:
-        words = [line.lower().strip() for line in Path(filename).read_text().splitlines()]
+        words = [
+            line.lower().strip()
+            for line in Path(filename).read_text().splitlines()
+        ]
         return words
 
     def generate(

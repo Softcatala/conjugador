@@ -1,0 +1,18 @@
+services:
+  conjugador-elastic:
+    image: conjugador-elasticsearch
+    build:
+      context: .
+      dockerfile: ./docker/elasticsearch/Dockerfile
+    ports:
+      - "9200:9200"
+
+  conjugador-server:
+    image: conjugador-webserver
+    build:
+      context: .
+      dockerfile: ./docker/webserver/Dockerfile
+    environment:
+      ES_URL: "http://conjugador-elastic:9200"
+    ports:
+      - "8000:8000"

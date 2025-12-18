@@ -19,60 +19,37 @@
 # Boston, MA 02111-1307, USA.
 
 import json
-
-from whoosh.index import FileIndex, open_dir
-from whoosh.qparser import MultifieldParser
-from whoosh.searching import Results, Searcher
+import logging
 
 from web.firstletter import FirstLetter
-from web.models.searchbase import SearchBase
+from web.models.base import BaseSearch
 
 
-def open_indexes() -> dict[str, FileIndex]:
+class Autocomplete(BaseSearch):
     """
-    Opens all the indexes in the autocomplete directory with Whoosh.
-
-    Returns:
-        dict[str, FileIndex]: A dict with alphabet letters as keys and Whoosh
-            indexes as values.
-    """
-    dir_name = "data/autocomplete_index/"
-
-    idxs = {}
-    for letter in FirstLetter().get_letters():
-        try:
-            dir_name_letter = f"{dir_name}{letter}"
-            ix = open_dir(dir_name_letter)
-            idxs[letter] = ix
-        except Exception:
-            print(f"No index found for {letter}")
-
-    return idxs
-
-
-idxs = open_indexes()
-
-
-class Autocomplete(SearchBase):
-    """
-    Autocomplete a word based on the information on the Whoosh indices.
+    Autocomplete a word based on the information on the Elasticsearch indices.
 
     Args:
         word (str): The word to try to autocomplete from.
+        es_url (str): The url to connect to an Elasticsearch instance.
     """
 
-    def __init__(self, word: str) -> None:
+    def __init__(self, word: str, es_url: str | None = None) -> None:
         """
         Initializes the Autocomplete class with a word to autocomplete.
 
         Args:
             word (str): The word to try to autocomplete from.
+            es_url (str | None): The url to connect to an Elasticsearch instance.
         """
-        self._word = word
-        self.searcher: Searcher | None = None
+        if not es_url:
+            es_url = self.DEFAULT_ES_HOST
+
+        super().__init__(word, es_url)
         self.query = None
         self.num_results = 0
         self.letter = FirstLetter()
+        self.results = []
 
     def get_num_results(self) -> int:
         """
@@ -83,34 +60,46 @@ class Autocomplete(SearchBase):
         """
         return self.num_results
 
-    def get_results(self) -> list[dict] | Results:
+    def get_results(self) -> list[dict]:
         """
         Gets the results from the prepared query, based on the word to autocomplete.
 
         Returns:
-            Results: A wrapper over a list of dicts containing the results.
+            list[dict]: A list of dictionaries containing the results.
         """
         letter = self.letter.from_word(self.word)
+        index_name = f"autocomplete-{letter}"
 
-        if letter not in idxs:
-            results = []
-        else:
-            self._search(letter)
-            results = self.searcher.search(  # pyrefly: ignore
-                self.query, limit=10, sortedby="autocomplete_sorting"
-            )
+        if not self.es_client.indices.exists(index=index_name):
+            self.results = []
+            self.num_results = 0
+            return self.results
 
-        self.num_results = len(results)
-        return results
+        query = {
+            "query": {
+                "prefix": {"verb_form.keyword": {"value": self.word.lower()}}
+            },
+            "sort": [
+                {
+                    "autocomplete_sorting.keyword": {
+                        "order": "asc",
+                    },
+                },
+            ],
+            "size": 1000,
+            "_source": ["verb_form", "infinitive", "url"],
+        }
 
-    def _search(self, letter: str) -> None:
-        ix = idxs[letter]
+        try:
+            resp = self.es_client.search(index=index_name, body=query)
+            self.results = [hit["_source"] for hit in resp["hits"]["hits"]]
+            self.num_results = len(self.results)
+        except Exception as e:
+            logging.error(f"Error searching index '{index_name}': {e}")
+            self.results = []
+            self.num_results = 0
 
-        self.searcher = ix.searcher()
-        fields = []
-        qs = " verb_form:({0}*)".format(self._word)
-
-        self.query = MultifieldParser(fields, ix.schema).parse(qs)
+        return self.results
 
     def get_json(self) -> tuple[str, int]:
         """
@@ -125,10 +114,11 @@ class Autocomplete(SearchBase):
         results = self.get_results()
         all_results = []
         for result in results:
-            verb = {}
-            verb["verb_form"] = result["verb_form"]
-            verb["infinitive"] = result["infinitive"]
-            verb["url"] = result["url"]
+            verb = {
+                "verb_form": result["verb_form"],
+                "infinitive": result["infinitive"],
+                "url": result["url"],
+            }
             all_results.append(verb)
 
         return json.dumps(
