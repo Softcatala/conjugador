@@ -9,19 +9,15 @@ variables:
 stages:
   - test
   - build
-#  - deploy
+  - deploy
 
 test:
   image: python:3.11.0-slim-bullseye
   before_script:
-    - apt-get update && apt-get install make
+    - apt-get update && apt-get install make -y
     - python -m pip install --upgrade pip
     - pip install uv
-    - uv sync    INDEXING_SUCCESS=0 && \
-    (make generate-data && INDEXING_SUCCESS=1) || INDEXING_SUCCESS=0 && \
-    echo "Flushing data to disk..." && \
-
-
+    - uv sync
 
   stage: test
   script:
