@@ -29,13 +29,23 @@ from pathlib import Path
 
 import psutil
 from flask import Flask, Response, request
+from opentelemetry import metrics
+from opentelemetry.exporter.prometheus import PrometheusMetricReader
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.sdk.metrics import MeterProvider
+from prometheus_client import REGISTRY, generate_latest
 
 from web.models.autocomplete import Autocomplete
 from web.models.indexletter import IndexLetter
 from web.models.search import Search
 from web.usage import Usage
 
+reader = PrometheusMetricReader()
+metrics.set_meter_provider(MeterProvider(metric_readers=[reader]))
+
 app = Flask(__name__)
+FlaskInstrumentor.instrument_app(app)
+
 start_time = datetime.datetime.now()
 es_url = os.getenv("ES_URL", "http://conjugador-elastic:9200")
 es_logger = logging.getLogger("elastic_transport.transport")
@@ -95,6 +105,12 @@ def json_answer_status(data: str, status: int) -> Response:
     resp = json_answer(data)
     resp.status = str(status)
     return resp
+
+
+@app.route("/metrics", methods=["GET"])
+def metrics_endpoint() -> Response:
+    """Expose Prometheus metrics via Flask."""
+    return Response(generate_latest(REGISTRY), mimetype="text/plain")
 
 
 @lru_cache(maxsize=500)  # Rationale: there are ~10K infitives, cache top 5%
@@ -219,7 +235,6 @@ def stats() -> Response:
 
 if __name__ == "__main__":
     init_logging()
-    app.debug = True  # pyrefly: ignore
     app.run()
 
 if __name__ != "__main__":
