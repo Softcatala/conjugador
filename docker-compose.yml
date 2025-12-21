@@ -27,6 +27,7 @@ services:
     environment:
       ES_URL: "http://conjugador-elastic:9200"
       OTEL_SERVICE_NAME: "conjugador-server"
+      PROMETHEUS_MULTIPROC_DIR: /tmp/prometheus_multiproc
     ports:
       - "8000:8000"
     depends_on:

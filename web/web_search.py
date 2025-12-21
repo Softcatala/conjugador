@@ -29,27 +29,69 @@ from pathlib import Path
 
 import psutil
 from flask import Flask, Response, request
-from opentelemetry import metrics
-from opentelemetry.exporter.prometheus import PrometheusMetricReader
-from opentelemetry.instrumentation.flask import FlaskInstrumentor
-from opentelemetry.sdk.metrics import MeterProvider
-from prometheus_client import REGISTRY, generate_latest
+from prometheus_client import (CollectorRegistry, Counter, Gauge,
+                               generate_latest, multiprocess)
 
 from web.models.autocomplete import Autocomplete
 from web.models.indexletter import IndexLetter
 from web.models.search import Search
 from web.usage import Usage
 
-reader = PrometheusMetricReader()
-metrics.set_meter_provider(MeterProvider(metric_readers=[reader]))
-
 app = Flask(__name__)
-FlaskInstrumentor.instrument_app(app)
 
-start_time = datetime.datetime.now()
+startup_time = datetime.datetime.now()
 es_url = os.getenv("ES_URL", "http://conjugador-elastic:9200")
 es_logger = logging.getLogger("elastic_transport.transport")
 es_logger.setLevel(os.getenv("LOGLEVEL", "WARNING"))
+
+REQUEST_COUNTER = Counter(
+    "app_num_requests",
+    "Total number of requests received",
+    ["endpoint", "method"],
+)
+
+MEM_GAUGE = Gauge(
+    "app_current_memory",
+    "Total RAM consumed by application",
+    multiprocess_mode="livesum",
+)
+
+UPTIME_GAUGE = Gauge(
+    "app_uptime", "Uptime of the application", multiprocess_mode="livemax"
+)
+
+SEARCH_CACHE_HITS_GAUGE = Gauge(
+    "app_search_cache_hits",
+    "Total hits from search cache",
+    multiprocess_mode="livesum",
+)
+SEARCH_CACHE_MISSES_GAUGE = Gauge(
+    "app_search_cache_misses",
+    "Total misses from search cache",
+    multiprocess_mode="livesum",
+)
+
+INDEX_CACHE_HITS_GAUGE = Gauge(
+    "app_index_cache_hits",
+    "Total hits from index cache",
+    multiprocess_mode="livesum",
+)
+INDEX_CACHE_MISSES_GAUGE = Gauge(
+    "app_index_cache_misses",
+    "Total misses from index cache",
+    multiprocess_mode="livesum",
+)
+
+AUTOCOMPLETE_CACHE_HITS_GAUGE = Gauge(
+    "app_autocomplete_cache_hits",
+    "Total hits from autocomplete cache",
+    multiprocess_mode="livesum",
+)
+AUTOCOMPLETE_CACHE_MISSES_GAUGE = Gauge(
+    "app_autocomplete_cache_misses",
+    "Total misses from autocomplete cache",
+    multiprocess_mode="livesum",
+)
 
 
 def init_logging() -> None:
@@ -109,8 +151,25 @@ def json_answer_status(data: str, status: int) -> Response:
 
 @app.route("/metrics", methods=["GET"])
 def metrics_endpoint() -> Response:
-    """Expose Prometheus metrics via Flask."""
-    return Response(generate_latest(REGISTRY), mimetype="text/plain")
+    """Expose Prometheus metrics"""
+    rss = int(psutil.Process(os.getpid()).memory_info().rss // 1024**2)
+    MEM_GAUGE.set(rss)
+    uptime_seconds = (datetime.datetime.now() - startup_time).total_seconds()
+    UPTIME_GAUGE.set(uptime_seconds)
+    search_cache = _get_search.cache_info()
+    index_cache = _get_letter_index.cache_info()
+    autocomplete_cache = _get_autocomplete.cache_info()
+    SEARCH_CACHE_HITS_GAUGE.set(search_cache.hits)
+    SEARCH_CACHE_MISSES_GAUGE.set(search_cache.misses)
+    INDEX_CACHE_HITS_GAUGE.set(index_cache.hits)
+    INDEX_CACHE_MISSES_GAUGE.set(index_cache.misses)
+    AUTOCOMPLETE_CACHE_HITS_GAUGE.set(autocomplete_cache.hits)
+    AUTOCOMPLETE_CACHE_MISSES_GAUGE.set(autocomplete_cache.misses)
+    prometheus_registry = CollectorRegistry()
+    multiprocess.MultiProcessCollector(prometheus_registry)
+    return Response(
+        generate_latest(prometheus_registry), mimetype="text/plain"
+    )
 
 
 @lru_cache(maxsize=500)  # Rationale: there are ~10K infitives, cache top 5%
@@ -127,6 +186,7 @@ def search_api(word: str) -> Response:
     Endpoint for the search functionality. Allows the user to input a word as
     a query parameter and check for verbs matching it or their conjugations.
     """
+    REQUEST_COUNTER.labels(endpoint="/search/<word>", method="GET").inc()
     start_time = time.time()
 
     j, status, num_results = _get_search(word)
@@ -152,6 +212,7 @@ def index_letter_api(letter: str) -> Response:
     Endpoint for the letter index functionality. Allows the user to input a letter as
     a query parameter and check all the verbs starting with that letter.
     """
+    REQUEST_COUNTER.labels(endpoint="/index/<letter>", method="GET").inc()
     start_time = time.time()
 
     j, status, num_results = _get_letter_index(letter)
@@ -176,6 +237,7 @@ def autocomplete_api(word: str) -> Response:
     Endpoint for the autocomplete functionality. Allows the user to input a piece of
     a verb as a query parameter and checks all the verbs that match the pattern.
     """
+    REQUEST_COUNTER.labels(endpoint="/autocomplete/<word>", method="GET").inc()
     start_time = time.time()
 
     j, status, num_results = _get_autocomplete(word)
@@ -227,7 +289,7 @@ def stats() -> Response:
 
     result["process_id"] = os.getpid()
     result["rss"] = f"{rss} MB"
-    result["up_time"] = str(datetime.datetime.now() - start_time)
+    result["up_time"] = str(datetime.datetime.now() - startup_time)
 
     json_data = json.dumps(result, indent=4, separators=(",", ": "))
     return json_answer(json_data)
