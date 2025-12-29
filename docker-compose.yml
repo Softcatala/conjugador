@@ -7,6 +7,19 @@ services:
     ports:
       - "9200:9200"
 
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - |
+          curl -fs http://localhost:9200/_cluster/health \
+          | grep -E '"status":"(green|yellow)"' \
+          || exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+
   conjugador-server:
     image: conjugador-webserver
     build:
@@ -16,3 +29,6 @@ services:
       ES_URL: "http://conjugador-elastic:9200"
     ports:
       - "8000:8000"
+    depends_on:
+      conjugador-elastic:
+        condition: service_healthy
