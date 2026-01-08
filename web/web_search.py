@@ -30,9 +30,9 @@ from pathlib import Path
 import psutil
 from flask import Flask, Response, request
 
-from web.models.autocomplete import Autocomplete
-from web.models.indexletter import IndexLetter
-from web.models.search import Search
+from web.conjugador.autocomplete import Autocomplete
+from web.conjugador.indexletter import IndexLetter
+from web.conjugador.search import Search
 from web.usage import Usage
 
 app = Flask(__name__)

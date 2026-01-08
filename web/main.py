@@ -1,9 +1,15 @@
+import os
+import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from web.routes import autocomplete, index, search
 
 app = FastAPI()
+
+es_logger = logging.getLogger("elastic_transport.transport")
+es_logger.setLevel(os.getenv("LOGLEVEL", "WARNING"))
 
 app.include_router(index.router)
 app.include_router(autocomplete.router)
