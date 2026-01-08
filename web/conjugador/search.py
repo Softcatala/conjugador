@@ -18,9 +18,11 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA02111-1307, USA.
 
+import asyncio
 import json
 import logging
-from pathlib import Path
+
+import aiofiles
 
 from web.conjugador.base import BaseSearch
 
@@ -82,7 +84,9 @@ class Search(BaseSearch):
         }
 
         try:
-            resp = await self.es_client.search(index=self.index_name, body=query)
+            resp = await self.es_client.search(
+                index=self.index_name, body=query
+            )
             hits = resp["hits"]["hits"]
             if len(hits) == 0:
                 query_expansion = {
@@ -132,18 +136,18 @@ class Search(BaseSearch):
         # on constructor but rather as function argument.
         await self.es_client.close()
 
-        all_results = []
-        for result in results:
-            filepath = result["file_path"]
-
+        async def _read_file_async(filepath: str) -> dict | None:
             try:
-                # TODO: This is a blocking operation, should use something that allows async fs ops.
-                with Path(filepath).open("r") as j:
-                    file = json.loads(j.read())
-                    all_results.append(file)
+                async with aiofiles.open(filepath, "r") as f:
+                    content = await f.read()
+                    return json.loads(content)
             except Exception as e:
                 logging.error(f"Error reading file {filepath}: {e}")
-                continue
+                return None
+
+        tasks = [_read_file_async(result["file_path"]) for result in results]
+
+        all_results = await asyncio.gather(*tasks)
 
         return json.dumps(
             all_results, indent=4, separators=(",", ": ")
