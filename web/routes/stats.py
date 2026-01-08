@@ -3,12 +3,12 @@ import os
 from functools import _CacheInfo
 
 import psutil
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, status
 
+from web.monitoring.usage import Usage
 from web.routes.autocomplete import _get_autocomplete
 from web.routes.index import _get_letter_index
 from web.routes.search import _get_search
-from web.monitoring.usage import Usage
 
 router = APIRouter(prefix="/stats")
 
@@ -27,10 +27,22 @@ def _get_cache_info(cache_info: _CacheInfo) -> dict:
     return cache
 
 
-@router.get(path="/")
+@router.get(
+    path="/",
+    summary="Returns information about the state of the app.",
+    response_description="A dictionary with various metrics about the application state.",
+    responses={200: {"description": "The request was sucessful."}},
+    status_code=status.HTTP_200_OK,
+)
 def stats(request: Request, date: str) -> dict:
     """
-    TODO: Docstring this endpoint.
+    Returns a dictionary with information about the application state, like:
+        - Search endpoint cache info
+        - Index endpoint cache info
+        - Autocomplete endpoint cache info
+        - Process id
+        - Total memory used
+        - Uptime
     """
     start_time = request.app.state.start_time
     try:

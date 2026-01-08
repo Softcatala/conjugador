@@ -3,7 +3,7 @@ import json
 import os
 from functools import lru_cache
 
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 
 from web.conjugador.indexletter import IndexLetter
 from web.models.index import IndexEntry, IndexResponse
@@ -27,10 +27,15 @@ def _get_letter_index(letter: str) -> tuple[str, int, int]:
 @router.get(
     path="/{letter}",
     response_model_exclude_none=True,
+    summary="Provides a list of all the verb forms and infinitives present that start with a letter.",
+    response_description="A list of all the known verb forms and infinitives that start with a letter.",
+    responses={200: {"description": "The request was fulfilled successfully"}},
+    status_code=status.HTTP_200_OK,
 )
 async def get_index_results(letter: str) -> IndexResponse:
     """
-    TODO: Docstring this endpoint.
+    Provides a list of all the known verb forms and their infinitives that start
+    with the given letter.
     """
     j, _, _ = await _get_letter_index(letter)
     resp = [

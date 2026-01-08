@@ -3,7 +3,7 @@ import json
 import os
 from functools import lru_cache
 
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 
 from web.conjugador.search import Search
 from web.models.search import SearchResponse
@@ -24,10 +24,16 @@ def _get_search(word: str) -> tuple[str, int, int]:
     return asyncio.create_task(_get_search_uncached(word))
 
 
-@router.get(path="/{word}")
+@router.get(
+    path="/{word}",
+    summary="Returns a list of all verbs and their information that match the given word.",
+    response_description="A list of all verbs and information and conjugations.",
+    responses={200: {"description": "The request was fulfilled successfully"}},
+    status_code=status.HTTP_200_OK,
+)
 async def get_search_results(word: str) -> SearchResponse:
     """
-    TODO: Docstring this endpoint.
+    Returns a list of all verbs and their information that match the given word.
     """
     j, _, _ = await _get_search(word)
     return SearchResponse.model_validate(json.loads(j))

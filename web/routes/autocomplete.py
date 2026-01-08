@@ -3,7 +3,7 @@ import json
 import os
 from functools import lru_cache
 
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 
 from web.conjugador.autocomplete import Autocomplete
 from web.models.autocomplete import AutocompleteEntry, AutocompleteResponse
@@ -24,10 +24,20 @@ def _get_autocomplete(word: str) -> tuple[str, int, int]:
     return asyncio.create_task(_get_autocomplete_uncached(word))
 
 
-@router.get(path="/{word}")
+@router.get(
+    path="/{word}",
+    summary="Provides a list of suggested autocompletions based on the given word",
+    response_description="A list of autocompletions with all their information.",
+    responses={200: {"description": "The request was fulfilled successfully"}},
+    status_code=status.HTTP_200_OK,
+)
 async def get_autocomplete_results(word: str) -> AutocompleteResponse:
     """
-    TODO: Docstring this endpoint.
+    Provides a list of suggested autocompletions of the given word in the format
+    of:
+        - verb_form
+        - infinitive
+        - url
     """
     j, _, _ = await _get_autocomplete(word)
     resp = [
