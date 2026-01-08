@@ -21,7 +21,7 @@
 import json
 import logging
 
-from web.firstletter import FirstLetter
+from indexer.firstletter import FirstLetter
 from web.models.base import BaseSearch
 
 
