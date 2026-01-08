@@ -1,12 +1,23 @@
-import os
+import datetime
 import logging
+import os
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from web.routes import autocomplete, index, search
+from web.monitoring.logging import init_logging
+from web.routes import autocomplete, index, search, stats
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):  # noqa: ANN201, D103
+    app.state.start_time = datetime.datetime.now()
+    init_logging()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 es_logger = logging.getLogger("elastic_transport.transport")
 es_logger.setLevel(os.getenv("LOGLEVEL", "WARNING"))
@@ -14,6 +25,7 @@ es_logger.setLevel(os.getenv("LOGLEVEL", "WARNING"))
 app.include_router(index.router)
 app.include_router(autocomplete.router)
 app.include_router(search.router)
+app.include_router(stats.router)
 
 app.add_middleware(
     CORSMiddleware,

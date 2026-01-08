@@ -33,7 +33,7 @@ from flask import Flask, Response, request
 from web.conjugador.autocomplete import Autocomplete
 from web.conjugador.indexletter import IndexLetter
 from web.conjugador.search import Search
-from web.usage import Usage
+from web.monitoring.usage import Usage
 
 app = Flask(__name__)
 start_time = datetime.datetime.now()
