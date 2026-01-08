@@ -10,9 +10,7 @@ from web.models.search import SearchResponse
 router = APIRouter(prefix="/search")
 
 
-async def _get_search_uncached(
-    word: str, search: Search
-) -> tuple[str, int]:
+async def _get_search_uncached(word: str, search: Search) -> tuple[str, int]:
     j, status = await search.get_json_search(word)
     return j, status
 
