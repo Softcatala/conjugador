@@ -30,53 +30,35 @@ class IndexLetter:
     Search a letter in the Elasticsearch index.
 
     Args:
-        letter (str): The letter to search for.
-        es_url (str | None): The url to connect to an Elasticsearch instance.
+        es_client (AsyncElasticsearch): The client to use for the ES connection.
     """
 
-    DEFAULT_ES_HOST = "http://localhost:9200"
-
-    def __init__(self, letter: str, es_url: str | None = None) -> None:
+    def __init__(self, es_client: AsyncElasticsearch) -> None:
         """
-        Initializes the IndexLetter class with a letter to look for.
+        Initializes the IndexLetter class with a preconfigured ES client.
 
         Args:
-            letter (str): The letter to search for.
-            es_url (str | None): The url to connect to an Elasticsearch instance.
+            es_client (AsyncElasticsearch): The client to use for the ES connection.
         """
-        if not es_url:
-            es_url = self.DEFAULT_ES_HOST
-
-        self.letter = letter
-        self.es_client = AsyncElasticsearch(es_url)
+        self.es_client = es_client
         self.index_name = "letter-index"
         self.collator = Collator()
-        self.num_results = 0
-        self.results = []
 
-    def get_num_results(self) -> int:
-        """
-        Retrieves the number of results found.
-
-        Returns:
-            int: Num of results.
-        """
-        return self.num_results
-
-    async def get_results(self) -> list[dict]:
+    async def get_results(self, letter: str) -> list[dict]:
         """
         Gets the results from the prepared query, based on the letter.
+
+        Args:
+            letter (str): The letter of the index to check.
 
         Returns:
             list[dict]: A list of dicts containing the results.
         """
         if not await self.es_client.indices.exists(index=self.index_name):
-            self.results = []
-            self.num_results = 0
-            return self.results
+            return []
 
         query = {
-            "query": {"term": {"index_letter.keyword": self.letter}},
+            "query": {"term": {"index_letter.keyword": letter}},
             "collapse": {"field": "verb_form.keyword"},
             "size": 10000,
             "_source": ["verb_form", "infinitive"],
@@ -87,35 +69,28 @@ class IndexLetter:
                 index=self.index_name, body=query
             )
             hits = response["hits"]["hits"]
-            self.results = [hit["_source"] for hit in hits]
-            self.results.sort(
-                key=lambda x: self.collator.sort_key(x["verb_form"])
-            )
-            self.num_results = len(self.results)
+            results = [hit["_source"] for hit in hits]
+            results.sort(key=lambda x: self.collator.sort_key(x["verb_form"]))
 
         except Exception as e:
             logging.error(f"Error searching index {self.index_name}: {e}")
-            self.results = []
-            self.num_results = 0
+            results = []
 
-        return self.results
+        return results
 
-    async def get_json(self) -> tuple[str, int]:
+    async def get_json(self, letter: str) -> tuple[str, int]:
         """
-        Gets a stringified JSON for all the results found for the initialized
-        letter.
+        Gets a stringified JSON for all the results found for the given letter.
+
+        Args:
+            letter (str): The letter of the index to check.
 
         Returns:
             tuple[str, int]: A tuple containing the stringified JSON and the status code.
         """
         OK = 200
         status = OK
-        results = await self.get_results()
-
-        # This close is a temporary shortcut to avoid memory leaks for leaving connections open.
-        # This will be solved in the future with a single shared client for all the app and not using word
-        # on constructor but rather as function argument.
-        await self.es_client.close()
+        results = await self.get_results(letter)
 
         all_results = []
         for result in results:

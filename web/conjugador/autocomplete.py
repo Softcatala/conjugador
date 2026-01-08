@@ -21,63 +21,48 @@
 import json
 import logging
 
+from elasticsearch import AsyncElasticsearch
+
 from indexer.firstletter import FirstLetter
-from web.conjugador.base import BaseSearch
 
 
-class Autocomplete(BaseSearch):
+class Autocomplete:
     """
     Autocomplete a word based on the information on the Elasticsearch indices.
 
     Args:
-        word (str): The word to try to autocomplete from.
-        es_url (str): The url to connect to an Elasticsearch instance.
+        es_client (AsyncElasticsearch): The client to use for the connection.
     """
 
-    def __init__(self, word: str, es_url: str | None = None) -> None:
+    def __init__(self, es_client: AsyncElasticsearch) -> None:
         """
         Initializes the Autocomplete class with a word to autocomplete.
 
         Args:
-            word (str): The word to try to autocomplete from.
-            es_url (str | None): The url to connect to an Elasticsearch instance.
+            es_client (AsyncElasticsearch): The client to use for the connection.
         """
-        if not es_url:
-            es_url = self.DEFAULT_ES_HOST
-
-        super().__init__(word, es_url)
-        self.query = None
-        self.num_results = 0
+        self.es_client = es_client
         self.letter = FirstLetter()
-        self.results = []
 
-    def get_num_results(self) -> int:
-        """
-        Retrieves the number of results found.
-
-        Returns:
-            int: Num of results.
-        """
-        return self.num_results
-
-    async def get_results(self) -> list[dict]:
+    async def get_results(self, word: str) -> list[dict]:
         """
         Gets the results from the prepared query, based on the word to autocomplete.
+
+        Args:
+            word (str): The word from which to autocomplete.
 
         Returns:
             list[dict]: A list of dictionaries containing the results.
         """
-        letter = self.letter.from_word(self.word)
+        letter = self.letter.from_word(word)
         index_name = f"autocomplete-{letter}"
 
         if not await self.es_client.indices.exists(index=index_name):
-            self.results = []
-            self.num_results = 0
-            return self.results
+            return []
 
         query = {
             "query": {
-                "prefix": {"verb_form.keyword": {"value": self.word.lower()}}
+                "prefix": {"verb_form.keyword": {"value": word.lower()}}
             },
             "sort": [
                 {
@@ -92,31 +77,26 @@ class Autocomplete(BaseSearch):
 
         try:
             resp = await self.es_client.search(index=index_name, body=query)
-            self.results = [hit["_source"] for hit in resp["hits"]["hits"]]
-            self.num_results = len(self.results)
+            results = [hit["_source"] for hit in resp["hits"]["hits"]]
         except Exception as e:
             logging.error(f"Error searching index '{index_name}': {e}")
-            self.results = []
-            self.num_results = 0
+            results = []
 
-        return self.results
+        return results
 
-    async def get_json(self) -> tuple[str, int]:
+    async def get_json(self, word: str) -> tuple[str, int]:
         """
-        Gets a stringified JSON for all the results found for the initialized
-        autocomplete word.
+        Gets a stringified JSON for all the results found for the autocomplete word.
+
+        Args:
+            word (str): The word from which to autocomplete.
 
         Returns:
             tuple[str, int]: A tuple containing the stringified JSON and the status code.
         """
         OK = 200
         status = OK
-        results = await self.get_results()
-
-        # This close is a temporary shortcut to avoid memory leaks for leaving connections open.
-        # This will be solved in the future with a single shared client for all the app and not using word
-        # on constructor but rather as function argument.
-        await self.es_client.close()
+        results = await self.get_results(word)
 
         all_results = []
         for result in results:

@@ -1,9 +1,8 @@
 import asyncio
 import json
-import os
 from functools import lru_cache
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Request, status
 
 from web.conjugador.indexletter import IndexLetter
 from web.models.index import IndexEntry, IndexResponse
@@ -11,17 +10,16 @@ from web.models.index import IndexEntry, IndexResponse
 router = APIRouter(prefix="/index")
 
 
-async def _get_letter_index_uncached(letter: str) -> tuple[str, int, int]:
-    es_url = os.getenv("ES_URL", "http://conjugador-elastic:9200")
-    indexLetter = IndexLetter(letter, es_url)
-    j, status = await indexLetter.get_json()
-    num_results = indexLetter.get_num_results()
-    return j, status, num_results
+async def _get_letter_index_uncached(
+    letter: str, ix: IndexLetter
+) -> tuple[str, int]:
+    j, status = await ix.get_json(letter)
+    return j, status
 
 
 @lru_cache(maxsize=23)  # Rationale: there 23 index files only
-def _get_letter_index(letter: str) -> tuple[str, int, int]:
-    return asyncio.create_task(_get_letter_index_uncached(letter))
+def _get_letter_index(letter: str, ix: IndexLetter) -> tuple[str, int]:
+    return asyncio.create_task(_get_letter_index_uncached(letter, ix))
 
 
 @router.get(
@@ -32,12 +30,13 @@ def _get_letter_index(letter: str) -> tuple[str, int, int]:
     responses={200: {"description": "The request was fulfilled successfully"}},
     status_code=status.HTTP_200_OK,
 )
-async def get_index_results(letter: str) -> IndexResponse:
+async def get_index_results(request: Request, letter: str) -> IndexResponse:
     """
     Provides a list of all the known verb forms and their infinitives that start
     with the given letter.
     """
-    j, _, _ = await _get_letter_index(letter)
+    ix = request.app.state.index_letter
+    j, _ = await _get_letter_index(letter, ix)
     resp = [
         IndexEntry(
             verb_form=entry["verb_form"], infinitive=entry.get("infinitive")

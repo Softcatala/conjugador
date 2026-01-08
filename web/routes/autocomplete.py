@@ -1,9 +1,8 @@
 import asyncio
 import json
-import os
 from functools import lru_cache
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Request, status
 
 from web.conjugador.autocomplete import Autocomplete
 from web.models.autocomplete import AutocompleteEntry, AutocompleteResponse
@@ -11,17 +10,16 @@ from web.models.autocomplete import AutocompleteEntry, AutocompleteResponse
 router = APIRouter(prefix="/autocomplete")
 
 
-async def _get_autocomplete_uncached(word: str) -> tuple[str, int, int]:
-    es_url = os.getenv("ES_URL", "http://conjugador-elastic:9200")
-    autocomplete = Autocomplete(word, es_url)
-    j, status = await autocomplete.get_json()
-    num_results = autocomplete.get_num_results()
-    return j, status, num_results
+async def _get_autocomplete_uncached(
+    word: str, ac: Autocomplete
+) -> tuple[str, int]:
+    j, status = await ac.get_json(word)
+    return j, status
 
 
 @lru_cache(maxsize=500)
-def _get_autocomplete(word: str) -> tuple[str, int, int]:
-    return asyncio.create_task(_get_autocomplete_uncached(word))
+def _get_autocomplete(word: str, ac: Autocomplete) -> tuple[str, int]:
+    return asyncio.create_task(_get_autocomplete_uncached(word, ac))
 
 
 @router.get(
@@ -31,7 +29,9 @@ def _get_autocomplete(word: str) -> tuple[str, int, int]:
     responses={200: {"description": "The request was fulfilled successfully"}},
     status_code=status.HTTP_200_OK,
 )
-async def get_autocomplete_results(word: str) -> AutocompleteResponse:
+async def get_autocomplete_results(
+    request: Request, word: str
+) -> AutocompleteResponse:
     """
     Provides a list of suggested autocompletions of the given word in the format
     of:
@@ -39,7 +39,8 @@ async def get_autocomplete_results(word: str) -> AutocompleteResponse:
         - infinitive
         - url
     """
-    j, _, _ = await _get_autocomplete(word)
+    ac = request.app.state.autocomplete
+    j, _ = await _get_autocomplete(word, ac)
     resp = [
         AutocompleteEntry(
             verb_form=entry["verb_form"],

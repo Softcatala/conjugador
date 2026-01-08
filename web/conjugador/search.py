@@ -23,60 +23,42 @@ import json
 import logging
 
 import aiofiles
+from elasticsearch import AsyncElasticsearch
 
-from web.conjugador.base import BaseSearch
 
-
-class Search(BaseSearch):
+class Search:
     """
     Search a term in the Elasticsearch search index.
 
     Args:
-        word (str): The word to search for.
-        es_url (str | None): The url to connect to an Elasticsearch instance.
+        es_client (AsyncElasticsearch): The client with which to connect to the ES instance.
     """
 
-    def __init__(self, word: str, es_url: str | None = None) -> None:
+    def __init__(self, es_client: AsyncElasticsearch) -> None:
         """
-        Initializes the Search class with a word to look into an Elasticsearch index.
+        Initializes the Search class with a preconfigured ES client.
+
+        Args:
+            es_client (AsyncElasticsearch): The client with which to connect to the ES instance.
+        """
+        self.es_client = es_client
+        self.index_name = "search-index"
+
+    async def get_results(self, word: str) -> list[dict]:
+        """
+        Gets the results from the prepared query based off the word..
 
         Args:
             word (str): The word to search for.
-            es_url (str | None): The url to connect to an Elasticsearch instance.
-        """
-        if not es_url:
-            es_url = self.DEFAULT_ES_HOST
-
-        super().__init__(word, es_url)
-        self.query = None
-        self.query_expansion = None
-        self.num_results = 0
-        self.results = []
-        self.index_name = "search-index"
-
-    def get_num_results(self) -> int:
-        """
-        Retrieves the number of results found.
-
-        Returns:
-            int: Num of results.
-        """
-        return self.num_results
-
-    async def get_results(self) -> list[dict]:
-        """
-        Gets the results from the prepared query.
 
         Returns:
             Results: A wrapper over a list of dicts containing the results.
         """
         if not await self.es_client.indices.exists(index=self.index_name):
-            self.results = []
-            self.num_results = 0
-            return self.results
+            return []
 
         query = {
-            "query": {"match": {"verb_form": {"query": self.word}}},
+            "query": {"match": {"verb_form": {"query": word}}},
             "sort": [{"index_letter.keyword": {"order": "asc"}}],
             "collapse": {"field": "file_path.keyword"},
             "size": 10000,
@@ -91,9 +73,7 @@ class Search(BaseSearch):
             if len(hits) == 0:
                 query_expansion = {
                     "query": {
-                        "match": {
-                            "verb_form_no_diacritics": {"query": self.word}
-                        }
+                        "match": {"verb_form_no_diacritics": {"query": word}}
                     },
                     "sort": [{"index_letter.keyword": {"order": "asc"}}],
                     "collapse": {"field": "file_path.keyword"},
@@ -105,23 +85,21 @@ class Search(BaseSearch):
                 )
                 hits = response["hits"]["hits"]
             if len(hits) == 0:
-                self.results = []
-                self.num_results = 0
-                return self.results
+                return []
 
-            self.results = [hit["_source"] for hit in hits]
-            self.num_results = len(self.results)
+            results = [hit["_source"] for hit in hits]
         except Exception as e:
             logging.error(f"Error searching index '{self.index_name}': {e}")
-            self.results = []
-            self.num_results = 0
+            results = []
 
-        return self.results
+        return results
 
-    async def get_json_search(self) -> tuple[str, int]:
+    async def get_json_search(self, word: str) -> tuple[str, int]:
         """
-        Gets a stringified JSON for all the results found for the initialized
-        word.
+        Gets a stringified JSON for all the results found for the given word.
+
+        Args:
+            word (str): The word to search for.
 
         Returns:
             tuple[str, int]: A tuple containing the stringified JSON and the status code.
@@ -129,12 +107,7 @@ class Search(BaseSearch):
         OK = 200
 
         status = OK
-        results = await self.get_results()
-
-        # This close is a temporary shortcut to avoid memory leaks for leaving connections open.
-        # This will be solved in the future with a single shared client for all the app and not using word
-        # on constructor but rather as function argument.
-        await self.es_client.close()
+        results = await self.get_results(word)
 
         async def _read_file_async(filepath: str) -> dict | None:
             try:
