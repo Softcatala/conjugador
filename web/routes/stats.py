@@ -28,7 +28,7 @@ def _get_cache_info(cache_info: _CacheInfo) -> dict:
 
 
 @router.get(path="/")
-async def stats(request: Request, date: str) -> dict:
+def stats(request: Request, date: str) -> dict:
     """
     TODO: Docstring this endpoint.
     """

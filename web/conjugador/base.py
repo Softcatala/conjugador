@@ -18,7 +18,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from elasticsearch import Elasticsearch
+from elasticsearch import AsyncElasticsearch
 
 
 class BaseSearch:
@@ -37,7 +37,7 @@ class BaseSearch:
             es_url (str): The url of the Elasticsearch instance to connect to.
         """
         self._word = word
-        self.es_client = Elasticsearch(es_url)
+        self.es_client = AsyncElasticsearch(es_url)
 
     @property
     def word(self) -> str:

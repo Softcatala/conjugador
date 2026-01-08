@@ -61,14 +61,14 @@ class Search(BaseSearch):
         """
         return self.num_results
 
-    def get_results(self) -> list[dict]:
+    async def get_results(self) -> list[dict]:
         """
         Gets the results from the prepared query.
 
         Returns:
             Results: A wrapper over a list of dicts containing the results.
         """
-        if not self.es_client.indices.exists(index=self.index_name):
+        if not await self.es_client.indices.exists(index=self.index_name):
             self.results = []
             self.num_results = 0
             return self.results
@@ -82,7 +82,7 @@ class Search(BaseSearch):
         }
 
         try:
-            resp = self.es_client.search(index=self.index_name, body=query)
+            resp = await self.es_client.search(index=self.index_name, body=query)
             hits = resp["hits"]["hits"]
             if len(hits) == 0:
                 query_expansion = {
@@ -96,7 +96,7 @@ class Search(BaseSearch):
                     "size": 10000,
                     "_source": True,
                 }
-                response = self.es_client.search(
+                response = await self.es_client.search(
                     index=self.index_name, body=query_expansion
                 )
                 hits = response["hits"]["hits"]
@@ -114,7 +114,7 @@ class Search(BaseSearch):
 
         return self.results
 
-    def get_json_search(self) -> tuple[str, int]:
+    async def get_json_search(self) -> tuple[str, int]:
         """
         Gets a stringified JSON for all the results found for the initialized
         word.
@@ -125,12 +125,19 @@ class Search(BaseSearch):
         OK = 200
 
         status = OK
-        results = self.get_results()
+        results = await self.get_results()
+
+        # This close is a temporary shortcut to avoid memory leaks for leaving connections open.
+        # This will be solved in the future with a single shared client for all the app and not using word
+        # on constructor but rather as function argument.
+        await self.es_client.close()
+
         all_results = []
         for result in results:
             filepath = result["file_path"]
 
             try:
+                # TODO: This is a blocking operation, should use something that allows async fs ops.
                 with Path(filepath).open("r") as j:
                     file = json.loads(j.read())
                     all_results.append(file)

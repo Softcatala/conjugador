@@ -60,7 +60,7 @@ class Autocomplete(BaseSearch):
         """
         return self.num_results
 
-    def get_results(self) -> list[dict]:
+    async def get_results(self) -> list[dict]:
         """
         Gets the results from the prepared query, based on the word to autocomplete.
 
@@ -70,7 +70,7 @@ class Autocomplete(BaseSearch):
         letter = self.letter.from_word(self.word)
         index_name = f"autocomplete-{letter}"
 
-        if not self.es_client.indices.exists(index=index_name):
+        if not await self.es_client.indices.exists(index=index_name):
             self.results = []
             self.num_results = 0
             return self.results
@@ -91,7 +91,7 @@ class Autocomplete(BaseSearch):
         }
 
         try:
-            resp = self.es_client.search(index=index_name, body=query)
+            resp = await self.es_client.search(index=index_name, body=query)
             self.results = [hit["_source"] for hit in resp["hits"]["hits"]]
             self.num_results = len(self.results)
         except Exception as e:
@@ -101,7 +101,7 @@ class Autocomplete(BaseSearch):
 
         return self.results
 
-    def get_json(self) -> tuple[str, int]:
+    async def get_json(self) -> tuple[str, int]:
         """
         Gets a stringified JSON for all the results found for the initialized
         autocomplete word.
@@ -111,7 +111,13 @@ class Autocomplete(BaseSearch):
         """
         OK = 200
         status = OK
-        results = self.get_results()
+        results = await self.get_results()
+
+        # This close is a temporary shortcut to avoid memory leaks for leaving connections open.
+        # This will be solved in the future with a single shared client for all the app and not using word
+        # on constructor but rather as function argument.
+        await self.es_client.close()
+
         all_results = []
         for result in results:
             verb = {

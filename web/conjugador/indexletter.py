@@ -21,7 +21,7 @@
 import json
 import logging
 
-from elasticsearch import Elasticsearch
+from elasticsearch import AsyncElasticsearch
 from pyuca import Collator
 
 
@@ -48,7 +48,7 @@ class IndexLetter:
             es_url = self.DEFAULT_ES_HOST
 
         self.letter = letter
-        self.es_client = Elasticsearch(es_url)
+        self.es_client = AsyncElasticsearch(es_url)
         self.index_name = "letter-index"
         self.collator = Collator()
         self.num_results = 0
@@ -63,14 +63,14 @@ class IndexLetter:
         """
         return self.num_results
 
-    def get_results(self) -> list[dict]:
+    async def get_results(self) -> list[dict]:
         """
         Gets the results from the prepared query, based on the letter.
 
         Returns:
             list[dict]: A list of dicts containing the results.
         """
-        if not self.es_client.indices.exists(index=self.index_name):
+        if not await self.es_client.indices.exists(index=self.index_name):
             self.results = []
             self.num_results = 0
             return self.results
@@ -83,7 +83,9 @@ class IndexLetter:
         }
 
         try:
-            response = self.es_client.search(index=self.index_name, body=query)
+            response = await self.es_client.search(
+                index=self.index_name, body=query
+            )
             hits = response["hits"]["hits"]
             self.results = [hit["_source"] for hit in hits]
             self.results.sort(
@@ -98,7 +100,7 @@ class IndexLetter:
 
         return self.results
 
-    def get_json(self) -> tuple[str, int]:
+    async def get_json(self) -> tuple[str, int]:
         """
         Gets a stringified JSON for all the results found for the initialized
         letter.
@@ -108,7 +110,13 @@ class IndexLetter:
         """
         OK = 200
         status = OK
-        results = self.get_results()
+        results = await self.get_results()
+
+        # This close is a temporary shortcut to avoid memory leaks for leaving connections open.
+        # This will be solved in the future with a single shared client for all the app and not using word
+        # on constructor but rather as function argument.
+        await self.es_client.close()
+
         all_results = []
         for result in results:
             verb = {"verb_form": result["verb_form"]}
