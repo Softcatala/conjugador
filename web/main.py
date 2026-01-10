@@ -28,8 +28,8 @@ async def lifespan(app: FastAPI):  # noqa: ANN201, D103
     yield
 
     await app.state.autocomplete.es_client.close()
-    await app.state.index_letter.es_clientclose()
-    await app.state.search.close.es_client()
+    await app.state.index_letter.es_client.close()
+    await app.state.search.es_client.close()
 
 
 app = FastAPI(lifespan=lifespan)
