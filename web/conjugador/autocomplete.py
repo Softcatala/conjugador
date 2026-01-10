@@ -36,7 +36,7 @@ class Autocomplete:
 
     def __init__(self, es_client: AsyncElasticsearch) -> None:
         """
-        Initializes the Autocomplete class with a word to autocomplete.
+        Initializes the Autocomplete class with a preconfigured ES client.
 
         Args:
             es_client (AsyncElasticsearch): The client to use for the connection.
