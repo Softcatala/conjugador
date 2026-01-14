@@ -19,6 +19,7 @@ RUN uv python install $(cat .python-version) && \
 
 ENV discovery.type=single-node
 ENV xpack.security.enabled=false
+ENV logger.level=error
 ENV ES_JAVA_OPTS="-Xms512m -Xmx512m"
 
 # Start Elasticsearch, wait for health, run indexing, then stop
@@ -74,5 +75,6 @@ COPY --from=build /usr/share/elasticsearch/data /usr/share/elasticsearch/data
 RUN chown -R elasticsearch:elasticsearch /usr/share/elasticsearch/data
 ENV discovery.type=single-node
 ENV xpack.security.enabled=false
+ENV logger.level=error
 ENV ES_JAVA_OPTS="-Xms512m -Xmx512m"
 USER elasticsearch
