@@ -19,10 +19,11 @@ class SearchVerbInformation(BaseModel):  # noqa: D101
 
 
 class SearchVerbMetadata(BaseModel):  # noqa: D101
-    definition: str
+    definition: str | None = None
     definition_credits: str
     title: str
     infinitive: str
+    note: str | None = None
 
 
 type VerbEntry = SearchVerbInformation | SearchVerbMetadata
