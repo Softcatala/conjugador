@@ -6,6 +6,7 @@ from fastapi import APIRouter, Request, status
 
 from web.conjugador.autocomplete import Autocomplete
 from web.models.autocomplete import AutocompleteEntry, AutocompleteResponse
+from web.monitoring.telemetry import REQUEST_COUNTER
 
 router = APIRouter(prefix="/autocomplete")
 
@@ -39,6 +40,7 @@ async def get_autocomplete_results(
         - infinitive
         - url
     """
+    REQUEST_COUNTER.labels(endpoint="/autocomplete/{word}", method="GET").inc()
     ac = request.app.state.autocomplete
     j, _ = await _get_autocomplete(word, ac)
     resp = [

@@ -6,6 +6,7 @@ from fastapi import APIRouter, Request, status
 
 from web.conjugador.indexletter import IndexLetter
 from web.models.index import IndexEntry, IndexResponse
+from web.monitoring.telemetry import REQUEST_COUNTER
 
 router = APIRouter(prefix="/index")
 
@@ -35,6 +36,7 @@ async def get_index_results(request: Request, letter: str) -> IndexResponse:
     Provides a list of all the known verb forms and their infinitives that start
     with the given letter.
     """
+    REQUEST_COUNTER.labels(endpoint="/index/{letter}", method="GET").inc()
     ix = request.app.state.index_letter
     j, _ = await _get_letter_index(letter, ix)
     resp = [
