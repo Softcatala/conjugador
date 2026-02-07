@@ -11,7 +11,7 @@ from web.conjugador.autocomplete import Autocomplete
 from web.conjugador.indexletter import IndexLetter
 from web.conjugador.search import Search
 from web.monitoring.logging import init_logging
-from web.routes import autocomplete, index, search, stats
+from web.routes import autocomplete, index, metrics, search, stats
 
 
 @asynccontextmanager
@@ -41,6 +41,7 @@ app.include_router(index.router)
 app.include_router(autocomplete.router)
 app.include_router(search.router)
 app.include_router(stats.router)
+app.include_router(metrics.router)
 
 app.add_middleware(
     CORSMiddleware,
