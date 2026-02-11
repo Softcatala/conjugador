@@ -84,12 +84,12 @@ class Tense:
         self.mode = mode
         self.tense = tense
         self.postag = postag
-        self.singular1 = []
-        self.singular2 = []
-        self.singular3 = []
-        self.plural1 = []
-        self.plural2 = []
-        self.plural3 = []
+        self.singular1: list[Form] = []
+        self.singular2: list[Form] = []
+        self.singular3: list[Form] = []
+        self.plural1: list[Form] = []
+        self.plural2: list[Form] = []
+        self.plural3: list[Form] = []
 
     def __str__(self) -> str:
         """Represents a Tense in a string format."""

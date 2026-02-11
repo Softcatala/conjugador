@@ -39,7 +39,12 @@ reflexius = Reflexius()
 notes = Notes()
 
 
-def _get_forms_with_variant(lemma_subdict, postag, prefix=""):
+def _get_forms_with_variant(
+    lemma_subdict: dict, postag: str, prefix: str = ""
+) -> list[Form]:
+    """
+    TODO: Docstring this.
+    """
     result = []
 
     variants = [
@@ -72,11 +77,20 @@ def _get_forms_with_variant(lemma_subdict, postag, prefix=""):
     return result
 
 
-def _get_verb_mode(postag):
+def _get_verb_mode(postag: str) -> str:
+    """
+    TODO: Docstring this.
+    """
     return postag[2]
 
 
-def _set_plurals_singulars(tense, lemma_subdict):
+def _set_plurals_singulars(tense: Tense, lemma_subdict: dict) -> None:
+    """
+    TODO: Docstring this.
+
+    BEWARE: This function modifies tense in place, like a C function of
+            void _set_plurals_singulars(&tense);
+    """
     if _get_verb_mode(tense.postag) not in ["I", "S", "M"]:
         return
     tense.singular1 = _get_forms_with_variant(
@@ -100,7 +114,15 @@ def _set_plurals_singulars(tense, lemma_subdict):
     )
 
 
-def _set_plurals_singulars_participi(tense, lemma_subdict):
+def _set_plurals_singulars_participi(
+    tense: Tense, lemma_subdict: dict
+) -> None:
+    """
+    TODO: Docstring this.
+
+    BEWARE: This function modifies tense in place, like a C function of
+            void _set_plurals_singulars_participi(&tense);
+    """
     if _get_verb_mode(tense.postag) != "P":
         return
     tense.singular1 = _get_forms_with_variant(
@@ -117,13 +139,25 @@ def _set_plurals_singulars_participi(tense, lemma_subdict):
     )
 
 
-def _set_plurals_singulars0(tense, lemma_subdict):
+def _set_plurals_singulars0(tense: Tense, lemma_subdict: dict) -> None:
+    """
+    TODO: Docstring this.
+
+    BEWARE: This function modifies tense in place, like a C function of
+            void _set_plurals_singulars_participi(&tense);
+    """
     tense.singular1 = _get_forms_with_variant(
         lemma_subdict, tense.postag + "000"
     )
 
 
-def _set_infinitiu_compost(tense, lemma_subdict):
+def _set_infinitiu_compost(tense: Tense, lemma_subdict: dict) -> None:
+    """
+    TODO: Docstring this.
+
+    BEWARE: This function modifies tense in place, like a C function of
+            void _set_infinitiu_compost(&tense);
+    """
     if _get_verb_mode(tense.postag) != "P":
         return
     tense.singular1 = _get_forms_with_variant(
@@ -131,10 +165,13 @@ def _set_infinitiu_compost(tense, lemma_subdict):
     )
 
 
-def _set_infinitiu(tense, lemma_subdict):
+def _set_infinitiu(tense: Tense, lemma_subdict: dict) -> None:
+    """
+    TODO: Docstring this.
+    """
     _set_plurals_singulars0(tense, lemma_subdict)
     for form in tense.singular1:
-        words = []
+        words: list[str] = []
         for word in form.word.split(WORDS_SEPARATOR):
             word = reflexius.get_reflexiu(word)
             words.append(word)
@@ -143,7 +180,13 @@ def _set_infinitiu(tense, lemma_subdict):
         form.word = new_word
 
 
-def _set_gerundi_compost(tense, lemma_subdict):
+def _set_gerundi_compost(tense: Tense, lemma_subdict: dict) -> None:
+    """
+    TODO: Docstring this.
+
+    BEWARE: This function modifies tense in place, like a C function of
+            void _set_gerundi_compost(&tense);
+    """
     if _get_verb_mode(tense.postag) != "P":
         return
     tense.singular1 = _get_forms_with_variant(
@@ -151,7 +194,13 @@ def _set_gerundi_compost(tense, lemma_subdict):
     )
 
 
-def _set_perfet_indicatiu(tense, lemma_subdict):
+def _set_perfet_indicatiu(tense: Tense, lemma_subdict: dict) -> None:
+    """
+    TODO: Docstring this.
+
+    BEWARE: This function modifies tense in place, like a C function of
+            void _set_perfet_indicatiu(&tense);
+    """
     if _get_verb_mode(tense.postag) != "P":
         return
     tense.singular1 = _get_forms_with_variant(
@@ -175,7 +224,13 @@ def _set_perfet_indicatiu(tense, lemma_subdict):
     )
 
 
-def _set_plusquamperfet_indicatiu(tense, lemma_subdict):
+def _set_plusquamperfet_indicatiu(tense: Tense, lemma_subdict: dict) -> None:
+    """
+    TODO: Docstring this.
+
+    BEWARE: This function modifies tense in place, like a C function of
+            void _set_plusquamperfet_indicatiu(&tense);
+    """
     if _get_verb_mode(tense.postag) != "P":
         return
     tense.singular1 = _get_forms_with_variant(
@@ -199,7 +254,15 @@ def _set_plusquamperfet_indicatiu(tense, lemma_subdict):
     )
 
 
-def _set_passatperifrastic_indicatiu(tense, lemma_subdict):
+def _set_passatperifrastic_indicatiu(
+    tense: Tense, lemma_subdict: dict
+) -> None:
+    """
+    TODO: Docstring this.
+
+    BEWARE: This function modifies tense in place, like a C function of
+            void _set_passatperifrastic_indicatiu(&tense);
+    """
     if _get_verb_mode(tense.postag) != "N":
         return
     tense.singular1 = _get_forms_with_variant(
@@ -223,7 +286,13 @@ def _set_passatperifrastic_indicatiu(tense, lemma_subdict):
     )
 
 
-def _set_passatanterior_indicatiu(tense, lemma_subdict):
+def _set_passatanterior_indicatiu(tense: Tense, lemma_subdict: dict) -> None:
+    """
+    TODO: Docstring this.
+
+    BEWARE: This function modifies tense in place, like a C function of
+            void _set_passatanterior_indicatiu(&tense);
+    """
     if _get_verb_mode(tense.postag) != "P":
         return
     tense.singular1 = _get_forms_with_variant(
@@ -247,7 +316,15 @@ def _set_passatanterior_indicatiu(tense, lemma_subdict):
     )
 
 
-def _set_passatanteriorperifrastic_indicatiu(tense, lemma_subdict):
+def _set_passatanteriorperifrastic_indicatiu(
+    tense: Tense, lemma_subdict: dict
+) -> None:
+    """
+    TODO: Docstring this.
+
+    BEWARE: This function modifies tense in place, like a C function of
+            void _set_passatanteriorperifrastic_indicatiu(&tense);
+    """
     if _get_verb_mode(tense.postag) != "P":
         return
     tense.singular1 = _get_forms_with_variant(
@@ -271,7 +348,13 @@ def _set_passatanteriorperifrastic_indicatiu(tense, lemma_subdict):
     )
 
 
-def _set_futurperfet_indicatiu(tense, lemma_subdict):
+def _set_futurperfet_indicatiu(tense: Tense, lemma_subdict: dict) -> None:
+    """
+    TODO: Docstring this.
+
+    BEWARE: This function modifies tense in place, like a C function of
+            void _set_futurperfet_indicatiu(&tense);
+    """
     if _get_verb_mode(tense.postag) != "P":
         return
     tense.singular1 = _get_forms_with_variant(
@@ -295,7 +378,15 @@ def _set_futurperfet_indicatiu(tense, lemma_subdict):
     )
 
 
-def _set_condicionalperfet_indicatiu(tense, lemma_subdict):
+def _set_condicionalperfet_indicatiu(
+    tense: Tense, lemma_subdict: dict
+) -> None:
+    """
+    TODO: Docstring this.
+
+    BEWARE: This function modifies tense in place, like a C function of
+            void _set_condicionalperfet_indicatiu(&tense);
+    """
     if _get_verb_mode(tense.postag) != "P":
         return
     tense.singular1 = _get_forms_with_variant(
@@ -319,7 +410,13 @@ def _set_condicionalperfet_indicatiu(tense, lemma_subdict):
     )
 
 
-def _set_perfet_subjuntiu(tense, lemma_subdict):
+def _set_perfet_subjuntiu(tense: Tense, lemma_subdict: dict) -> None:
+    """
+    TODO: Docstring this.
+
+    BEWARE: This function modifies tense in place, like a C function of
+            void _set_perfet_subjuntiu(&tense);
+    """
     if _get_verb_mode(tense.postag) != "P":
         return
     tense.singular1 = _get_forms_with_variant(
@@ -343,7 +440,13 @@ def _set_perfet_subjuntiu(tense, lemma_subdict):
     )
 
 
-def _set_plusquamperfet_subjuntiu(tense, lemma_subdict):
+def _set_plusquamperfet_subjuntiu(tense: Tense, lemma_subdict: dict) -> None:
+    """
+    TODO: Docstring this.
+
+    BEWARE: This function modifies tense in place, like a C function of
+            void _set_plusquamperfet_subjuntiu(&tense);
+    """
     if _get_verb_mode(tense.postag) != "P":
         return
     tense.singular1 = _get_forms_with_variant(
@@ -367,7 +470,10 @@ def _set_plusquamperfet_subjuntiu(tense, lemma_subdict):
     )
 
 
-def _build_dictionary(dictionary_file):
+def _build_dictionary(dictionary_file: DictionaryFile) -> dict:
+    """
+    TODO: Docstring this.
+    """
     main_dict = {}
     for form, lemma, postag in dictionary_file.get_form_lemma_postag():
         lemma_subdict = main_dict.get(lemma, {})
@@ -390,8 +496,11 @@ def _build_dictionary(dictionary_file):
 
 # Part of speech tags documentation:
 # https://freeling-user-manual.readthedocs.io/en/latest/tagsets/tagset-ca/#part-of-speech-verb
-def _get_tenses(input_dict, lemma):
-    tenses = []
+def _get_tenses(input_dict: dict, lemma: str) -> list[Tense]:
+    """
+    TODO: Docstring this.
+    """
+    tenses: list[Tense] = []
     verb_types = ["M", "A", "S"]
 
     for verb_type in verb_types:
@@ -491,7 +600,10 @@ def _get_tenses(input_dict, lemma):
     return tenses
 
 
-def _serialize_to_file(file_dir, lemma, tenses):
+def _serialize_to_file(file_dir: str, lemma: str, tenses: list[Tense]) -> None:
+    """
+    TODO: Docstring this.
+    """
     d = {}
     d[lemma] = tenses
     s = json.dumps(d, default=lambda x: x.__dict__, indent=4)
@@ -501,13 +613,21 @@ def _serialize_to_file(file_dir, lemma, tenses):
         file.write(s)
 
 
-def _load_definitions(definitions_file):
+def _load_definitions(definitions_file: str) -> dict:
+    """
+    TODO: Docstring this.
+    """
     with Path(definitions_file).open() as json_file:
         data = json.load(json_file)
         return data
 
 
-def rename_anar_aux_infinitive(lemma, tenses):
+def rename_anar_aux_infinitive(
+    lemma: str, tenses: list[Tense]
+) -> tuple[str, list[Tense]]:
+    """
+    TODO: Docstring this.
+    """
     if lemma == "anar_aux":
         lemma = "anar - auxiliar"
         for i in range(len(tenses)):
@@ -521,7 +641,13 @@ def rename_anar_aux_infinitive(lemma, tenses):
     return lemma, tenses
 
 
-def _set_definition(lemma, tenses, definitions):
+def _set_definition(
+    lemma: str, tenses: list[Tense], definitions: dict
+) -> None:
+    """
+    TODO: Docstring this.
+    TODO: Check the typechecker warnings
+    """
     definition = {}
     if lemma in definitions:
         definition["definition"] = definitions[lemma]
@@ -542,19 +668,30 @@ def _set_definition(lemma, tenses, definitions):
     if notes.has_note_for(lemma):
         definition["note"] = notes.get_note(lemma)
 
-    tenses.insert(0, definition)
+    tenses.insert(0, definition)  # pyrefly: ignore
 
 
-def _get_dictionary(dictionary_file, exclusions_file):
+def _get_dictionary(
+    dictionary_file: str, exclusions_file: str
+) -> DictionaryFile:
+    """
+    TODO: Docstring this.
+    """
     dictionary = DictionaryFile(dictionary_file)
     exclusions = ExclusionsFile(exclusions_file)
-    dictionary.exclude_lemmas_list(exclusions.get_lemmas())
+    dictionary.exclude_lemmas_list(list(exclusions.get_lemmas()))
     return dictionary
 
 
 def extract_from_dictfile(
-    dictionary_file, exclusions_file, definitions_file, output_dir
-):
+    dictionary_file: str,
+    exclusions_file: str,
+    definitions_file: str,
+    output_dir: str,
+) -> int:
+    """
+    TODO: Docstring this.
+    """
     dictionary = _get_dictionary(dictionary_file, exclusions_file)
     lemmas = dictionary.get_lemmas_for_infinitives()
 
@@ -568,9 +705,7 @@ def extract_from_dictfile(
     definitions = _load_definitions(definitions_file)
 
     for lemma in lemmas:
-        # if infinitive != 'cantar':
-        #    continue
-        file_dir = Path(output_dir) / lemma[:2]
+        file_dir = str(Path(output_dir) / lemma[:2])
         if not Path(file_dir).exists():
             Path(file_dir).mkdir(parents=True)
 
@@ -585,7 +720,12 @@ def extract_from_dictfile(
     return len(output_dict)
 
 
-def extract_infinitives(dictionary_file, exclusions_file, output_file):
+def extract_infinitives(
+    dictionary_file: str, exclusions_file: str, output_file: str
+) -> int:
+    """
+    TODO: Docstring this.
+    """
     file_dir = Path(output_file).parent
     if not file_dir.exists():
         file_dir.mkdir(parents=True)
@@ -599,7 +739,10 @@ def extract_infinitives(dictionary_file, exclusions_file, output_file):
     return len(lemmas)
 
 
-def read_parameters():
+def read_parameters() -> bool:
+    """
+    TODO: Docstring this.
+    """
     parser = OptionParser()
 
     parser.add_option(
@@ -614,7 +757,7 @@ def read_parameters():
     return options.infinitives_only
 
 
-def main():
+def main() -> None:  # noqa: D103
     print("Read a dictionary file and extracts the verbs")
 
     infinitives_only = read_parameters()
