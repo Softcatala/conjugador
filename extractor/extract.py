@@ -43,7 +43,18 @@ def _get_forms_with_variant(
     lemma_subdict: dict, postag: str, prefix: str = ""
 ) -> list[Form]:
     """
-    TODO: Docstring this.
+    Returns all forms of a lemma matching a given base POS tag, including
+    all variant and diacritic variants.
+
+    Args:
+        lemma_subdict (dict): A lemma-specific submapping from fully specified
+            POS tags to surface word forms.
+        postag (str): The base POS tag identifying a grammatical slot without the
+            variant code.
+        prefix (str): Prefix associated with the resulting Forms.
+
+    Returns:
+        list[Form]: All matching Forms or an empty list if None are found.
     """
     result = []
 
@@ -79,16 +90,27 @@ def _get_forms_with_variant(
 
 def _get_verb_mode(postag: str) -> str:
     """
-    TODO: Docstring this.
+    Gets the verb mode (Infinitive, Subjuntive, Imperative) from the pos tag
+    representation.
+
+    Args:
+        postag (str): The postag representation.
+
+    Returns:
+        str: The character representing the verb mode.
     """
     return postag[2]
 
 
 def _set_plurals_singulars(tense: Tense, lemma_subdict: dict) -> None:
     """
-    TODO: Docstring this.
+    Sets the plural and singular forms of a verb tense.
 
-    BEWARE: This function modifies tense in place, like a C function of
+    Args:
+        tense (Tense): The verb tense without the forms.
+        lemma_subdict (dict): A lemma-specific submapping from fully specified postags.
+
+    NOTE: This function modifies tense in place, like a C function of
             void _set_plurals_singulars(&tense);
     """
     if _get_verb_mode(tense.postag) not in ["I", "S", "M"]:
@@ -118,9 +140,13 @@ def _set_plurals_singulars_participi(
     tense: Tense, lemma_subdict: dict
 ) -> None:
     """
-    TODO: Docstring this.
+    Sets the plurals and singulars of a tense for the participi.
 
-    BEWARE: This function modifies tense in place, like a C function of
+    Args:
+        tense (Tense): The verb tense without the forms.
+        lemma_subdict (dict): A lemma-specific submapping from fully specified postags.
+
+    NOTE: This function modifies tense in place, like a C function of
             void _set_plurals_singulars_participi(&tense);
     """
     if _get_verb_mode(tense.postag) != "P":
@@ -143,7 +169,7 @@ def _set_plurals_singulars0(tense: Tense, lemma_subdict: dict) -> None:
     """
     TODO: Docstring this.
 
-    BEWARE: This function modifies tense in place, like a C function of
+    NOTE: This function modifies tense in place, like a C function of
             void _set_plurals_singulars_participi(&tense);
     """
     tense.singular1 = _get_forms_with_variant(
@@ -155,7 +181,7 @@ def _set_infinitiu_compost(tense: Tense, lemma_subdict: dict) -> None:
     """
     TODO: Docstring this.
 
-    BEWARE: This function modifies tense in place, like a C function of
+    NOTE: This function modifies tense in place, like a C function of
             void _set_infinitiu_compost(&tense);
     """
     if _get_verb_mode(tense.postag) != "P":
@@ -184,7 +210,7 @@ def _set_gerundi_compost(tense: Tense, lemma_subdict: dict) -> None:
     """
     TODO: Docstring this.
 
-    BEWARE: This function modifies tense in place, like a C function of
+    NOTE: This function modifies tense in place, like a C function of
             void _set_gerundi_compost(&tense);
     """
     if _get_verb_mode(tense.postag) != "P":
@@ -198,7 +224,7 @@ def _set_perfet_indicatiu(tense: Tense, lemma_subdict: dict) -> None:
     """
     TODO: Docstring this.
 
-    BEWARE: This function modifies tense in place, like a C function of
+    NOTE: This function modifies tense in place, like a C function of
             void _set_perfet_indicatiu(&tense);
     """
     if _get_verb_mode(tense.postag) != "P":
@@ -228,7 +254,7 @@ def _set_plusquamperfet_indicatiu(tense: Tense, lemma_subdict: dict) -> None:
     """
     TODO: Docstring this.
 
-    BEWARE: This function modifies tense in place, like a C function of
+    NOTE: This function modifies tense in place, like a C function of
             void _set_plusquamperfet_indicatiu(&tense);
     """
     if _get_verb_mode(tense.postag) != "P":
@@ -260,7 +286,7 @@ def _set_passatperifrastic_indicatiu(
     """
     TODO: Docstring this.
 
-    BEWARE: This function modifies tense in place, like a C function of
+    NOTE: This function modifies tense in place, like a C function of
             void _set_passatperifrastic_indicatiu(&tense);
     """
     if _get_verb_mode(tense.postag) != "N":
@@ -290,7 +316,7 @@ def _set_passatanterior_indicatiu(tense: Tense, lemma_subdict: dict) -> None:
     """
     TODO: Docstring this.
 
-    BEWARE: This function modifies tense in place, like a C function of
+    NOTE: This function modifies tense in place, like a C function of
             void _set_passatanterior_indicatiu(&tense);
     """
     if _get_verb_mode(tense.postag) != "P":
@@ -322,7 +348,7 @@ def _set_passatanteriorperifrastic_indicatiu(
     """
     TODO: Docstring this.
 
-    BEWARE: This function modifies tense in place, like a C function of
+    NOTE: This function modifies tense in place, like a C function of
             void _set_passatanteriorperifrastic_indicatiu(&tense);
     """
     if _get_verb_mode(tense.postag) != "P":
@@ -352,7 +378,7 @@ def _set_futurperfet_indicatiu(tense: Tense, lemma_subdict: dict) -> None:
     """
     TODO: Docstring this.
 
-    BEWARE: This function modifies tense in place, like a C function of
+    NOTE: This function modifies tense in place, like a C function of
             void _set_futurperfet_indicatiu(&tense);
     """
     if _get_verb_mode(tense.postag) != "P":
@@ -384,7 +410,7 @@ def _set_condicionalperfet_indicatiu(
     """
     TODO: Docstring this.
 
-    BEWARE: This function modifies tense in place, like a C function of
+    NOTE: This function modifies tense in place, like a C function of
             void _set_condicionalperfet_indicatiu(&tense);
     """
     if _get_verb_mode(tense.postag) != "P":
@@ -414,7 +440,7 @@ def _set_perfet_subjuntiu(tense: Tense, lemma_subdict: dict) -> None:
     """
     TODO: Docstring this.
 
-    BEWARE: This function modifies tense in place, like a C function of
+    NOTE: This function modifies tense in place, like a C function of
             void _set_perfet_subjuntiu(&tense);
     """
     if _get_verb_mode(tense.postag) != "P":
@@ -444,7 +470,7 @@ def _set_plusquamperfet_subjuntiu(tense: Tense, lemma_subdict: dict) -> None:
     """
     TODO: Docstring this.
 
-    BEWARE: This function modifies tense in place, like a C function of
+    NOTE: This function modifies tense in place, like a C function of
             void _set_plusquamperfet_subjuntiu(&tense);
     """
     if _get_verb_mode(tense.postag) != "P":
@@ -602,7 +628,12 @@ def _get_tenses(input_dict: dict, lemma: str) -> list[Tense]:
 
 def _serialize_to_file(file_dir: str, lemma: str, tenses: list[Tense]) -> None:
     """
-    TODO: Docstring this.
+    Serializes the tenses information of a lema into a file in disk.
+
+    Args:
+        file_dir (str): The directory where to store the file at.
+        lemma (str): The lemma of which we want to store information.
+        tenses (list[Tense]): The list of tenses and information of the lemma.
     """
     d = {}
     d[lemma] = tenses
@@ -675,7 +706,14 @@ def _get_dictionary(
     dictionary_file: str, exclusions_file: str
 ) -> DictionaryFile:
     """
-    TODO: Docstring this.
+    Gets a dictionary object with some selected lemmas excluded.
+
+    Args:
+        dictionary_file (str): The path to the dictionary.
+        exclusions_file (str): The path to the file with the exclusions
+
+    Returns:
+        DictionaryFile: A dictionary containing entries with 'form lemma postag'.
     """
     dictionary = DictionaryFile(dictionary_file)
     exclusions = ExclusionsFile(exclusions_file)
@@ -690,7 +728,14 @@ def extract_from_dictfile(
     output_dir: str,
 ) -> int:
     """
-    TODO: Docstring this.
+    Creates a file for every lemma contained in the dictionary and populates it
+    with all the tenses, forms and definitions.
+
+    Args:
+        dictionary_file (str): The path to the dictionary file to load.
+        exclusions_file (str): The path to the file containing lemmas to exclude.
+        definitions_file (str): The path to the file containing definitions.
+        output_dir (str): The directory where to store the final lemma files.
     """
     dictionary = _get_dictionary(dictionary_file, exclusions_file)
     lemmas = dictionary.get_lemmas_for_infinitives()
@@ -741,7 +786,10 @@ def extract_infinitives(
 
 def read_parameters() -> bool:
     """
-    TODO: Docstring this.
+    Returns whether the application was launched with infinitives only mode.
+
+    Returns:
+        bool: True if infinitives only, else, False.
     """
     parser = OptionParser()
 
