@@ -777,28 +777,18 @@ def main() -> None:  # noqa: D103
     start_time = datetime.datetime.now()
 
     if infinitives_only:
-        print(
-            "Input file: {0}, output dir: {1}".format(
-                dictionary_file, infinitives_file
-            )
-        )
+        print(f"Input file: {dictionary_file}, output dir: {infinitives_file}")
         num_verbs = extract_infinitives(
             dictionary_file, exclusions_file, infinitives_file
         )
     else:
-        print(
-            "Input file: {0}, output dir: {1}".format(
-                dictionary_file, output_dir
-            )
-        )
+        print(f"Input file: {dictionary_file}, output dir: {output_dir}")
         num_verbs = extract_from_dictfile(
             dictionary_file, exclusions_file, definitions_file, output_dir
         )
 
-    print("Number of verbs {0}".format(num_verbs))
-    s = "Time used for generation: {0}".format(
-        datetime.datetime.now() - start_time
-    )
+    print(f"Number of verbs {num_verbs}")
+    s = f"Time used for generation: {datetime.datetime.now() - start_time}"
     print(s)
 
 
