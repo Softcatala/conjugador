@@ -29,7 +29,6 @@ exclude = [
     "*/test/*",
     "*/tests/*",
     "*/tools/*",
-    "extractor/extract.py",
     "catalan-dict-tools",
 ]
 
