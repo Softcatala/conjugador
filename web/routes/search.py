@@ -6,6 +6,7 @@ from fastapi import APIRouter, Request, status
 
 from web.conjugador.search import Search
 from web.models.search import SearchResponse
+from web.monitoring.telemetry import REQUEST_COUNTER
 
 router = APIRouter(prefix="/search")
 
@@ -31,6 +32,7 @@ async def get_search_results(request: Request, word: str) -> SearchResponse:
     """
     Returns a list of all verbs and their information that match the given word.
     """
+    REQUEST_COUNTER.labels(endpoint="/search/{word}", method="GET").inc()
     search = request.app.state.search
     j, _ = await _get_search(word, search)
     return SearchResponse.model_validate(json.loads(j))
