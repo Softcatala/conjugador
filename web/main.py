@@ -1,12 +1,12 @@
 import datetime
-import logging
 import os
 from contextlib import asynccontextmanager
 
 from elasticsearch import AsyncElasticsearch
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from opentelemetry.instrumentation.elasticsearch import ElasticsearchInstrumentor
+from opentelemetry.instrumentation.elasticsearch import \
+    ElasticsearchInstrumentor
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
 from web.conjugador.autocomplete import Autocomplete
@@ -38,9 +38,6 @@ app = FastAPI(lifespan=lifespan)
 
 FastAPIInstrumentor.instrument_app(app)
 ElasticsearchInstrumentor().instrument()
-
-# es_logger = logging.getLogger("elastic_transport.transport")
-# es_logger.setLevel(os.getenv("LOGLEVEL", "WARNING"))
 
 app.include_router(index.router)
 app.include_router(autocomplete.router)
