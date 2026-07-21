@@ -529,12 +529,12 @@ def _set_definition(lemma, tenses, definitions):
             "La definició del verb prové del Viccionari i està sotmesa "
             "a les condicions de la llicència Creative Commons "
             "<a href='https://creativecommons.org/licenses/by-sa/3.0/deed.ca'>Reconeixement-CompartirIgual (CC BY-SA 3.0)</a>. "
-            f"Podeu millorar-la editant <a href='https://ca.wiktionary.org/wiki/{lemma}'>la seva entrada al Viccionari</a>."
+            f"Podeu millorar-la editant <a href='https://ca.wiktionary.org/wiki/{lemma}'>l'entrada al Viccionari</a>."
         )
     else:
         definition["definition_credits"] = (
             "Aquest verb no és al Viccionari, que és la font que usem per a les definicions. "
-            f"Podeu afegir la definició creant <a href='https://ca.wiktionary.org/wiki/{lemma}'>la seva entrada al Viccionari</a>."
+            f"Podeu afegir la definició creant <a href='https://ca.wiktionary.org/wiki/{lemma}'>l'entrada al Viccionari</a>."
         )
 
     definition["title"] = reflexius.get_reflexiu(lemma)
